@@ -1,0 +1,76 @@
+.profile-page{
+   flex: 6;
+
+    .top{
+        -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47); 
+        box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+        padding: 10px;
+        margin: 20px;
+        display: flex;
+
+        .profileTitle{
+            color: lightgray;
+            font-size: 20px;
+        }
+    }
+
+    .bottom{
+        -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47); 
+            box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+            padding: 10px;
+            margin: 20px;
+            display: flex;
+
+            .p-left{
+                flex: 2;
+                text-align: center;
+                align-items: center;
+                justify-content: center;
+
+                img{
+                    width: 200px;
+                    height: 200px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    margin-left: 60px;
+                    margin-top: 60px;
+                }
+            }
+
+            .p-right{
+                flex: 3;
+
+                .p-detail{
+                    width: 40%;
+                    gap: 10px;
+
+                    h1{
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        font-size: 26px;
+                        color: gray;
+                    }
+
+                    button{
+                        width: 400px;
+                        height: 50px;
+                        padding: 10px;
+                        border: none;
+                        background-color: #00002e;
+                        color: white;
+                        font-weight: bold;
+                        cursor: pointer;
+                        margin-top: 10px;
+                        margin-bottom: 10px;
+
+                        &:disabled{
+                            background-color: #00002e57;
+                            cursor: not-allowed;
+                        }
+                    }
+                }
+
+            }
+    }
+}

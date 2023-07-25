@@ -1,0 +1,30 @@
+.buttonDiv{
+    display: flex;
+    align-items: center;
+    margin: 12px;
+    cursor: pointer;
+
+    .mAvatar{
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+    }
+
+}
+
+.profileImg{
+    display: flex;
+    align-items: center;
+    margin: 12px;
+    cursor: pointer;
+
+    .pAvatar{
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+    }
+}
+
+.modal-body{
+    display: flex;
+}

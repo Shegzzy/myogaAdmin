@@ -1,0 +1,21 @@
+.verifyButton{
+    padding: 2px 5px;
+    border-radius: 5px;
+    color: darkblue;
+    border: 1px solid rgba(0, 0, 139, 0.342);
+    cursor: pointer;
+}
+
+.primaryBtn{
+    background-color: #00002e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    height: 40px;
+    width: 80px;
+
+    &:hover{
+        color: #e290fa;
+        background-color: #dcf3fd;
+    }
+}

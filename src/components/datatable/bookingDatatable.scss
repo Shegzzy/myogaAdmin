@@ -1,0 +1,95 @@
+.datatable{
+    height: 600px;
+    padding: 20px;
+
+    .datagrid{
+        width: 100%;
+    }
+
+    .search{
+        display: flex;
+        align-items: center;
+        border: 0.5px solid lightgray;
+        padding: 3px;
+        margin: 8px;
+
+        input{
+            border: none;
+            outline: none;
+            background-color: transparent;
+            width: 200px;
+
+            &::placeholder{
+                font-size: 12px;
+            }
+        }
+    }
+
+.datatableTitle{
+    width: 100%;
+    font-size: 24px;
+    color: gray;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+
+    .link{
+        text-decoration: none;
+        color: #e290fa;
+        font-size: 16px;
+        font-weight: 400;
+        border: 1px solid #e290fa;
+        padding: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+}
+
+    .cellWithImg{
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+
+        .cellImg{
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 20px;
+        }
+    }
+
+    
+
+        // button{
+        //     width: 100%;
+        //     margin: .5rem;
+        //     padding: 16px 0;
+        //     border: none;
+        //     color: white;
+        //     background-color: #00002e;
+        // }
+    
+
+    .cellAction{
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        cursor: pointer;
+
+        .viewButton{
+            padding: 2px 5px;
+            border-radius: 5px;
+            color: darkblue;
+            border: 1px solid rgba(0, 0, 139, 0.342);
+        }
+
+        .deleteButton{
+            padding: 2px 5px;
+            border-radius: 5px;
+            color: crimson;
+            border: 1px solid rgba(220, 20, 60, 0.283);
+        }
+       
+    }
+}

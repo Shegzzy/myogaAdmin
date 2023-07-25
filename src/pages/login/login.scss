@@ -1,0 +1,241 @@
+// .login{
+//     height: 100vh;
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     justify-content: center;
+//     background-color: #dcf3fd;
+
+//     .title{
+//         margin-bottom: 20px;
+//     }
+
+//     form{
+//         background-color: #e290fa;
+//         display: flex;
+//         flex-direction: column;
+//         align-items: center;
+//         -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+//         box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+//         padding: 10px;
+//     }
+
+//     input{
+//         width: 200px;
+//         height: 40px;
+//         margin: 10px;
+//         border-radius: 10px;
+//     }
+
+//     button{
+//         width: 200px;
+//         height: 40px;
+//         border: none;
+//         background-color: #00002e;
+//         color: white;
+//         font-weight: bold;
+//         cursor: pointer;
+//         margin-top: 30px;
+//         margin-bottom: 10px;
+//         font-size: 20px;
+//     }
+
+//     span{
+//         font-size: 15px;
+//         color: red;
+//         margin-top: 20px;
+//     }
+// }
+
+.login-page {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(55deg, #810555, #fff);
+    width: 420px;
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    padding: 10px 80px;
+
+}
+
+.login-page::before {
+    position: absolute;
+    content: "";
+    height: calc(100% - 8px);
+    width: calc(100% - 8px);
+    background-color: #111;
+    border-radius: 10px;
+
+}
+
+.login-page header {
+    position: absolute;
+    top: 30px;
+    display: flex;
+    align-items: center;
+}
+
+.login-page header span {
+    font-size: 22px;
+    background: linear-gradient(90deg, #ff009d, #09b4c7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 800;
+
+}
+
+.logo {
+    margin-top: 90px;
+    position: relative;
+    width: 200px;
+}
+
+.login-page form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 30px;
+
+}
+
+.login-page email,
+.login-page password {
+    position: relative;
+}
+
+.login-page form input {
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    background: transparent;
+    padding: 20px 10px 3px;
+    border-bottom: 1px solid #810551;
+    color: #fff;
+}
+
+.login-page form input:focus {
+    outline: none;
+    color: #fff;
+}
+
+.error {
+    color: red;
+    font-size: 12px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.login-page form button {
+    background-color: #810555;
+    border: none;
+    border-radius: 20px;
+    margin-top: 20px;
+    padding: 10px;
+    color: #fff;
+    cursor: pointer;
+}
+
+
+.user-stat {
+    color: #fff;
+    font-size: 14px;
+    margin: 0 auto;
+    width: 500px;
+}
+
+.user-stat b {
+    color: #aa0c6e;
+    cursor: pointer;
+}
+
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner-btn:disabled {
+    background-color: #7e7070;
+    cursor: not-allowed;
+}
+
+.hidden {
+    display: none;
+}
+
+.spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    animation: spin 0.8s linear infinite;
+    margin-right: 10px;
+}
+
+.spinner-btn {
+    background-color: #810555;
+    border: none;
+    border-radius: 20px;
+    margin-top: 20px;
+    padding: 10px;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Styles for small devices */
+@media screen and (max-width: 600px) {
+    .login-page {
+        width: 90%;
+        /* Reduce the width for smaller devices */
+        padding: 10px 40px;
+        /* Adjust the padding for smaller devices */
+    }
+
+    .logo {
+        margin-top: 50px;
+        /* Reduce the top margin for smaller devices */
+    }
+
+    /* Adjust font size for header span on smaller devices */
+    .login-page header span {
+        font-size: 18px;
+    }
+}
+
+/* Additional styles for extra-small devices (e.g., smartphones) */
+@media screen and (max-width: 400px) {
+    .login-page {
+        padding: 10px 20px;
+        /* Further adjust the padding for extra-small devices */
+    }
+
+    /* Adjust font size for header span on extra-small devices */
+    .login-page header span {
+        font-size: 16px;
+    }
+}

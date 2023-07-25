@@ -1,0 +1,94 @@
+.sidebar {
+    flex: 1;
+    border-right: 0.5px solid rgb(226, 224, 224);
+    min-height: 100vh;
+    background-color: white;
+
+    .top{
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+
+        .logo{
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #00002e;
+        }
+    }
+
+    hr{
+        height: 0;
+        border: 0.5px solid rgb(226, 224, 224);
+    }
+
+    .center{
+        padding-left: 10px;
+
+        ul{
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            .title{
+                font-size: 10px;
+                font-weight: bold;
+                color: lightgray;
+                margin-top: 15px;
+                margin-bottom: 5px;
+            }
+
+            li{
+                display: flex;
+                align-items: center;
+                padding: 5px;
+                cursor: pointer;
+
+                &:hover{
+                    background-color: rgb(237, 221, 237)
+                }
+
+                li:focus{
+                    background-color: gray;
+                    color: gray;
+                }
+
+                .icon{
+                    font-size: 18px;
+                    color: #e290fa;
+                }
+
+                span{
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: #00002e;
+                    margin-left: 10px;
+                }
+            }
+        }
+    }
+
+    .bottom{
+        display: flex;
+        align-items: center;
+        margin: 10px;
+
+        .colorOption{
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+            border: 1px solid #00002e;
+            cursor: pointer;
+            margin: 5px;
+
+            &:nth-child(1){
+                background-color: white;
+            }
+            &:nth-child(2){
+                background-color: #333;
+            }
+        }
+    }
+}

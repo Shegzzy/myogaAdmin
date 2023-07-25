@@ -1,0 +1,23 @@
+.top{
+    display: flex;
+
+    .leftCard{
+        flex: 50%;
+    }
+
+    .rightCard{
+        flex: 50%;
+    }
+}
+
+.bottom{
+    display: flex;
+
+    .leftCard{
+        flex: 50%;
+    }
+
+    .rightCard{
+        flex: 50%;
+    }
+}
