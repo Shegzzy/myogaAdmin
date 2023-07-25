@@ -1,0 +1,10 @@
+.statusList{
+    display: flex;
+    width: 100vw;
+    position: relative;
+
+    .statusListContainer{
+        flex: 75%;
+    }
+}
+
