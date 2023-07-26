@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "my-oga-admin",
     "public": "build",
     "ignore": [
       "firebase.json",
