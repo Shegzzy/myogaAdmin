@@ -211,6 +211,18 @@ export const bookingColumns = [
     },
     {
         field: "Amount", headerName: "Amount NGN", width: 100,
+        renderCell: (params) => {
+            return (
+                <div className='cellStatus'>
+                    {new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: "NGN",
+                    })
+                        .format(params.row.Amount)
+                        .replace(".00", "")}
+                </div>
+            )
+        }
     },
     {
         field: "Payment Method", headerName: "Payment Method", width: 150,
@@ -349,7 +361,12 @@ export const earningColumns = [
         renderCell: (params) => {
             return (
                 <div className='cellStatus'>
-                    N{params.row.Amount}
+                    {new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: "NGN",
+                    })
+                        .format(params.row.Amount)
+                        .replace(".00", "")}
                 </div>
             )
         }

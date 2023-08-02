@@ -58,6 +58,30 @@ const Featured = () => {
 
         setData(list);
         setFieldSum(total);
+      } else if (Selected === getPreviousMonth(0)) {
+        const today = new Date();
+        const firstDayOfMonth = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          1
+        );
+
+        const q = query(
+          collection(db, "Bookings"),
+          where("Status", "==", "completed"),
+          where("timeStamp", ">=", firstDayOfMonth),
+          where("timeStamp", "<=", today)
+        );
+        const querySnapshot = await getDocs(q);
+
+        let total = 0;
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          total += parseFloat(data.Amount);
+        });
+
+        setData(list);
+        setFieldSum(total);
       } else if (Selected === getPreviousMonth()) {
         const today = new Date();
         // Calculate the first day of last month
@@ -478,6 +502,7 @@ const Featured = () => {
           <option value="total">Total</option>
           <option value="yesterday">Yesterday</option>
           <option value="last_week">Last Week</option>
+          <option value={getPreviousMonth(0)}>{getPreviousMonth(0)}</option>
           <option value={getPreviousMonth()}>{getPreviousMonth()}</option>
           <option value={getPreviousMonth(2)}>{getPreviousMonth(2)}</option>
           <option value={getPreviousMonth(3)}>{getPreviousMonth(3)}</option>
