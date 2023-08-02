@@ -1,38 +1,40 @@
 import AssignModal from './components/modal/AssignModal';
 import ModalContainer from './components/modal/ModalContainer';
 import VerifyModal from './components/modal/VerifyModal';
+import { Link } from "react-router-dom";
+
 
 export const userColumns = [
     { field: 'id', headerName: 'ID', width: 150 },
     {
-        field: "user", headerName: "User", width: 200, renderCell: (params)=>{
+        field: "user", headerName: "User", width: 200, renderCell: (params) => {
             return (
                 <div className="cellWithImg">
-                    <img className="cellImg" src={params.row['Profile Photo']} alt=" avatar "/>
+                    <img className="cellImg" src={params.row['Profile Photo']} alt=" avatar " />
                     {params.row.FullName}
                 </div>
             )
         }
     },
     {
-        field: "Email", headerName:"Email", width: 200,
+        field: "Email", headerName: "Email", width: 200,
     },
     {
-        field: "Phone", headerName:"Phone Number", width: 150,
+        field: "Phone", headerName: "Phone Number", width: 150,
     },
     {
-        field: ['Date of Birth'], headerName:"Date of Birth", width: 100,
+        field: ['Date of Birth'], headerName: "Date of Birth", width: 100,
     },
     {
-        field: "Gender", headerName:"Gender", width: 100,
+        field: "Gender", headerName: "Gender", width: 100,
     },
     {
-        field: "Address", headerName:"Address", width: 150,
+        field: "Address", headerName: "Address", width: 150,
     },
     {
-        field: "Status", headerName:"Status", width: 100,
-        renderCell:(params)=>{
-            return(
+        field: "Status", headerName: "Status", width: 100,
+        renderCell: (params) => {
+            return (
                 <div className={`cellWithStatus ${params.row.Status}`}>
                     {params.row.Status}
                 </div>
@@ -40,126 +42,126 @@ export const userColumns = [
         }
     },
     {
-        field: ['Date Created'], headerName:"Date Created", width: 150,
+        field: ['Date Created'], headerName: "Date Created", width: 150,
     },
 ];
 
 export const driverColumns = [
     { field: 'id', headerName: 'ID', width: 150 },
     {
-        field: "FullName", headerName: "Driver Name", width: 200, renderCell: (params)=>{
+        field: "FullName", headerName: "Driver Name", width: 200, renderCell: (params) => {
             return (
                 <div className="cellWithImg">
-                    <img className="cellImg" src={params.row['Profile Photo']} alt=" avatar "/>
+                    <img className="cellImg" src={params.row['Profile Photo']} alt=" avatar " />
                     {params.row.FullName}
                 </div>
             )
         }
     },
     {
-        field: "Email", headerName:"Email", width: 200,
+        field: "Email", headerName: "Email", width: 200,
     },
     {
-        field: "Phone", headerName:"Phone Number", width: 150,
+        field: "Phone", headerName: "Phone Number", width: 150,
     },
     {
-        field: ['Date of Birth'], headerName:"Date of Birth", width: 100,
+        field: ['Date of Birth'], headerName: "Date of Birth", width: 100,
     },
     {
-        field: "Gender", headerName:"Gender", width: 100,
+        field: "Gender", headerName: "Gender", width: 100,
     },
     {
-        field: "State", headerName:"Location", width: 100,
+        field: "State", headerName: "Location", width: 100,
     },
     {
-        field: "Address", headerName:"Address", width: 150,
+        field: "Address", headerName: "Address", width: 150,
     },
     {
-        field: "Online", headerName:"Status", width: 100,
-        renderCell:(params)=>{
-            return(
+        field: "Online", headerName: "Status", width: 100,
+        renderCell: (params) => {
+            return (
                 <div className={`cellWithStatus ${params.row.Online}`}>
-                    {params.row.Online==="1"?"online":"offline"}
+                    {params.row.Online === "1" ? "online" : "offline"}
                 </div>
             )
         }
     },
     {
-        field: "Verified", headerName:"Verification", width: 100,
-        renderCell:(params)=>{
-            return(
+        field: "Verified", headerName: "Verification", width: 100,
+        renderCell: (params) => {
+            return (
                 <div className={`cellWithVerify ${params.row.Verified}`}>
-                    {params.row.Verified==="1"?"verified":"not verified"}
-                    {params.row.Verified==="0"?<AssignModal value={params.row.Verified} Id={params.row.id} />:<div className="verifiedButton">Verified</div>}
+                    {params.row.Verified === "1" ? "verified" : "not verified"}
+                    {params.row.Verified === "0" ? <AssignModal value={params.row.Verified} Id={params.row.id} /> : <div className="verifiedButton">Verified</div>}
                 </div>
             )
         }
     },
     {
-        field: "Company", headerName:"Company", width: 150,
+        field: "Company", headerName: "Company", width: 150,
     },
     {
-        field: "Documents", headerName:"Documents", width: 150,
-        renderCell: (params)=>{
+        field: "Documents", headerName: "Documents", width: 150,
+        renderCell: (params) => {
             return (
                 <div className="cellWithImg">
-                    <img className="cellImg" src={params.row['Documents']} alt=" docs "/>
+                    <img className="cellImg" src={params.row['Documents']} alt=" docs " />
                 </div>
             )
         }
     },
     {
-        field: "Vehicle Type", headerName:"Vehicle Type", width: 100,
+        field: "Vehicle Type", headerName: "Vehicle Type", width: 100,
     },
     {
-        field: "Vehicle Make", headerName:"Vehicle Make", width: 100,
+        field: "Vehicle Make", headerName: "Vehicle Make", width: 100,
     },
     {
-        field: "Vehicle Color", headerName:"Vehicle Color", width: 100,
+        field: "Vehicle Color", headerName: "Vehicle Color", width: 100,
     },
     {
-        field: "Vehicle Year", headerName:"Vehicle Year", width: 100,
+        field: "Vehicle Year", headerName: "Vehicle Year", width: 100,
     },
     {
-        field: "Vehicle Number", headerName:"Vehicle Number", width: 100,
+        field: "Vehicle Number", headerName: "Vehicle Number", width: 100,
     },
     {
-        field: "Date Created", headerName:"Date Created", width: 150,
+        field: "Date Created", headerName: "Date Created", width: 150,
     },
 ];
 export const companyColumns = [
     { field: 'id', headerName: 'ID', width: 100 },
     {
-        field: "Company Name", headerName: "Company Name", width: 200, renderCell: (params)=>{
+        field: "Company Name", headerName: "Company Name", width: 200, renderCell: (params) => {
             return (
                 <div className="cellWithImg">
-                   { params.row['Profile Photo'] === null ? <img className="cellImg" src="https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg" alt=" avatar "/>
-                   :<img className="cellImg" src={params.row['Profile Photo']} alt=" avatar "/>
-                   }
+                    {params.row['Profile Photo'] === null ? <img className="cellImg" src="https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg" alt=" avatar " />
+                        : <img className="cellImg" src={params.row['Profile Photo']} alt=" avatar " />
+                    }
                     {params.row.company}
                 </div>
             )
         }
     },
     {
-        field: "email", headerName:"Email", width: 200,
+        field: "email", headerName: "Email", width: 200,
     },
     {
-        field: "phone", headerName:"Company Phone Number", width: 150,
+        field: "phone", headerName: "Company Phone Number", width: 150,
     },
     {
-        field: "regnumber", headerName:"Registration Number", width: 150,
+        field: "regnumber", headerName: "Registration Number", width: 150,
     },
     {
-        field: "address", headerName:"Company Address", width: 150,
+        field: "address", headerName: "Company Address", width: 150,
     },
     {
-        field: "location", headerName:"Location", width: 150,
+        field: "location", headerName: "Location", width: 150,
     },
     {
-        field: "Status", headerName:"Status", width: 100,
-        renderCell:(params)=>{
-            return(
+        field: "Status", headerName: "Status", width: 100,
+        renderCell: (params) => {
+            return (
                 <div className={`cellWithStatus ${params.row.Status}`}>
                     {params.row.Status}
                 </div>
@@ -167,181 +169,185 @@ export const companyColumns = [
         }
     },
     {
-        field: "Document", headerName:"Documents", width: 150, renderCell:(params)=>{
-            return(
+        field: "Document", headerName: "Documents", width: 150, renderCell: (params) => {
+            return (
                 <div className="cellWithImg" >
-                    { params.row.documents === null ? <img className="cellImg" src="https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg" alt=" avatar "/>
-                   :<img className="cellImg" src={params.row.documents} alt=" avatar "/>
-                   }
+                    {params.row.documents === null ? <img className="cellImg" src="https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg" alt=" avatar " />
+                        : <img className="cellImg" src={params.row.documents} alt=" avatar " />
+                    }
                 </div>
             )
         }
     },
     {
-        field: "date", headerName:"Date Created", width: 150,
+        field: "date", headerName: "Date Created", width: 150,
     },
 ];
 export const bookingColumns = [
     { field: 'id', headerName: 'ID', width: 100 },
     {
-        field: "Booking Number", headerName:"Booking Number", width: 150,
+        field: "Booking Number", headerName: "Booking Number", width: 150,
     },
     {
-        field: "Customer Name", headerName:"Cusomer Name", width: 150,
+        field: "Customer Name", headerName: "Cusomer Name", width: 150,
     },
     {
-        field: "Customer Phone", headerName:"Customer Phone", width: 150,
+        field: "Customer Phone", headerName: "Customer Phone", width: 150,
     },
     {
-        field: 'Customer ID', headerName:"Customer ID", width: 100,
+        field: 'Customer ID', headerName: "Customer ID", width: 100,
     },
     {
-        field: "Driver ID", headerName:"Driver ID", width: 100,
+        field: "Driver ID", headerName: "Driver ID", width: 100,
     },
     {
-        field: ['PickUp Address'], headerName:"Pick Up Address", width: 150,
+        field: ['PickUp Address'], headerName: "Pick Up Address", width: 150,
     },
     {
-        field: ['DropOff Address'], headerName:"Drop Off Address", width: 150,
+        field: ['DropOff Address'], headerName: "Drop Off Address", width: 150,
     },
     {
-        field: "Distance", headerName:"Distance", width: 80,
+        field: "Distance", headerName: "Distance", width: 80,
     },
     {
-        field: "Amount", headerName:"Amount NGN", width: 100,
+        field: "Amount", headerName: "Amount NGN", width: 100,
     },
     {
-        field: "Payment Method", headerName:"Payment Method", width: 150,
+        field: "Payment Method", headerName: "Payment Method", width: 150,
     },
     {
-        field: "Status", headerName:"Status", width: 100,
-        renderCell:(params)=>{
-            return(
+        field: "Status", headerName: "Status", width: 100,
+        renderCell: (params) => {
+            return (
                 <div className={`cellWithStatus ${params.row.Status}`}>
                     {params.row.Status}
-                    {params.row.Status === "pending"?<VerifyModal Id={params.row.id} customer={params.row['Customer ID']} bookNum={params.row['Booking Number']}/>:<ModalContainer id={params.row['Booking Number']}/>}
+                    {params.row.Status === "pending" ? <VerifyModal Id={params.row.id} customer={params.row['Customer ID']} bookNum={params.row['Booking Number']} /> : <ModalContainer id={params.row['Booking Number']} />}
                 </div>
             )
         }
     },
     {
-        field: "Date Created", headerName:"Date Created", width: 150,
+        field: "Date Created", headerName: "Date Created", width: 150,
     },
 ];
 
 export const statusColumns = [
     { field: 'id', headerName: 'ID', width: 100 },
     {
-        field: "Booking Number", headerName:"Booking Number", width: 150,
-        
+        field: "Booking Number", headerName: "Booking Number", width: 150,
+
     },
     {
-        field: 'Customer ID', headerName:"Customer ID", width: 100,
-        
+        field: 'Customer ID', headerName: "Customer ID", width: 100,
+
     },
     {
-        field: "Driver ID", headerName:"Driver ID", width: 100,
-        
+        field: "Driver ID", headerName: "Driver ID", width: 100,
+
     },
     {
-        field: ['Order Assigned'], headerName:"Booking Accepted", width: 150,
-        renderCell:(params)=>{
-            return(
+        field: ['Order Assigned'], headerName: "Booking Accepted", width: 150,
+        renderCell: (params) => {
+            return (
                 <div className='cellStatus'>
-                    {params.row['Order Assigned'] === "1"?"Yes":"Not Yet"}
+                    {params.row['Order Assigned'] === "1" ? "Yes" : "Not Yet"}
                 </div>
             )
         }
     },
     {
-        field: ['Out For PickUp'], headerName:"On Way to Pick Up", width: 150,
-        renderCell:(params)=>{
-            return(
+        field: ['Out For PickUp'], headerName: "On Way to Pick Up", width: 150,
+        renderCell: (params) => {
+            return (
                 <div className='cellStatus'>
-                    {params.row['Out For PickUp'] === "1"?"Yes":"Not Yet"}
+                    {params.row['Out For PickUp'] === "1" ? "Yes" : "Not Yet"}
                 </div>
             )
         }
     },
     {
-        field: "Arrived at PickUp", headerName:"Arrived at Pick Up", width: 80,
-        renderCell:(params)=>{
-            return(
+        field: "Arrived at PickUp", headerName: "Arrived at Pick Up", width: 80,
+        renderCell: (params) => {
+            return (
                 <div className='cellStatus'>
-                    {params.row['Arrive at PickUp'] === "1"?"Yes":"Not Yet"}
+                    {params.row['Arrive at PickUp'] === "1" ? "Yes" : "Not Yet"}
                 </div>
             )
         }
     },
     {
-        field: "Parcel Picked", headerName:"Parcel Picked", width: 100,
-        renderCell:(params)=>{
-            return(
+        field: "Parcel Picked", headerName: "Parcel Picked", width: 100,
+        renderCell: (params) => {
+            return (
                 <div className='cellStatus'>
-                    {params.row['Parcel Picked'] === "1"?"Yes":"Not Yet"}
+                    {params.row['Parcel Picked'] === "1" ? "Yes" : "Not Yet"}
                 </div>
             )
         }
     },
     {
-        field: "Going to DropOff", headerName:"On Way to Drop", width: 150,
-        renderCell:(params)=>{
-            return(
+        field: "Going to DropOff", headerName: "On Way to Drop", width: 150,
+        renderCell: (params) => {
+            return (
                 <div className='cellStatus'>
-                    {params.row['Going to DropOff'] === "1"?"Yes":"Not Yet"}
+                    {params.row['Going to DropOff'] === "1" ? "Yes" : "Not Yet"}
                 </div>
             )
         }
     },
     {
-        field: "Arrived at DropOff", headerName:"Arrived at Drop", width: 100,
-        renderCell:(params)=>{
-            return(
+        field: "Arrived at DropOff", headerName: "Arrived at Drop", width: 100,
+        renderCell: (params) => {
+            return (
                 <div className='cellStatus'>
-                    {params.row['Arrive DropOff'] === "1"?"Yes":"Not Yet"}
+                    {params.row['Arrive DropOff'] === "1" ? "Yes" : "Not Yet"}
                 </div>
             )
         }
     },
     {
-        field: "Completed", headerName:"Completed", width: 100,
-        renderCell:(params)=>{
-            return(
+        field: "Completed", headerName: "Completed", width: 100,
+        renderCell: (params) => {
+            return (
                 <div className='cellStatus'>
-                    {params.row.Completed === "1"?"Yes":"Not Yet"}
+                    {params.row.Completed === "1" ? "Yes" : "Not Yet"}
                 </div>
             )
         }
     },
     {
-        field: "Date Created", headerName:"Date Created", width: 150,
+        field: "Date Created", headerName: "Date Created", width: 150,
     },
 ];
 export const earningColumns = [
     { field: 'id', headerName: 'ID', width: 100 },
     {
-        field: "BookingID", headerName:"Booking Number", width: 150,
-        
+        field: "BookingID", headerName: "Booking Number", width: 150,
+
     },
     {
-        field: "Driver", headerName:"Driver ID", width: 150,
-        renderCell:(params)=>{
-            return(
+        field: "Driver", headerName: "Driver ID", width: 150,
+        renderCell: (params) => {
+            return (
                 <div className='cellStatus'>
-                    <a href='./'>
+                    {/* <a href='/'>
                         {params.row.Driver}
-                    </a>
+                    </a> */}
+                    <Link to={`/drivers/${params.row.Driver}`}>
+                        {params.row.Driver}
+                    </Link>
                 </div>
+
             )
         }
     },
     {
-        field: "Company", headerName:"Company", width: 150,
+        field: "Company", headerName: "Company", width: 150,
     },
     {
-        field: "Amount", headerName:"Amount", width: 100,
-        renderCell:(params)=>{
-            return(
+        field: "Amount", headerName: "Amount", width: 100,
+        renderCell: (params) => {
+            return (
                 <div className='cellStatus'>
                     N{params.row.Amount}
                 </div>
@@ -349,19 +355,22 @@ export const earningColumns = [
         }
     },
     {
-        field: "Customer", headerName:"Customer ID", width: 100,
-        renderCell:(params)=>{
-            return(
+        field: "Customer", headerName: "Customer ID", width: 100,
+        renderCell: (params) => {
+            return (
                 <div className='cellStatus'>
-                    <a href='./'>
+                    {/* <a href='./'>
                         {params.row.Customer}
-                    </a>
+                    </a> */}
+                    <Link to={`/users/${params.row.Customer}`}>
+                        {params.row.Customer}
+                    </Link>
                 </div>
             )
         }
     },
     {
-        field: "DateCreated", headerName:"Date Created", width: 150,
+        field: "DateCreated", headerName: "Date Created", width: 150,
     },
 ];
 
@@ -518,36 +527,36 @@ export const driversRows = [
         VehicleNumber: "234RFS",
         Status: "Pending",
     },
-  ];
+];
 
-  export const earningsColumns = [
+export const earningsColumns = [
     { field: 'id', headerName: 'ID', width: 150 },
     {
-        field: "CompanyName", headerName: "Company Name", width: 200, renderCell: (params)=>{
+        field: "CompanyName", headerName: "Company Name", width: 200, renderCell: (params) => {
             return (
                 <div className="cellWithImg">
-                    <img className="cellImg" src="https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg" alt=" avatar "/>
+                    <img className="cellImg" src="https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg" alt=" avatar " />
                     {params.row.CompanyName}
                 </div>
             )
         }
     },
     {
-        field: "Email", headerName:"Email", width: 200,
+        field: "Email", headerName: "Email", width: 200,
     },
     {
-        field: "Phone", headerName:"Company Phone Number", width: 150,
+        field: "Phone", headerName: "Company Phone Number", width: 150,
     },
     {
-        field: "DateOfRegistration", headerName:"Date of Registration", width: 150,
+        field: "DateOfRegistration", headerName: "Date of Registration", width: 150,
     },
     {
-        field: "Address", headerName:"Company Address", width: 150,
+        field: "Address", headerName: "Company Address", width: 150,
     },
     {
-        field: "Status", headerName:"Status", width: 100,
-        renderCell:(params)=>{
-            return(
+        field: "Status", headerName: "Status", width: 100,
+        renderCell: (params) => {
+            return (
                 <div className={`cellWithStatus ${params.row.Status}`}>
                     {params.row.Status}
                 </div>
@@ -555,10 +564,10 @@ export const driversRows = [
         }
     },
     {
-        field: "Document", headerName:"Documents", width: 150,
+        field: "Document", headerName: "Documents", width: 150,
     },
     {
-        field: "timeStamp", headerName:"Date Created", width: 150,
+        field: "timeStamp", headerName: "Date Created", width: 150,
     },
 ];
 
