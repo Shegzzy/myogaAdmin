@@ -75,8 +75,9 @@ const SingleDriver = (props) => {
       let isMounted = true;
 
       const bookingsQuery = query(
-        collection(db, "Earnings"),
-        where("Driver", "==", id)
+        collection(db, "Bookings"),
+        where("Driver ID", "==", id),
+        where("Status", "==", "completed")
       );
       const unsubscribe = onSnapshot(bookingsQuery, (snapshot) => {
         let totalAmount = 0;
@@ -367,22 +368,57 @@ const SingleDriver = (props) => {
                 <h1 className="title">Total Earning</h1>
               </div>
               <div className="bottom">
-                <p className="amount">₦ {totalEarnings}</p>
+                <p className="amount">
+                  {new Intl.NumberFormat("en-NG", {
+                    style: "currency",
+                    currency: "NGN",
+                  })
+                    .format(totalEarnings)
+                    .replace(".00", "")}
+                </p>
 
                 <div className="summary">
                   <div className="item">
                     <div className="itemTitle">This Month Earning</div>
-                    <div className="itemResult">₦{mData}</div>
+                    <div className="itemResult">
+                      {new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: "NGN",
+                      })
+                        .format(mData)
+                        .replace(".00", "")}
+                    </div>
                     <div className="itemTitle">Last Month Earning</div>
-                    <div className="itemResult">₦{lMData}</div>
+                    <div className="itemResult">
+                      {new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: "NGN",
+                      })
+                        .format(lMData)
+                        .replace(".00", "")}
+                    </div>
                     <div className="itemTitle">Last 7 Days Earning</div>
-                    <div className="itemResult">₦{oData}</div>
+                    <div className="itemResult">
+                      {new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: "NGN",
+                      })
+                        .format(oData)
+                        .replace(".00", "")}
+                    </div>
                     <div className="itemTitle">Last 2 Weeks Earning</div>
-                    <div className="itemResult">₦{lWData}</div>
+                    <div className="itemResult">
+                      {new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: "NGN",
+                      })
+                        .format(lWData)
+                        .replace(".00", "")}
+                    </div>
                     <div className="itemTitle">Total Trips</div>
-                    <div className="itemResult">₦{bookL}</div>
+                    <div className="itemResult">{bookL}</div>
                     <div className="itemTitle">Completed Trips</div>
-                    <div className="itemResult">₦{earnL}</div>
+                    <div className="itemResult">{earnL}</div>
                   </div>
                 </div>
               </div>
