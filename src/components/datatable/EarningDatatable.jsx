@@ -39,6 +39,9 @@ const EarningDatatable = () => {
         snapShot.docs.forEach((doc) => {
           list.push({ id: doc.id, ...doc.data() });
         });
+        list.sort(
+          (a, b) => new Date(b["DateCreated"]) - new Date(a["DateCreated"])
+        );
         setData(list);
         setMsg(" Displaying Earnings Information ");
         setType("success");
@@ -71,30 +74,30 @@ const EarningDatatable = () => {
   //     }
   // }
 
-  const actionColumn = [
-    {
-      field: "action",
-      headerName: "Action",
-      Width: 280,
-      renderCell: (params) => {
-        return (
-          <div className="cellAction">
-            <div
-              className="viewButton"
-              onClick={() =>
-                navigate(`/users/${params.id}`, {
-                  replace: true,
-                  state: { id: params.id },
-                })
-              }
-            >
-              View
-            </div>
-          </div>
-        );
-      },
-    },
-  ];
+  // const actionColumn = [
+  //   {
+  //     field: "action",
+  //     headerName: "Action",
+  //     Width: 280,
+  //     renderCell: (params) => {
+  //       return (
+  //         <div className="cellAction">
+  //           <div
+  //             className="viewButton"
+  //             onClick={() =>
+  //               navigate(`/users/${params.id}`, {
+  //                 replace: true,
+  //                 state: { id: params.id },
+  //               })
+  //             }
+  //           >
+  //             View
+  //           </div>
+  //         </div>
+  //       );
+  //     },
+  //   },
+  // ];
 
   return (
     <div className="datatable">
@@ -112,7 +115,7 @@ const EarningDatatable = () => {
       <DataGrid
         className="datagrid"
         rows={data}
-        columns={earningColumns.concat(actionColumn)}
+        columns={earningColumns}
         pageSize={9}
         rowsPerPageOptions={[9]}
         checkboxSelection
