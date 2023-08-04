@@ -2,6 +2,7 @@ import AssignModal from './components/modal/AssignModal';
 import ModalContainer from './components/modal/ModalContainer';
 import VerifyModal from './components/modal/VerifyModal';
 import { Link } from "react-router-dom";
+import { format } from 'date-fns';
 
 
 export const userColumns = [
@@ -43,6 +44,10 @@ export const userColumns = [
     },
     {
         field: ['Date Created'], headerName: "Date Created", width: 150,
+        renderCell: (params) => {
+            const formattedDate = format(new Date(params.value), 'MM/dd/yyyy'); // Format the date
+            return <div>{formattedDate}</div>;
+        }
     },
 ];
 
@@ -127,6 +132,10 @@ export const driverColumns = [
     },
     {
         field: "Date Created", headerName: "Date Created", width: 150,
+        renderCell: (params) => {
+            const formattedDate = format(new Date(params.value), 'MM/dd/yyyy'); // Format the date
+            return <div>{formattedDate}</div>;
+        }
     },
 ];
 export const companyColumns = [
@@ -240,6 +249,10 @@ export const bookingColumns = [
     },
     {
         field: "Date Created", headerName: "Date Created", width: 150,
+        renderCell: (params) => {
+            const formattedDate = format(new Date(params.value), 'MM/dd/yyyy'); // Format the date
+            return <div>{formattedDate}</div>;
+        }
     },
 ];
 
@@ -329,6 +342,10 @@ export const statusColumns = [
     },
     {
         field: "Date Created", headerName: "Date Created", width: 150,
+        renderCell: (params) => {
+            const formattedDate = format(new Date(params.value), 'MM/dd/yyyy'); // Format the date
+            return <div>{formattedDate}</div>;
+        }
     },
 ];
 export const earningColumns = [
@@ -388,6 +405,11 @@ export const earningColumns = [
     },
     {
         field: "DateCreated", headerName: "Date Created", width: 150,
+        renderCell: (params) => {
+            const formattedDate = format(new Date(params.value), 'MM/dd/yyyy'); // Format the date
+            return <div>{formattedDate}</div>;
+        }
+
     },
 ];
 
