@@ -27,6 +27,7 @@ import SingleBooking from './pages/single/singleBooking';
 import StatusList from './pages/list/StatusList';
 import EarningList from './pages/list/EarningList';
 import SettingList from './pages/list/SettingList';
+import Report from './pages/report/report'
 import Profile from './pages/list/Profile';
 import Notification from './pages/list/Notification';
 import SupportList from './pages/list/SupportList';
@@ -141,6 +142,14 @@ function App() {
               <Route index element={
                 <RequireAuth>
                   <StatusList />
+                </RequireAuth>
+              }
+              />
+            </Route>
+            <Route path="reports">
+              <Route index element={
+                <RequireAuth>
+                  <Report />
                 </RequireAuth>
               }
               />
