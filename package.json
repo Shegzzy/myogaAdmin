@@ -1,6 +1,6 @@
 {
   "name": "my-oga-admin",
-  "homepage": "https://admin.myoga.com.ng/",
+  "homepage": "https://oga-admin.myoga.com.ng/",
   "version": "0.1.0",
   "private": false,
   "dependencies": {

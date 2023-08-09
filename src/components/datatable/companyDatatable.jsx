@@ -107,14 +107,14 @@ const CompanyDatatable = () => {
     <div className="datatable">
       <Snakbar ref={snackbarRef} message={msg} type={sType} />
       <div className="datatableTitle">
-        Add New Company
-        <Link
+        Company
+        {/* <Link
           to="/company/new"
           style={{ textDecoration: "none" }}
           className="link"
         >
           Add New
-        </Link>
+        </Link> */}
       </div>
       <DataGrid
         className="datagrid"
