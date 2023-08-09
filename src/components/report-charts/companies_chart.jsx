@@ -3,6 +3,7 @@ import "./report_chart.scss";
 import {
   BarChart,
   ResponsiveContainer,
+  Tooltip,
   Bar,
   XAxis,
   YAxis,
@@ -12,7 +13,7 @@ import { useEffect, useState } from "react";
 import { collection, getDocs, where, query } from "firebase/firestore";
 import { db } from "../../firebase";
 
-const CompletedBookingsChart = ({ aspect, title }) => {
+const CompanyChart = ({ aspect, title }) => {
   const [lastMonthData, setLastMonthData] = useState([]);
   const [lastTwoMonthData, setLastTwoMonthData] = useState([]);
   const [lastThreeMonthData, setLastThreeMonthData] = useState([]);
@@ -137,50 +138,44 @@ const CompletedBookingsChart = ({ aspect, title }) => {
 
     //Last Month's Earning Query
     const lastMonthQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
-      where("Date Created", ">=", firstDayOfLastMonth.toISOString()),
-      where("Date Created", "<=", lastDayOfLastMonth.toISOString())
+      collection(db, "Companies"),
+      where("timeStamp", ">=", firstDayOfLastMonth),
+      where("timeStamp", "<=", lastDayOfLastMonth)
     );
 
     //Last Two Month's Earning Query
     const lastTwoMonthsQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
-      where("Date Created", ">=", firstDayOfLastTwoMonths.toISOString()),
-      where("Date Created", "<=", lastDayOfLastTwoMonths.toISOString())
+      collection(db, "Companies"),
+      where("timeStamp", ">=", firstDayOfLastTwoMonths),
+      where("timeStamp", "<=", lastDayOfLastTwoMonths)
     );
 
     //Last Three Month's Earning Query
     const lastThreeMonthsQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
-      where("Date Created", ">=", firstDayOfLastThreeMonths.toISOString()),
-      where("Date Created", "<=", lastDayOfLastThreeMonths.toISOString())
+      collection(db, "Companies"),
+      where("timeStamp", ">=", firstDayOfLastThreeMonths),
+      where("timeStamp", "<=", lastDayOfLastThreeMonths)
     );
 
     //Last Five Month's Earning Query
     const lastFourMonthsQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
-      where("Date Created", ">=", firstDayOfLastFourMonths.toISOString()),
-      where("Date Created", "<=", lastDayOfLastFourMonths.toISOString())
+      collection(db, "Companies"),
+      where("timeStamp", ">=", firstDayOfLastFourMonths),
+      where("timeStamp", "<=", lastDayOfLastFourMonths)
     );
 
     //Last Four Month's Earning Query
     const lastFiveMonthsQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
-      where("Date Created", ">=", firstDayOfLastFiveMonths.toISOString()),
-      where("Date Created", "<=", lastDayOfLastFiveMonths.toISOString())
+      collection(db, "Companies"),
+      where("timeStamp", ">=", firstDayOfLastFiveMonths),
+      where("timeStamp", "<=", lastDayOfLastFiveMonths)
     );
 
     //Last Six Month's Earning Query
     const lastSixMonthsQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
-      where("Date Created", ">=", firstDayOfLastSixMonths.toISOString()),
-      where("Date Created", "<=", lastDayOfLastSixMonths.toISOString())
+      collection(db, "Companies"),
+      where("timeStamp", ">=", firstDayOfLastSixMonths),
+      where("timeStamp", "<=", lastDayOfLastSixMonths)
     );
 
     //Calculating a month ago amount
@@ -235,51 +230,20 @@ const CompletedBookingsChart = ({ aspect, title }) => {
     { name: getPreviousMonth(), Total: lastMonthData },
   ];
 
-  const getPath = (x, y, width, height) => {
-    return `M${x},${y + height}C${x + width / 3},${y + height} ${
-      x + width / 2
-    },${y + height / 3}
-  ${x + width / 2}, ${y}
-  C${x + width / 2},${y + height / 3} ${x + (2 * width) / 3},${y + height} ${
-      x + width
-    }, ${y + height}
-  Z`;
-  };
-
-  const TriangleBar = (props) => {
-    const { fill, x, y, width, height } = props;
-
-    return <path d={getPath(x, y, width, height)} stroke="none" fill={fill} />;
-  };
-
   return (
     <div className="report__chart">
       <div className="title">{title}</div>
       <ResponsiveContainer width="100%" aspect={aspect}>
-        <BarChart
-          width={500}
-          height={300}
-          data={data}
-          margin={{
-            top: 20,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
+        <BarChart width={800} height={300} data={data}>
           <XAxis dataKey="name" stroke="#8884d8" />
           <YAxis />
-          <Bar
-            dataKey="Total"
-            fill="#8884d8"
-            shape={<TriangleBar />}
-            label={{ position: "top" }}
-          ></Bar>
+          <Tooltip wrapperStyle={{ width: 100, backgroundColor: "#ccc" }} />
+          <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+          <Bar dataKey="Total" fill="#8884d8" barSize={30} />
         </BarChart>
       </ResponsiveContainer>
     </div>
   );
 };
 
-export default CompletedBookingsChart;
+export default CompanyChart;

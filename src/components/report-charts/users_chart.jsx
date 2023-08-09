@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { collection, getDocs, where, query } from "firebase/firestore";
 import { db } from "../../firebase";
 
-const CompletedBookingsChart = ({ aspect, title }) => {
+const UsersChart = ({ aspect, title }) => {
   const [lastMonthData, setLastMonthData] = useState([]);
   const [lastTwoMonthData, setLastTwoMonthData] = useState([]);
   const [lastThreeMonthData, setLastThreeMonthData] = useState([]);
@@ -137,48 +137,42 @@ const CompletedBookingsChart = ({ aspect, title }) => {
 
     //Last Month's Earning Query
     const lastMonthQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
+      collection(db, "Users"),
       where("Date Created", ">=", firstDayOfLastMonth.toISOString()),
       where("Date Created", "<=", lastDayOfLastMonth.toISOString())
     );
 
     //Last Two Month's Earning Query
     const lastTwoMonthsQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
+      collection(db, "Users"),
       where("Date Created", ">=", firstDayOfLastTwoMonths.toISOString()),
       where("Date Created", "<=", lastDayOfLastTwoMonths.toISOString())
     );
 
     //Last Three Month's Earning Query
     const lastThreeMonthsQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
+      collection(db, "Users"),
       where("Date Created", ">=", firstDayOfLastThreeMonths.toISOString()),
       where("Date Created", "<=", lastDayOfLastThreeMonths.toISOString())
     );
 
     //Last Five Month's Earning Query
     const lastFourMonthsQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
+      collection(db, "Users"),
       where("Date Created", ">=", firstDayOfLastFourMonths.toISOString()),
       where("Date Created", "<=", lastDayOfLastFourMonths.toISOString())
     );
 
     //Last Four Month's Earning Query
     const lastFiveMonthsQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
+      collection(db, "Users"),
       where("Date Created", ">=", firstDayOfLastFiveMonths.toISOString()),
       where("Date Created", "<=", lastDayOfLastFiveMonths.toISOString())
     );
 
     //Last Six Month's Earning Query
     const lastSixMonthsQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
+      collection(db, "Users"),
       where("Date Created", ">=", firstDayOfLastSixMonths.toISOString()),
       where("Date Created", "<=", lastDayOfLastSixMonths.toISOString())
     );
@@ -282,4 +276,4 @@ const CompletedBookingsChart = ({ aspect, title }) => {
   );
 };
 
-export default CompletedBookingsChart;
+export default UsersChart;

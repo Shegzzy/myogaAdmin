@@ -167,16 +167,16 @@ export const companyColumns = [
     {
         field: "location", headerName: "Location", width: 150,
     },
-    {
-        field: "Status", headerName: "Status", width: 100,
-        renderCell: (params) => {
-            return (
-                <div className={`cellWithStatus ${params.row.Status}`}>
-                    {params.row.Status}
-                </div>
-            )
-        }
-    },
+    // {
+    //     field: "Status", headerName: "Status", width: 100,
+    //     renderCell: (params) => {
+    //         return (
+    //             <div className={`cellWithStatus ${params.row.Status}`}>
+    //                 {params.row.Status}
+    //             </div>
+    //         )
+    //     }
+    // },
     {
         field: "Document", headerName: "Documents", width: 150, renderCell: (params) => {
             return (
@@ -205,9 +205,31 @@ export const bookingColumns = [
     },
     {
         field: 'Customer ID', headerName: "Customer ID", width: 100,
+        renderCell: (params) => {
+            return (
+                <div className='cellStatus'>
+                    {/* <a href='./'>
+                        {params.row.Customer}
+                    </a> */}
+                    <Link to={`/users/${params.row["Customer ID"]}`}>
+                        {params.row["Customer ID"]}
+                    </Link>
+                </div>
+            )
+        }
     },
     {
         field: "Driver ID", headerName: "Driver ID", width: 100,
+        renderCell: (params) => {
+            return (
+                <div className='cellStatus'>
+                    <Link to={`/drivers/${params.row["Driver ID"]}`}>
+                        {params.row["Driver ID"]}
+                    </Link>
+                </div>
+
+            )
+        }
     },
     {
         field: ['PickUp Address'], headerName: "Pick Up Address", width: 150,
@@ -264,10 +286,30 @@ export const statusColumns = [
     },
     {
         field: 'Customer ID', headerName: "Customer ID", width: 100,
+        renderCell: (params) => {
+            return (
+                <div className='cellStatus'>
+                    <Link to={`/drivers/${params.row["Customer ID"]}`}>
+                        {params.row["Customer ID"]}
+                    </Link>
+                </div>
+
+            )
+        }
 
     },
     {
         field: "Driver ID", headerName: "Driver ID", width: 100,
+        renderCell: (params) => {
+            return (
+                <div className='cellStatus'>
+                    <Link to={`/drivers/${params.row["Driver ID"]}`}>
+                        {params.row["Driver ID"]}
+                    </Link>
+                </div>
+
+            )
+        }
 
     },
     {
@@ -359,9 +401,6 @@ export const earningColumns = [
         renderCell: (params) => {
             return (
                 <div className='cellStatus'>
-                    {/* <a href='/'>
-                        {params.row.Driver}
-                    </a> */}
                     <Link to={`/drivers/${params.row.Driver}`}>
                         {params.row.Driver}
                     </Link>
