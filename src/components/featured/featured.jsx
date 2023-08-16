@@ -43,8 +43,7 @@ const Featured = () => {
           today.getTime() - 7 * 24 * 60 * 60 * 1000
         );
         const q = query(
-          collection(db, "Bookings"),
-          where("Status", "==", "completed"),
+          collection(db, "Earnings"),
           where("timeStamp", ">=", sevenDaysAgo),
           where("timeStamp", "<=", today)
         );
@@ -67,8 +66,7 @@ const Featured = () => {
         );
 
         const q = query(
-          collection(db, "Bookings"),
-          where("Status", "==", "completed"),
+          collection(db, "Earnings"),
           where("timeStamp", ">=", firstDayOfMonth),
           where("timeStamp", "<=", today)
         );
@@ -102,8 +100,7 @@ const Featured = () => {
           999
         );
         const q = query(
-          collection(db, "Bookings"),
-          where("Status", "==", "completed"),
+          collection(db, "Earnings"),
           where("timeStamp", "<=", lastDayOfLastMonth),
           where("timeStamp", ">=", firstDayOfLastMonth)
         );
@@ -141,8 +138,7 @@ const Featured = () => {
           999
         );
         const q = query(
-          collection(db, "Bookings"),
-          where("Status", "==", "completed"),
+          collection(db, "Earnings"),
           where("timeStamp", "<=", lastDayOfLastTwoMonth),
           where("timeStamp", ">=", firstDayOfLastTwoMonth)
         );
@@ -180,8 +176,7 @@ const Featured = () => {
           999
         );
         const q = query(
-          collection(db, "Bookings"),
-          where("Status", "==", "completed"),
+          collection(db, "Earnings"),
           where("timeStamp", "<=", lastDayOfLastThreeMonth),
           where("timeStamp", ">=", firstDayOfLastThreeMonth)
         );
@@ -224,8 +219,7 @@ const Featured = () => {
         );
 
         const q = query(
-          collection(db, "Bookings"),
-          where("Status", "==", "completed"),
+          collection(db, "Earnings"),
           where("timeStamp", ">=", firstDayOfLastFourMonths),
           where("timeStamp", "<=", lastDayOfLastFourMonths)
         );
@@ -264,8 +258,7 @@ const Featured = () => {
         );
 
         const q = query(
-          collection(db, "Bookings"),
-          where("Status", "==", "completed"),
+          collection(db, "Earnings"),
           where("timeStamp", ">=", firstDayOfLastFiveMonths),
           where("timeStamp", "<=", lastDayOfLastFiveMonths)
         );
@@ -304,8 +297,7 @@ const Featured = () => {
         );
 
         const q = query(
-          collection(db, "Bookings"),
-          where("Status", "==", "completed"),
+          collection(db, "Earnings"),
           where("timeStamp", ">=", firstDayOfLastSixMonths),
           where("timeStamp", "<=", lastDayOfLastSixMonths)
         );
@@ -322,8 +314,8 @@ const Featured = () => {
         const sumEarnings = async () => {
           const querySnapshot = await getDocs(
             query(
-              collection(db, "Bookings"),
-              where("Status", "==", "completed")
+              collection(db, "Earnings"),
+              // where("Status", "==", "completed")
             )
           );
 
@@ -376,15 +368,13 @@ const Featured = () => {
     );
 
     const lastMonthQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
+      collection(db, "Earnings"),
       where("timeStamp", "<=", lastDayOfLastMonth),
       where("timeStamp", ">=", firstDayOfLastMonth)
     );
 
     const thisMonthQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
+      collection(db, "Earnings"),
       where("timeStamp", ">=", firstDayOfMonth),
       where("timeStamp", "<=", today)
     );
@@ -396,8 +386,8 @@ const Featured = () => {
       where("timeStamp", ">", oneWeekAgo)
     );
     const twoWeekQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
+      collection(db, "Earnings"),
+      // where("Status", "==", "completed"),
       where("timeStamp", "<=", oneWeekAgo),
       where("timeStamp", ">", twoWeekAgo)
     );
