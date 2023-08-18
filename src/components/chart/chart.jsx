@@ -11,15 +11,6 @@ import { collection, getDocs, where, query } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useEffect, useState } from "react";
 
-// const data = [
-//     { name: "January", Total: 1200 },
-//     { name: "February", Total: 2100 },
-//     { name: "March", Total: 800 },
-//     { name: "April", Total: 1600 },
-//     { name: "May", Total: 900 },
-//     { name: "June", Total: 1700 },
-// ];
-
 const Chart = ({ aspect, title }) => {
   const [lastMonthData, setLastMonthData] = useState([]);
   const [lastTwoMonthData, setLastTwoMonthData] = useState([]);
@@ -145,48 +136,42 @@ const Chart = ({ aspect, title }) => {
 
     //Last Month's Earning Query
     const lastMonthQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
+      collection(db, "Earnings"),
       where("timeStamp", ">=", firstDayOfLastMonth),
       where("timeStamp", "<=", lastDayOfLastMonth)
     );
 
     //Last Two Month's Earning Query
     const lastTwoMonthsQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
+      collection(db, "Earnings"),
       where("timeStamp", ">=", firstDayOfLastTwoMonths),
       where("timeStamp", "<=", lastDayOfLastTwoMonths)
     );
 
     //Last Three Month's Earning Query
     const lastThreeMonthsQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
+      collection(db, "Earnings"),
       where("timeStamp", ">=", firstDayOfLastThreeMonths),
       where("timeStamp", "<=", lastDayOfLastThreeMonths)
     );
 
-    //Last Five Month's Earning Query
+    //Last Four Month's Earning Query
     const lastFourMonthsQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
+      collection(db, "Earnings"),
       where("timeStamp", ">=", firstDayOfLastFourMonths),
       where("timeStamp", "<=", lastDayOfLastFourMonths)
     );
 
-    //Last Four Month's Earning Query
+    //Last Five Month's Earning Query
     const lastFiveMonthsQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
+      collection(db, "Earnings"),
       where("timeStamp", ">=", firstDayOfLastFiveMonths),
       where("timeStamp", "<=", lastDayOfLastFiveMonths)
     );
 
     //Last Six Month's Earning Query
     const lastSixMonthsQuery = query(
-      collection(db, "Bookings"),
-      where("Status", "==", "completed"),
+      collection(db, "Earnings"),
       where("timeStamp", ">=", firstDayOfLastSixMonths),
       where("timeStamp", "<=", lastDayOfLastSixMonths)
     );

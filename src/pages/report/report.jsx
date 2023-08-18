@@ -24,7 +24,7 @@ const Report = () => {
           />
           <UsersChart title="Users Chart" aspect={4 / 3} />
           <CompanyChart title="Company Chart" aspect={4 / 3} />
-          <Chart title="Last 6 Months (Revenue)" aspect={4 / 3} />
+          <Chart title="Last 6 Months Earnings (Revenue)" aspect={4 / 3} />
           <EarningProfits title="Monthly Earnings and Profits" />
         </div>
       </div>

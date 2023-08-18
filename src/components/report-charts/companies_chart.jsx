@@ -14,6 +14,8 @@ import { collection, getDocs, where, query } from "firebase/firestore";
 import { db } from "../../firebase";
 
 const CompanyChart = ({ aspect, title }) => {
+  const [totalCompanyData, setCompanyData] = useState([]);
+  const [currentMonthData, setCurrentMonthData] = useState([]);
   const [lastMonthData, setLastMonthData] = useState([]);
   const [lastTwoMonthData, setLastTwoMonthData] = useState([]);
   const [lastThreeMonthData, setLastThreeMonthData] = useState([]);
@@ -27,6 +29,20 @@ const CompanyChart = ({ aspect, title }) => {
 
   const getData = async () => {
     const today = new Date();
+
+    // Calculate the first day of current month
+    const startOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      1
+    );
+
+    // Calculate the last day of current month
+    const endOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      0
+    );
 
     // Calculate the first day of last month
     const firstDayOfLastMonth = new Date(
@@ -178,6 +194,30 @@ const CompanyChart = ({ aspect, title }) => {
       where("timeStamp", "<=", lastDayOfLastSixMonths)
     );
 
+    //Current Month's Company's Query
+    const currentMonthsQuery = query(
+      collection(db, "Companies"),
+      where("timeStamp", ">=", startOfMonth),
+      where("timeStamp", "<=", endOfMonth)
+    );
+
+    //Current Month's Company's Query
+    const totalCompanyQuery = query(
+      collection(db, "Companies"),
+    );
+
+    //Calculating a month ago amount
+    getDocs(totalCompanyQuery).then((querySnapshot) => {
+      let total = querySnapshot.size;
+      setCompanyData(total);
+    });
+
+    //Calculating a month ago amount
+    getDocs(currentMonthsQuery).then((querySnapshot) => {
+      let total = querySnapshot.size;
+      setCurrentMonthData(total);
+    });
+
     //Calculating a month ago amount
     getDocs(lastMonthQuery).then((querySnapshot) => {
       let total = querySnapshot.size;
@@ -232,7 +272,11 @@ const CompanyChart = ({ aspect, title }) => {
 
   return (
     <div className="report__chart">
-      <div className="title">{title}</div>
+      <div className="title">
+        <p>{title}</p>
+        <p>Current Month: {currentMonthData}</p>
+        <p>Total Number Companies: {totalCompanyData}</p>
+      </div>
       <ResponsiveContainer width="100%" aspect={aspect}>
         <BarChart width={800} height={300} data={data}>
           <XAxis dataKey="name" stroke="#8884d8" />

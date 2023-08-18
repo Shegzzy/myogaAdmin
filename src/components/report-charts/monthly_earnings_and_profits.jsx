@@ -18,15 +18,6 @@ const EarningProfits = () => {
 
 
   useEffect(() => {
-    // Calculate the available width of the div
-    const divWidth = document.querySelector(".featuredChart").clientWidth;
-
-    // Calculate the initial font size based on the available width
-    const initialFontSize = divWidth * 0.1; // Adjust the multiplier as needed
-
-    // Set the initial font size
-    document.getElementById("dynamicFontSize").style.fontSize = `${initialFontSize}px`;
-
 
     const FetchData = async () => {
       let list = [];

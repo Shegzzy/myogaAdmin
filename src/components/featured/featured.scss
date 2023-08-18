@@ -34,7 +34,7 @@
         }
         
             .featuredChart {
-                width: 100px;
+                width: 100%;
                 height: 100px;
             }
         
@@ -54,7 +54,6 @@
                 display: flex;
                 flex-direction: column;
                 gap: 15px;
-                width: 100px;
             }
 
                 .title {
@@ -62,6 +61,7 @@
                     color: gray;
                     margin-bottom: 0;
                     text-align: center;
+                    
                 }
                 .amount {
                     font-size: 30px;

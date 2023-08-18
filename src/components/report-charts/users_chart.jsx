@@ -13,6 +13,8 @@ import { collection, getDocs, where, query } from "firebase/firestore";
 import { db } from "../../firebase";
 
 const UsersChart = ({ aspect, title }) => {
+  const [totalUsersData, setTotalUsersData] = useState([]);
+  const [currentMonthData, setCurrentMonthData] = useState([]);
   const [lastMonthData, setLastMonthData] = useState([]);
   const [lastTwoMonthData, setLastTwoMonthData] = useState([]);
   const [lastThreeMonthData, setLastThreeMonthData] = useState([]);
@@ -26,6 +28,21 @@ const UsersChart = ({ aspect, title }) => {
 
   const getData = async () => {
     const today = new Date();
+
+    // Calculate the first day of current month
+    const startOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      1
+    );
+
+    // Calculate the last day of current month
+    const endOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      0
+    );
+
 
     // Calculate the first day of last month
     const firstDayOfLastMonth = new Date(
@@ -177,6 +194,30 @@ const UsersChart = ({ aspect, title }) => {
       where("Date Created", "<=", lastDayOfLastSixMonths.toISOString())
     );
 
+    //Current Month's Users Query
+    const currentMonthsQuery = query(
+      collection(db, "Users"),
+      where("Date Created", ">=", startOfMonth.toISOString()),
+      where("Date Created", "<=", endOfMonth.toISOString())
+    );
+
+    //Total Users Query
+    const totalUsersQuery = query(
+      collection(db, "Users"),
+    );
+
+    //Calculating a month ago amount
+    getDocs(totalUsersQuery).then((querySnapshot) => {
+      let total = querySnapshot.size;
+      setTotalUsersData(total);
+    });
+
+    //Calculating current month
+    getDocs(currentMonthsQuery).then((querySnapshot) => {
+      let total = querySnapshot.size;
+      setCurrentMonthData(total);
+    });
+
     //Calculating a month ago amount
     getDocs(lastMonthQuery).then((querySnapshot) => {
       let total = querySnapshot.size;
@@ -230,13 +271,11 @@ const UsersChart = ({ aspect, title }) => {
   ];
 
   const getPath = (x, y, width, height) => {
-    return `M${x},${y + height}C${x + width / 3},${y + height} ${
-      x + width / 2
-    },${y + height / 3}
+    return `M${x},${y + height}C${x + width / 3},${y + height} ${x + width / 2
+      },${y + height / 3}
   ${x + width / 2}, ${y}
-  C${x + width / 2},${y + height / 3} ${x + (2 * width) / 3},${y + height} ${
-      x + width
-    }, ${y + height}
+  C${x + width / 2},${y + height / 3} ${x + (2 * width) / 3},${y + height} ${x + width
+      }, ${y + height}
   Z`;
   };
 
@@ -248,7 +287,11 @@ const UsersChart = ({ aspect, title }) => {
 
   return (
     <div className="report__chart">
-      <div className="title">{title}</div>
+      <div className="title">
+        <p>{title}</p>
+        <p>Current Month's Users: {currentMonthData}</p>
+        <p>Total Number of Users: {totalUsersData}</p>
+      </div>
       <ResponsiveContainer width="100%" aspect={aspect}>
         <BarChart
           width={500}
