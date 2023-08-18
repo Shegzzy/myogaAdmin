@@ -14,6 +14,8 @@ import { collection, getDocs, where, query } from "firebase/firestore";
 import { db } from "../../firebase";
 
 const ReportChart = ({ aspect, title }) => {
+  const [totalRiderData, setRiderData] = useState([]);
+  const [currentMonthData, setCurrentMonthData] = useState([]);
   const [lastMonthData, setLastMonthData] = useState([]);
   const [lastTwoMonthData, setLastTwoMonthData] = useState([]);
   const [lastThreeMonthData, setLastThreeMonthData] = useState([]);
@@ -27,6 +29,20 @@ const ReportChart = ({ aspect, title }) => {
 
   const getData = async () => {
     const today = new Date();
+
+    // Calculate the first day of current month
+    const startOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      1
+    );
+
+    // Calculate the last day of current month
+    const endOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      0
+    );
 
     // Calculate the first day of last month
     const firstDayOfLastMonth = new Date(
@@ -136,6 +152,13 @@ const ReportChart = ({ aspect, title }) => {
       999
     );
 
+    //Current Month's Earning Query
+    const currentMonthQuery = query(
+      collection(db, "Drivers"),
+      where("Date Created", ">=", startOfMonth.toISOString()),
+      where("Date Created", "<=", endOfMonth.toISOString())
+    );
+
     //Last Month's Earning Query
     const lastMonthQuery = query(
       collection(db, "Drivers"),
@@ -177,6 +200,23 @@ const ReportChart = ({ aspect, title }) => {
       where("Date Created", ">=", firstDayOfLastSixMonths.toISOString()),
       where("Date Created", "<=", lastDayOfLastSixMonths.toISOString())
     );
+
+    //Total Riders Query
+    const totalRidersQuery = query(
+      collection(db, "Drivers"),
+    );
+
+    //Calculating total riders count
+    getDocs(totalRidersQuery).then((querySnapshot) => {
+      let total = querySnapshot.size;
+      setRiderData(total);
+    });
+
+    //Calculating current month's amount
+    getDocs(currentMonthQuery).then((querySnapshot) => {
+      let total = querySnapshot.size;
+      setCurrentMonthData(total);
+    });
 
     //Calculating a month ago amount
     getDocs(lastMonthQuery).then((querySnapshot) => {
@@ -232,7 +272,11 @@ const ReportChart = ({ aspect, title }) => {
 
   return (
     <div className="report__chart">
-      <div className="title">{title}</div>
+      <div className="title">
+        <p>{title}</p>
+        <p>Current Month's Rider: {currentMonthData}</p>
+        <p>Total Riders: {totalRiderData}</p>
+      </div>
       <ResponsiveContainer width="100%" aspect={aspect}>
         <BarChart width={800} height={300} data={data}>
           <XAxis dataKey="name" stroke="#8884d8" />
