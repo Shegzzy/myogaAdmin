@@ -7,6 +7,7 @@ import CompletedBookingsChart from "../../components/report-charts/completed_boo
 import UsersChart from "../../components/report-charts/users_chart";
 import CompanyChart from "../../components/report-charts/companies_chart";
 import EarningProfits from "../../components/report-charts/monthly_earnings_and_profits";
+import TopUsers from "../../components/report-charts/top_users_report";
 import Chart from "../../components/chart/chart";
 
 const Report = () => {
@@ -26,6 +27,7 @@ const Report = () => {
           <CompanyChart title="Company Chart" aspect={4 / 3} />
           <Chart title="Last 6 Months Earnings (Revenue)" aspect={4 / 3} />
           <EarningProfits title="Monthly Earnings and Profits" />
+          <TopUsers title="Top 50 Users" />
         </div>
       </div>
     </div>

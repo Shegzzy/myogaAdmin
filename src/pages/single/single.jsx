@@ -2,7 +2,7 @@ import "./single.scss";
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
 import UserTable from "../../components/table/UserTable";
-import { useLocation, Link, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
@@ -10,15 +10,13 @@ import SingleFeatured from "../../components/featured/singleFeatured";
 
 const Single = (props) => {
   const { id } = useParams();
-  // const location = useLocation();
-  // const userID = location.state.id;
   const [data, setData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       let isMounted = true;
       try {
-        const profile = [];
+        // const profile = [];
         const docRef = doc(db, "Users", id);
         const docSnap = await getDoc(docRef);
         if (isMounted && docSnap.exists()) {
@@ -31,13 +29,6 @@ const Single = (props) => {
       }
     };
     fetchData();
-    // const docRef = doc(db, "Users", userID);
-    // const unsub = onSnapshot(docRef, (doc) => {
-    //     setData(doc.data(), doc.id);
-    // });
-    // return () => {
-    //     unsub();
-    // }
   }, [id]);
   return (
     <div className="single">
