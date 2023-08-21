@@ -9,7 +9,6 @@ import {
   collection,
   doc,
   getDoc,
-  onSnapshot,
   getDocs,
   query,
   where,
@@ -37,6 +36,10 @@ const SingleCompany = (props) => {
   const [lMData, setLData] = useState([]);
   const [mData, setMData] = useState([]);
   const [totalEarnings, setTotalEarnings] = useState(0);
+  const [totalProfits, setTotalProfits] = useState(0);
+  const [Selected, setSelected] = useState("Total");
+  const [data, setData] = useState([]);
+  const [fieldSum, setFieldSum] = useState(0);
 
   useEffect(() => {
     fetchUser();
@@ -44,6 +47,357 @@ const SingleCompany = (props) => {
     getData();
     getRiders();
   });
+
+  useEffect(() => {
+    const FetchData = async () => {
+      let list = [];
+      //Calculate for current month earnings and profits
+      if (Selected === getPreviousMonth(0)) {
+        const today = new Date();
+        const startOfMonth = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          1
+        );
+        const endOfMonth = new Date(
+          today.getFullYear(),
+          today.getMonth() + 1,
+          0
+        );
+
+        const q = query(
+          collection(db, "Earnings"),
+          where("Company", "==", name),
+          where("DateCreated", ">=", startOfMonth.toISOString()),
+          where("DateCreated", "<=", endOfMonth.toISOString())
+        );
+        const querySnapshot = await getDocs(q);
+
+        let total = 0;
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          total += parseFloat(data.Amount);
+        });
+
+        // Calculating 85% of the total earnings
+        const eightyFivePercent = total * 0.85;
+        const roundPercentage = eightyFivePercent.toFixed(0);
+
+
+        setData(list);
+        setFieldSum(total);
+        setTotalProfits(roundPercentage);
+      }
+
+      //Calculate for last month earnings
+      else if (Selected === getPreviousMonth()) {
+        // Calculate today
+        const today = new Date();
+
+        // Calculate the first day of last month
+        const firstDayOfLastMonth = new Date(
+          today.getFullYear(),
+          today.getMonth() - 1,
+          1
+        );
+
+        // Calculate the last day of last month
+        const lastDayOfLastMonth = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          0,
+          23,
+          59,
+          59,
+          999
+        );
+
+        const q = query(
+          collection(db, "Earnings"),
+          where("Company", "==", name),
+          where("DateCreated", ">=", firstDayOfLastMonth.toISOString()),
+          where("DateCreated", "<=", lastDayOfLastMonth.toISOString())
+        );
+        const querySnapshot = await getDocs(q);
+
+        let total = 0;
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          total += parseFloat(data.Amount);
+        });
+        // Calculating 85% of the total earnings
+        const eightyFivePercent = total * 0.85;
+        const roundPercentage = eightyFivePercent.toFixed(0);
+
+
+        setData(list);
+        setFieldSum(total);
+        setTotalProfits(roundPercentage);
+      }
+
+      //Calculate for two month ago earnings
+      else if (Selected === getPreviousMonth(2)) {
+        // Calculate today
+        const today = new Date();
+
+        // Calculate the first day of last month
+        const firstDayOfLastTwoMonths = new Date(
+          today.getFullYear(),
+          today.getMonth() - 2,
+          1
+        );
+
+        // Calculate the last day of last month
+        const lastDayOfLastTwoMonths = new Date(
+          today.getFullYear(),
+          today.getMonth() - 1,
+          0,
+          23,
+          59,
+          59,
+          999
+        );
+
+        const q = query(
+          collection(db, "Earnings"),
+          where("Company", "==", name),
+          where("DateCreated", ">=", firstDayOfLastTwoMonths.toISOString()),
+          where("DateCreated", "<=", lastDayOfLastTwoMonths.toISOString())
+        );
+        const querySnapshot = await getDocs(q);
+
+        let total = 0;
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          total += parseFloat(data.Amount);
+        });
+        // Calculating 85% of the total earnings
+        const eightyFivePercent = total * 0.85;
+        const roundPercentage = eightyFivePercent.toFixed(0);
+
+
+        setData(list);
+        setFieldSum(total);
+        setTotalProfits(roundPercentage);
+      }
+
+      //Calculate for three month ago earnings
+      else if (Selected === getPreviousMonth(3)) {
+        // Calculate today
+        const today = new Date();
+
+        // Calculate the first day of last month
+        const firstDayOfLastThreeMonths = new Date(
+          today.getFullYear(),
+          today.getMonth() - 3,
+          1
+        );
+
+        // Calculate the last day of last month
+        const lastDayOfLastThreeMonths = new Date(
+          today.getFullYear(),
+          today.getMonth() - 2,
+          0,
+          23,
+          59,
+          59,
+          999
+        );
+
+        const q = query(
+          collection(db, "Earnings"),
+          where("Company", "==", name),
+          where("DateCreated", ">=", firstDayOfLastThreeMonths.toISOString()),
+          where("DateCreated", "<=", lastDayOfLastThreeMonths.toISOString())
+        );
+        const querySnapshot = await getDocs(q);
+
+        let total = 0;
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          total += parseFloat(data.Amount);
+        });
+        // Calculating 85% of the total earnings
+        const eightyFivePercent = total * 0.85;
+        const roundPercentage = eightyFivePercent.toFixed(0);
+
+
+        setData(list);
+        setFieldSum(total);
+        setTotalProfits(roundPercentage);
+      }
+
+      //Calculate for four month ago earnings
+      else if (Selected === getPreviousMonth(4)) {
+        // Calculate today
+        const today = new Date();
+
+        // Calculate the first day of last month
+        const firstDayOfLastFourMonths = new Date(
+          today.getFullYear(),
+          today.getMonth() - 4,
+          1
+        );
+
+        // Calculate the last day of last month
+        const lastDayOfLastFourMonths = new Date(
+          today.getFullYear(),
+          today.getMonth() - 3,
+          0,
+          23,
+          59,
+          59,
+          999
+        );
+
+        const q = query(
+          collection(db, "Earnings"),
+          where("Company", "==", name),
+          where("DateCreated", ">=", firstDayOfLastFourMonths.toISOString()),
+          where("DateCreated", "<=", lastDayOfLastFourMonths.toISOString())
+        );
+        const querySnapshot = await getDocs(q);
+
+        let total = 0;
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          total += parseFloat(data.Amount);
+        });
+
+        // Calculating 85% of the total earnings
+        const eightyFivePercent = total * 0.85;
+        const roundPercentage = eightyFivePercent.toFixed(0);
+
+        setData(list);
+        setFieldSum(total);
+        setTotalProfits(roundPercentage);
+      }
+
+      //Calculate for five month ago earnings
+      else if (Selected === getPreviousMonth(5)) {
+        // Calculate today
+        const today = new Date();
+
+        // Calculate the first day of last month
+        const firstDayOfLastFiveMonths = new Date(
+          today.getFullYear(),
+          today.getMonth() - 5,
+          1
+        );
+
+        // Calculate the last day of last month
+        const lastDayOfLastFiveMonths = new Date(
+          today.getFullYear(),
+          today.getMonth() - 4,
+          0,
+          23,
+          59,
+          59,
+          999
+        );
+
+        const q = query(
+          collection(db, "Earnings"),
+          where("Company", "==", name),
+          where("DateCreated", ">=", firstDayOfLastFiveMonths.toISOString()),
+          where("DateCreated", "<=", lastDayOfLastFiveMonths.toISOString())
+        );
+        const querySnapshot = await getDocs(q);
+
+        let total = 0;
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          total += parseFloat(data.Amount);
+        });
+
+        // Calculating 85% of the total earnings
+        const eightyFivePercent = total * 0.85;
+        const roundPercentage = eightyFivePercent.toFixed(0);
+
+
+        setData(list);
+        setFieldSum(total);
+        setTotalProfits(roundPercentage);
+      }
+
+      //Calculate for six month ago earnings
+      else if (Selected === getPreviousMonth(6)) {
+        // Calculate today
+        const today = new Date();
+
+        // Calculate the first day of last month
+        const firstDayOfLastSixMonths = new Date(
+          today.getFullYear(),
+          today.getMonth() - 6,
+          1
+        );
+
+        // Calculate the last day of last month
+        const lastDayOfLastSixMonths = new Date(
+          today.getFullYear(),
+          today.getMonth() - 5,
+          0,
+          23,
+          59,
+          59,
+          999
+        );
+
+        const q = query(
+          collection(db, "Earnings"),
+          where("Company", "==", name),
+          where("DateCreated", ">=", firstDayOfLastSixMonths.toISOString()),
+          where("DateCreated", "<=", lastDayOfLastSixMonths.toISOString())
+        );
+        const querySnapshot = await getDocs(q);
+
+        let total = 0;
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          total += parseFloat(data.Amount);
+        });
+
+        // Calculating 85% of the total earnings
+        const eightyFivePercent = total * 0.85;
+        const roundPercentage = eightyFivePercent.toFixed(0);
+
+
+        setData(list);
+        setFieldSum(total);
+        setTotalProfits(roundPercentage);
+      }
+
+      // Calculate for all the earnings
+      else if (Selected === "Total") {
+        const sumEarnings = async () => {
+          const querySnapshot = await getDocs(
+            query(
+              collection(db, "Earnings"),
+              where("Company", "==", name)
+            )
+          );
+
+          let total = 0;
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            total += parseFloat(data.Amount);
+          });
+
+          // Calculating 85% of the total earnings
+          const eightyFivePercent = total * 0.85;
+          const roundPercentage = eightyFivePercent.toFixed(0);
+
+          setFieldSum(total);
+          setTotalProfits(roundPercentage);
+        };
+        sumEarnings();
+      }
+
+    };
+    FetchData();
+  }, [Selected, data, name]);
+
+
 
   const fetchUser = async () => {
     try {
@@ -63,29 +417,28 @@ const SingleCompany = (props) => {
   };
 
   const getEarnings = async () => {
-    let isMounted = true;
+    try {
+      const bookingsQuery = query(
+        collection(db, "Earnings"),
+        where("Company", "==", name)
+      );
 
-    const bookingsQuery = query(
-      collection(db, "Earnings"),
-      where("Company", "==", name)
-    );
-    const unsubscribe = onSnapshot(bookingsQuery, (snapshot) => {
+      const querySnapshot = await getDocs(bookingsQuery);
+
       let totalAmount = 0;
-      snapshot.forEach((doc) => {
+      querySnapshot.forEach((doc) => {
         const booking = doc.data();
         totalAmount += parseFloat(booking.Amount);
       });
-      if (isMounted) {
-        setTotalEarnings(totalAmount);
-        setEarnL(snapshot.docs.length);
-      }
-    });
 
-    return () => {
-      isMounted = false;
-      unsubscribe();
-    };
+
+      setTotalEarnings(totalAmount);
+      setEarnL(querySnapshot.docs.length);
+    } catch (error) {
+      console.error("Error fetching earnings:", error);
+    }
   };
+
 
   const getData = async () => {
     // let dataArray = [];
@@ -184,33 +537,38 @@ const SingleCompany = (props) => {
   };
 
   const getRiders = async () => {
-    let isMounted = true;
+    try {
+      const ridersQuery = query(
+        collection(db, "Drivers"),
+        where("Company", "==", name)
+      );
 
-    const bookingsQuery = query(
-      collection(db, "Drivers"),
-      where("Company", "==", name)
-    );
-    const unsubscribe = onSnapshot(bookingsQuery, (snapshot) => {
+      const querySnapshot = await getDocs(ridersQuery);
+
       const bookingsData = [];
-      snapshot.forEach((doc) => {
+      querySnapshot.forEach((doc) => {
         const booking = doc.data();
         const bookingId = doc.id; // unique ID for this booking document
         bookingsData.push({ ...booking, id: bookingId }); // include ID in booking data
       });
-      if (isMounted) {
-        bookingsData.sort(
-          (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
-        );
-        setRData(bookingsData);
-        setRiderL(snapshot.docs.length);
-      }
-    });
 
-    return () => {
-      isMounted = false;
-      unsubscribe();
-    };
+      bookingsData.sort(
+        (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
+      );
+
+      setRData(bookingsData);
+      setRiderL(querySnapshot.docs.length);
+    } catch (error) {
+      console.error("Error fetching riders:", error);
+    }
   };
+
+  const getPreviousMonth = (monthsAgo = 1) => {
+    const today = new Date();
+    today.setMonth(today.getMonth() - monthsAgo);
+    return new Intl.DateTimeFormat("en-US", { month: "long" }).format(today);
+  };
+
 
   return (
     <div className="singleCompany">
@@ -284,15 +642,42 @@ const SingleCompany = (props) => {
           <div className="right">
             <div className="featured">
               <div className="top">
-                <h1 className="title">Total Earning</h1>
+                <h1 className="title">Total Earnings & Profits</h1>
+                <select
+                  className="chart-select"
+                  onChange={(e) => {
+                    e.preventDefault();
+                    setSelected(e.target.value);
+                  }}
+                >
+                  <option value="Total">Total</option>
+                  <option value={getPreviousMonth(0)}>Current Month</option>
+                  <option value={getPreviousMonth()}>{getPreviousMonth()}</option>
+                  <option value={getPreviousMonth(2)}>{getPreviousMonth(2)}</option>
+                  <option value={getPreviousMonth(3)}>{getPreviousMonth(3)}</option>
+                  <option value={getPreviousMonth(4)}>{getPreviousMonth(4)}</option>
+                  <option value={getPreviousMonth(5)}>{getPreviousMonth(5)}</option>
+                  <option value={getPreviousMonth(6)}>{getPreviousMonth(6)}</option>
+                </select>
               </div>
               <div className="bottom">
+                <div className="itemTitle">Total</div>
                 <p className="amount">
                   {new Intl.NumberFormat("en-NG", {
                     style: "currency",
                     currency: "NGN",
                   })
-                    .format(totalEarnings)
+                    .format(fieldSum)
+                    .replace(".00", "")}
+                </p>
+
+                <div className="itemTitle">Profit</div>
+                <p className="amount">
+                  {new Intl.NumberFormat("en-NG", {
+                    style: "currency",
+                    currency: "NGN",
+                  })
+                    .format(totalProfits)
                     .replace(".00", "")}
                 </p>
                 <div className="summary">
