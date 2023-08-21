@@ -256,6 +256,10 @@ const SingleCompany = (props) => {
                       <span className="itemValue">{row.regnumber}</span>
                     </div>
                     <div className="detailItem">
+                      <span className="itemKey">Account Number:</span>
+                      <span className="itemValue">{row.account}</span>
+                    </div>
+                    <div className="detailItem">
                       <span className="itemKey">Date Joined:</span>
                       <span className="itemValue">{row.date}</span>
                     </div>
