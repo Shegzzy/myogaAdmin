@@ -30,7 +30,7 @@ const SettingData = () => {
         const unsub = onSnapshot(collection(db, "Settings/deliverymodes/modes"), (snapShot) => {
             let list = [];
             snapShot.docs.forEach(doc => {
-                list.push({ id: doc.id, name: doc.data().name, rate: doc.data().rate, duration: doc.data().duration });
+                list.push({ id: doc.id, name: doc.data().name, rate: doc.data().rate, duration: doc.data().duration, minimumPrice: doc.data().minimumPrice, startPrice: doc.data().startPrice });
             });
             setMData(list);
             // setMsg(" Displaying Users Information ");
@@ -117,8 +117,7 @@ const SettingData = () => {
                     <div className="shadow-md flex flex-wrap justify-center">
                         {Mdata.map((data) => {
                             return (
-                                < Dmode name={data.name} id={data.id} rate={data.rate} duration={data.duration} />
-                            )
+                                < Dmode name={data.name} id={data.id} rate={data.rate} duration={data.duration} minimumPrice={data.minimumPrice} startPrice={data.startPrice} />)
                         })}
                     </div>
                 </div>

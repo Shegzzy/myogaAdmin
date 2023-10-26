@@ -11,6 +11,8 @@ function EditMode(props) {
     const [Name, setName] = useState(props.name);
     const [Rate, setRate] = useState(props.rate);
     const [Duration, setDuration] = useState(props.duration);
+    const [MinPrice, setMinPrice] = useState(props.minimumPrice);
+    const [StartPrice, setStartPrice] = useState(props.startPrice);
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -21,7 +23,9 @@ function EditMode(props) {
         await updateDoc(DocRef, {
             name: Name,
             rate: Rate,
-            duration: Duration
+            duration: Duration,
+            minimumPrice: MinPrice,
+            startPrice: StartPrice,
         });
         handleClose();
     }
@@ -53,7 +57,7 @@ function EditMode(props) {
                                 onChange={(e) => { setName(e.target.value) }}
                             />
                             <Form.Text className="text-muted">
-                                Enter the devlivery mode name.
+                                Update the devlivery mode name.
                             </Form.Text>
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -62,7 +66,7 @@ function EditMode(props) {
                                 onChange={(e) => { setRate(e.target.value) }}
                             />
                             <Form.Text className="text-muted">
-                                Enter the rate per kilometer.
+                                Update the rate per kilometer.
                             </Form.Text>
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -71,7 +75,25 @@ function EditMode(props) {
                                 onChange={(e) => { setDuration(e.target.value) }}
                             />
                             <Form.Text className="text-muted">
-                                Enter the duration in hours.
+                                Update the duration in hours.
+                            </Form.Text>
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="formBasicEmail">
+                            <Form.Label>Minimum Price</Form.Label>
+                            <Form.Control type="text" value={MinPrice}
+                                onChange={(e) => { setMinPrice(e.target.value) }}
+                            />
+                            <Form.Text className="text-muted">
+                                Update the minimum price.
+                            </Form.Text>
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="formBasicEmail">
+                            <Form.Label>Starting Price</Form.Label>
+                            <Form.Control type="text" value={StartPrice}
+                                onChange={(e) => { setStartPrice(e.target.value || '') }}
+                            />
+                            <Form.Text className="text-muted">
+                                Update the starting price.
                             </Form.Text>
                         </Form.Group>
                     </Form>

@@ -12,6 +12,7 @@
         border: 0.5px solid lightgray;
         padding: 3px;
         margin: 8px;
+        width: 250px;
 
         input{
             border: none;
@@ -130,6 +131,13 @@
             color: crimson;
             border: 1px solid rgba(220, 20, 60, 0.283);
         }
+
+                .trackButton {
+                    padding: 2px 5px;
+                    border-radius: 5px;
+                    color: green;
+                    border: 1px solid rgba(220, 20, 60, 0.283);
+                }
        
     }
 }

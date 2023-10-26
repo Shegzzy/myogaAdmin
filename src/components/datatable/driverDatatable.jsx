@@ -15,7 +15,9 @@ import {
 } from "firebase/firestore";
 import { db } from "./../../firebase";
 import Snakbar from "../snackbar/Snakbar";
+import { toast } from "react-toastify";
 import SearchIcon from "@mui/icons-material/Search";
+import MapModal from "../modal/mapModal";
 
 const DriverDatatable = () => {
   const navigate = useNavigate();
@@ -26,6 +28,9 @@ const DriverDatatable = () => {
   const snackbarRef = useRef(null);
   const [msg, setMsg] = useState("");
   const [sType, setType] = useState("");
+  const [showMapModal, setShowMapModal] = useState(false);
+  const [selectedRiderLocation, setSelectedRiderLocation] = useState(null);
+  const [loadScriptKey, setLoadScriptKey] = useState(Date.now());
 
   useEffect(() => {
     //Listening to Database
@@ -84,11 +89,41 @@ const DriverDatatable = () => {
     }
   };
 
+  // const handleTrackButtonClick = async (id) => {
+  //   try {
+  //     const riderRef = doc(db, "Drivers", id);
+
+  //     // Set up a real-time listener for the rider's document
+  //     const unsubscribe = onSnapshot(riderRef, (docSnapshot) => {
+  //       if (docSnapshot.exists()) {
+  //         const riderData = docSnapshot.data();
+  //         setSelectedRiderLocation(riderData);
+  //         setShowMapModal(true);
+  //         setLoadScriptKey(Date.now());
+  //       } else {
+  //         toast.error("Rider data not found.");
+  //       }
+  //     });
+
+  //     // Return a function to unsubscribe from the listener when the component unmounts
+  //     return () => {
+  //       unsubscribe();
+  //     };
+  //   } catch (error) {
+  //     toast.error("Error fetching rider data.");
+  //   }
+  // };
+
+  // Function to close the map modal
+  const handleCloseMapModal = () => {
+    setShowMapModal(false);
+  };
+
   const actionColumn = [
     {
       field: "action",
       headerName: "Action",
-      Width: 250,
+      width: 230,
       renderCell: (params) => {
         return (
           <div className="cellAction">
@@ -103,6 +138,14 @@ const DriverDatatable = () => {
             >
               View
             </div>
+
+            {/* <div
+              className="trackButton"
+              onClick={() => handleTrackButtonClick(params.row.id)}
+            >
+              Track Rider
+            </div> */}
+
             <div
               className="deleteButton"
               onClick={() => handleDelete(params.row.id)}
@@ -163,6 +206,16 @@ const DriverDatatable = () => {
           pageSize={9}
           rowsPerPageOptions={[9]}
           checkboxSelection
+        />
+
+      )}
+
+      {showMapModal && (
+        <MapModal
+          riderLocation={selectedRiderLocation}
+          show={showMapModal}
+          handleClose={handleCloseMapModal}
+          loadScriptKey={loadScriptKey}
         />
       )}
     </div>

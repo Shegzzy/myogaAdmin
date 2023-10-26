@@ -45,7 +45,7 @@ export const userColumns = [
     {
         field: ['Date Created'], headerName: "Date Created", width: 150,
         renderCell: (params) => {
-            const formattedDate = format(new Date(params.value), 'MM/dd/yyyy'); // Format the date
+            const formattedDate = format(new Date(params.value), 'dd/MM/yyyy'); // Format the date
             return <div>{formattedDate}</div>;
         }
     },
@@ -133,11 +133,13 @@ export const driverColumns = [
     {
         field: "Date Created", headerName: "Date Created", width: 150,
         renderCell: (params) => {
-            const formattedDate = format(new Date(params.value), 'MM/dd/yyyy'); // Format the date
+            const formattedDate = format(new Date(params.value), 'dd/MM/yyyy'); // Format the date
             return <div>{formattedDate}</div>;
         }
     },
 ];
+
+
 export const companyColumns = [
     { field: 'id', headerName: 'ID', width: 100 },
     {
