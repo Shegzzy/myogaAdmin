@@ -10,6 +10,8 @@ function AddModeModal() {
     const [Name, setName] = useState('');
     const [Rate, setRate] = useState('');
     const [Duration, setDuration] = useState('');
+    const [MinPrice, setMinPrice] = useState('');
+    const [StartPrice, setStartPrice] = useState('');
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -20,7 +22,9 @@ function AddModeModal() {
         await addDoc(DocRef, {
             name: Name,
             rate: Rate,
-            duration: Duration
+            duration: Duration,
+            minimumPrice: MinPrice,
+            startPrice: StartPrice,
         });
         handleClose();
     }
@@ -71,6 +75,24 @@ function AddModeModal() {
                             />
                             <Form.Text className="text-muted">
                                 Enter the hours for delivery.
+                            </Form.Text>
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="formBasicEmail">
+                            <Form.Label>Minimum Price</Form.Label>
+                            <Form.Control type="text" placeholder="e.g 6" value={MinPrice}
+                                onChange={(e) => { setMinPrice(e.target.value) }}
+                            />
+                            <Form.Text className="text-muted">
+                                Enter the minimum price.
+                            </Form.Text>
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="formBasicEmail">
+                            <Form.Label>Start Price</Form.Label>
+                            <Form.Control type="text" placeholder="e.g 6" value={StartPrice}
+                                onChange={(e) => { setStartPrice(e.target.value) }}
+                            />
+                            <Form.Text className="text-muted">
+                                Enter the starting price.
                             </Form.Text>
                         </Form.Group>
                     </Form>
