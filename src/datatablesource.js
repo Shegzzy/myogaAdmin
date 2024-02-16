@@ -46,7 +46,7 @@ export const userColumns = [
         field: ['Date Created'], headerName: "Date Created", width: 150,
         renderCell: (params) => {
             const formattedDate = format(new Date(params.value), 'dd/MM/yyyy'); // Format the date
-            return <div>{formattedDate}</div>;
+            return <div>{formattedDate || ''}</div>;
         }
     },
 ];
@@ -141,7 +141,7 @@ export const driverColumns = [
 
 
 export const companyColumns = [
-    { field: 'id', headerName: 'ID', width: 100 },
+    // { field: 'id', headerName: 'ID', width: 100 },
     {
         field: "Company Name", headerName: "Company Name", width: 200, renderCell: (params) => {
             return (
@@ -164,7 +164,7 @@ export const companyColumns = [
         field: "regnumber", headerName: "Registration Number", width: 150,
     },
     {
-        field: "address", headerName: "Company Address", width: 150,
+        field: "address", headerName: "Company Address", width: 250,
     },
     {
         field: "location", headerName: "Location", width: 150,
@@ -194,8 +194,10 @@ export const companyColumns = [
         field: "date", headerName: "Date Created", width: 150,
     },
 ];
+
+
 export const bookingColumns = [
-    { field: 'id', headerName: 'ID', width: 100 },
+    // { field: 'id', headerName: 'ID', width: 100 },
     {
         field: "Booking Number", headerName: "Booking Number", width: 150,
     },
@@ -281,7 +283,7 @@ export const bookingColumns = [
 ];
 
 export const statusColumns = [
-    { field: 'id', headerName: 'ID', width: 100 },
+    // { field: 'id', headerName: 'ID', width: 100 },
     {
         field: "Booking Number", headerName: "Booking Number", width: 150,
 
@@ -393,7 +395,7 @@ export const statusColumns = [
     },
 ];
 export const earningColumns = [
-    { field: 'id', headerName: 'ID', width: 100 },
+    // { field: 'id', headerName: 'ID', width: 100 },
     {
         field: "BookingID", headerName: "Booking Number", width: 150,
 
@@ -610,7 +612,7 @@ export const driversRows = [
 ];
 
 export const earningsColumns = [
-    { field: 'id', headerName: 'ID', width: 150 },
+    // { field: 'id', headerName: 'ID', width: 150 },
     {
         field: "CompanyName", headerName: "Company Name", width: 200, renderCell: (params) => {
             return (

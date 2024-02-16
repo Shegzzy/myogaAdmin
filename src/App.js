@@ -35,6 +35,8 @@ import EditDriver from './pages/edit/editDriver';
 import EditCompany from './pages/edit/editCompany';
 import EditUser from './pages/edit/editUser';
 import EditProfile from './pages/edit/editProfile';
+import styled from "styled-components";
+
 
 
 function App() {
@@ -46,188 +48,200 @@ function App() {
     return currentUser ? (children) : <Navigate to="/login" />;
   }
 
+  const AppContainer = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
   return (
     <div className={darkMode ? "app dark" : "app"}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/">
-            <Route path="login" element={<Login />} />
-            <Route index element={
-              <RequireAuth>
-                <Home />
-              </RequireAuth>
-            }
-            />
-            <Route path="users">
+      <AppContainer>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/">
+              <Route path="login" element={<Login />} />
               <Route index element={
                 <RequireAuth>
-                  <List />
+                  <Home />
                 </RequireAuth>
               }
               />
-              <Route path="/users/:id" element={
-                <RequireAuth>
-                  <Single />
-                </RequireAuth>
-              }
+              <Route path="users">
+                <Route index element={
+                  <RequireAuth>
+                    <List />
+                  </RequireAuth>
+                }
+                />
+                <Route path="/users/:id" element={
+                  <RequireAuth>
+                    <Single />
+                  </RequireAuth>
+                }
+                />
+                <Route path="new" element={
+                  <RequireAuth>
+                    <New inputs={userInputs} title="Add New User" />
+                  </RequireAuth>
+                }
+                />
+              </Route>
+              <Route path="drivers">
+                <Route index element={
+                  <RequireAuth>
+                    <DriversList />
+                  </RequireAuth>
+                }
+                />
+                <Route path="/drivers/:id" element={
+                  <RequireAuth>
+                    <SingleDriver />
+                  </RequireAuth>
+                }
+                />
+                <Route path="new" element={
+                  <RequireAuth>
+                    <NewDriver />
+                  </RequireAuth>
+                }
+                />
+              </Route>
+              <Route path="company">
+                <Route index element={
+                  <RequireAuth>
+                    <CompanyList />
+                  </RequireAuth>
+                }
+                />
+                <Route path=":companyId" element={
+                  <RequireAuth>
+                    <SingleCompany />
+                  </RequireAuth>
+                }
+                />
+                <Route path="new" element={
+                  <RequireAuth>
+                    <NewCompany />
+                  </RequireAuth>
+                }
+                />
+              </Route>
+              <Route path="bookings">
+                <Route index element={
+                  <RequireAuth>
+                    <BookingList />
+                  </RequireAuth>
+                }
+                />
+                <Route path=":bookingId" element={
+                  <RequireAuth>
+                    <SingleBooking />
+                  </RequireAuth>
+                }
+                />
+                <Route path="new" element={
+                  <RequireAuth>
+                    <NewBooking />
+                  </RequireAuth>
+                }
+                />
+              </Route>
+              <Route path="bookingstatus">
+                <Route index element={
+                  <RequireAuth>
+                    <StatusList />
+                  </RequireAuth>
+                }
+                />
+              </Route>
+              <Route path="reports">
+                <Route index element={
+                  <RequireAuth>
+                    <Report />
+                  </RequireAuth>
+                }
+                />
+              </Route>
+              <Route path="earnings">
+                <Route index element={
+                  <RequireAuth>
+                    <EarningList />
+                  </RequireAuth>
+                }
+                />
+              </Route>
+              <Route path="setting">
+                <Route index element={
+                  <RequireAuth>
+                    <SettingList />
+                  </RequireAuth>
+                }
+                />
+              </Route>
+              <Route path="profile">
+                <Route index element={
+                  <RequireAuth>
+                    <Profile />
+                  </RequireAuth>
+                }
+                />
+              </Route>
+              <Route path="notification">
+                <Route index element={
+                  <RequireAuth>
+                    <Notification />
+                  </RequireAuth>
+                }
+                />
+              </Route>
+              <Route path="support">
+                <Route index element={
+                  <RequireAuth>
+                    <SupportList />
+                  </RequireAuth>
+                }
+                />
+              </Route>
+              <Route path="edit/:id"
+                element={
+                  <RequireAuth>
+                    <EditDriver inputs={driverInputs} title="Update Driver" />
+                  </RequireAuth>
+                }
               />
-              <Route path="new" element={
-                <RequireAuth>
-                  <New inputs={userInputs} title="Add New User" />
-                </RequireAuth>
-              }
+              <Route
+                path="editcompany/:id"
+                element={
+                  <RequireAuth>
+                    <EditCompany inputs={companyInputs} title="Update Company" />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="edituser/:id"
+                element={
+                  <RequireAuth>
+                    <EditUser inputs={userInputs} title="Update User" />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="editprofile/:id"
+                element={
+                  <RequireAuth>
+                    <EditProfile inputs={adminInputs} title="Update Profile" />
+                  </RequireAuth>
+                }
               />
             </Route>
-            <Route path="drivers">
-              <Route index element={
-                <RequireAuth>
-                  <DriversList />
-                </RequireAuth>
-              }
-              />
-              <Route path="/drivers/:id" element={
-                <RequireAuth>
-                  <SingleDriver />
-                </RequireAuth>
-              }
-              />
-              <Route path="new" element={
-                <RequireAuth>
-                  <NewDriver />
-                </RequireAuth>
-              }
-              />
-            </Route>
-            <Route path="company">
-              <Route index element={
-                <RequireAuth>
-                  <CompanyList />
-                </RequireAuth>
-              }
-              />
-              <Route path=":companyId" element={
-                <RequireAuth>
-                  <SingleCompany />
-                </RequireAuth>
-              }
-              />
-              <Route path="new" element={
-                <RequireAuth>
-                  <NewCompany />
-                </RequireAuth>
-              }
-              />
-            </Route>
-            <Route path="bookings">
-              <Route index element={
-                <RequireAuth>
-                  <BookingList />
-                </RequireAuth>
-              }
-              />
-              <Route path=":bookingId" element={
-                <RequireAuth>
-                  <SingleBooking />
-                </RequireAuth>
-              }
-              />
-              <Route path="new" element={
-                <RequireAuth>
-                  <NewBooking />
-                </RequireAuth>
-              }
-              />
-            </Route>
-            <Route path="bookingstatus">
-              <Route index element={
-                <RequireAuth>
-                  <StatusList />
-                </RequireAuth>
-              }
-              />
-            </Route>
-            <Route path="reports">
-              <Route index element={
-                <RequireAuth>
-                  <Report />
-                </RequireAuth>
-              }
-              />
-            </Route>
-            <Route path="earnings">
-              <Route index element={
-                <RequireAuth>
-                  <EarningList />
-                </RequireAuth>
-              }
-              />
-            </Route>
-            <Route path="setting">
-              <Route index element={
-                <RequireAuth>
-                  <SettingList />
-                </RequireAuth>
-              }
-              />
-            </Route>
-            <Route path="profile">
-              <Route index element={
-                <RequireAuth>
-                  <Profile />
-                </RequireAuth>
-              }
-              />
-            </Route>
-            <Route path="notification">
-              <Route index element={
-                <RequireAuth>
-                  <Notification />
-                </RequireAuth>
-              }
-              />
-            </Route>
-            <Route path="support">
-              <Route index element={
-                <RequireAuth>
-                  <SupportList />
-                </RequireAuth>
-              }
-              />
-            </Route>
-            <Route path="edit/:id"
-              element={
-                <RequireAuth>
-                  <EditDriver inputs={driverInputs} title="Update Driver" />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="editcompany/:id"
-              element={
-                <RequireAuth>
-                  <EditCompany inputs={companyInputs} title="Update Company" />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="edituser/:id"
-              element={
-                <RequireAuth>
-                  <EditUser inputs={userInputs} title="Update User" />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="editprofile/:id"
-              element={
-                <RequireAuth>
-                  <EditProfile inputs={adminInputs} title="Update Profile" />
-                </RequireAuth>
-              }
-            />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+          </Routes>
+        </BrowserRouter>
+      </AppContainer>
     </div>
   );
 }

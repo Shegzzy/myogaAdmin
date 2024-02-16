@@ -76,7 +76,7 @@ const CompanyDatatable = () => {
     {
       field: "action",
       headerName: "Action",
-      Width: 250,
+      width: 100,
       renderCell: (params) => {
         return (
           <div className="cellAction">
