@@ -191,7 +191,7 @@ export const companyColumns = [
         }
     },
     {
-        field: "date", headerName: "Date Created", width: 150,
+        field: "date", headerName: "Date Created",
     },
 ];
 
@@ -447,9 +447,9 @@ export const earningColumns = [
         }
     },
     {
-        field: "DateCreated", headerName: "Date Created", width: 150,
+        field: "DateCreated", headerName: "Date Created",
         renderCell: (params) => {
-            const formattedDate = format(new Date(params.value), 'MM/dd/yyyy'); // Format the date
+            const formattedDate = format(new Date(params.value), 'dd/MM/yyyy'); // Format the date
             return <div>{formattedDate}</div>;
         }
 

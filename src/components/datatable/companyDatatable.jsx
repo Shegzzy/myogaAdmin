@@ -58,25 +58,25 @@ const CompanyDatatable = () => {
     };
   }, []);
 
-  const handleDelete = async (id) => {
-    try {
-      await deleteDoc(doc(db, "Companies", id));
-      setData(data.filter((item) => item.id !== id));
-      setMsg("User Deleted Succesfully");
-      setType("success");
-      snackbarRef.current.show();
-    } catch (erre) {
-      setMsg(erre.message);
-      setType("error");
-      snackbarRef.current.show();
-    }
-  };
+  // const handleDelete = async (id) => {
+  //   try {
+  //     await deleteDoc(doc(db, "Companies", id));
+  //     setData(data.filter((item) => item.id !== id));
+  //     setMsg("User Deleted Succesfully");
+  //     setType("success");
+  //     snackbarRef.current.show();
+  //   } catch (erre) {
+  //     setMsg(erre.message);
+  //     setType("error");
+  //     snackbarRef.current.show();
+  //   }
+  // };
 
   const actionColumn = [
     {
       field: "action",
       headerName: "Action",
-      width: 100,
+      width: 130,
       renderCell: (params) => {
         return (
           <div className="cellAction">
@@ -91,12 +91,12 @@ const CompanyDatatable = () => {
             >
               View
             </div>
-            <div
+            {/* <div
               className="deleteButton"
               onClick={() => handleDelete(params.row.id)}
             >
               Delete
-            </div>
+            </div> */}
           </div>
         );
       },

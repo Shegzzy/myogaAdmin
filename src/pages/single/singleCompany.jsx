@@ -1,7 +1,7 @@
 import "./singleCompany.scss";
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
 import { db } from "../../firebase";
@@ -24,8 +24,10 @@ import {
 } from "@mui/material";
 
 const SingleCompany = (props) => {
-  const location = useLocation();
-  const userID = location.state.id;
+  // const location = useLocation();
+  // const userID = location.state.id;
+  const { companyId } = useParams();
+
   const [user, setUser] = useState(null);
   const [name, setName] = useState("");
   const [rData, setRData] = useState(null);
@@ -41,368 +43,225 @@ const SingleCompany = (props) => {
   const [data, setData] = useState([]);
   const [fieldSum, setFieldSum] = useState(0);
 
+  const [selectedFilter, setSelectedFilter] = useState("all");
+  const [loading, setLoading] = useState(true);
+  const [total, setTotal] = useState(0);
+  const [inFlow, setInFlow] = useState(null);
+  const [outFlow, setOutFlow] = useState(null);
+  const [cardPayments, setCardPayments] = useState(0);
+  const [cashPayments, setCashPayments] = useState(0);
+  const [payOut, setPayOut] = useState(0);
+  const [toReceive, setToReceive] = useState(0);
+  const [activeTab, setActiveTab] = useState("riders");
+
+
+  console.log(companyId)
+
   useEffect(() => {
     fetchUser();
     getEarnings();
     getData();
     getRiders();
-  });
+    fetchEarningsData();
+  }, [companyId, name]);
 
+  // Function for weekly query
   useEffect(() => {
-    const FetchData = async () => {
-      let list = [];
-      //Calculate for current month earnings and profits
-      if (Selected === getPreviousMonth(0)) {
-        const today = new Date();
-        const startOfMonth = new Date(
-          today.getFullYear(),
-          today.getMonth(),
-          1
-        );
-        const endOfMonth = new Date(
-          today.getFullYear(),
-          today.getMonth() + 1,
-          0
-        );
-
-        const q = query(
-          collection(db, "Earnings"),
-          where("Company", "==", name),
-          where("DateCreated", ">=", startOfMonth.toISOString()),
-          where("DateCreated", "<=", endOfMonth.toISOString())
-        );
-        const querySnapshot = await getDocs(q);
-
-        let total = 0;
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          total += parseFloat(data.Amount);
-        });
-
-        // Calculating 85% of the total earnings
-        const eightyFivePercent = total * 0.85;
-        const roundPercentage = eightyFivePercent.toFixed(0);
+    let isMounted = true;
+    let earningsTotal = 0;
+    let sumCardPayments = 0;
+    let sumCashPayments = 0;
+    let totalPayOut = 0;
+    let totalReceive = 0;
+    let startOfPeriod, endOfPeriod;
 
 
-        setData(list);
-        setFieldSum(total);
-        setTotalProfits(roundPercentage);
-      }
+    const fetchDataByWeek = async () => {
+      if (isMounted) {
+        try {
+          setLoading(true);
 
-      //Calculate for last month earnings
-      else if (Selected === getPreviousMonth()) {
-        // Calculate today
-        const today = new Date();
+          if (selectedFilter === "all") {
+            getEarnings();
+          } else {
+            const today = new Date();
 
-        // Calculate the first day of last month
-        const firstDayOfLastMonth = new Date(
-          today.getFullYear(),
-          today.getMonth() - 1,
-          1
-        );
+            // Calculate the start and end dates based on the selected filter
+            if (selectedFilter === "7") {
+              // Last Week
+              startOfPeriod = new Date(today);
+              startOfPeriod.setDate(today.getDate() - today.getDay() - 7);
+              endOfPeriod = new Date(today);
+              endOfPeriod.setDate(today.getDate() - today.getDay() - 1);
+            } else if (selectedFilter === "1") {
+              // Two Weeks Ago
+              startOfPeriod = new Date(today);
+              startOfPeriod.setDate(today.getDate() - today.getDay() - 14);
+              endOfPeriod = new Date(today);
+              endOfPeriod.setDate(today.getDate() - today.getDay() - 8);
+            } else if (selectedFilter === "2") {
+              // Three Weeks Ago
+              startOfPeriod = new Date(today);
+              startOfPeriod.setDate(today.getDate() - today.getDay() - 21);
+              endOfPeriod = new Date(today);
+              endOfPeriod.setDate(today.getDate() - today.getDay() - 15);
+            } else if (selectedFilter === "3") {
+              // Four Weeks Ago
+              startOfPeriod = new Date(today);
+              startOfPeriod.setDate(today.getDate() - today.getDay() - 28);
+              endOfPeriod = new Date(today);
+              endOfPeriod.setDate(today.getDate() - today.getDay() - 22);
+            } else if (selectedFilter === "30") {
+              // Last Month
+              startOfPeriod = new Date(today);
+              startOfPeriod.setMonth(today.getMonth() - 1, 1);
+              startOfPeriod.setHours(0, 0, 0, 0);
+              endOfPeriod = new Date(startOfPeriod.getFullYear(), startOfPeriod.getMonth() + 1, 0);
+              // endOfPeriod.setHours(23, 59, 59, 999);
+            } else if (selectedFilter === "60") {
+              // Two Months Ago
+              startOfPeriod = new Date(today);
+              startOfPeriod.setMonth(today.getMonth() - 2, 1);
+              startOfPeriod.setHours(0, 0, 0, 0);
+              endOfPeriod = new Date(today);
+              endOfPeriod.setMonth(today.getMonth() - 1, 0);
+            }
 
-        // Calculate the last day of last month
-        const lastDayOfLastMonth = new Date(
-          today.getFullYear(),
-          today.getMonth(),
-          0,
-          23,
-          59,
-          59,
-          999
-        );
+            console.log('Start of period: ' + startOfPeriod);
+            console.log('End of period: ' + endOfPeriod);
 
-        const q = query(
-          collection(db, "Earnings"),
-          where("Company", "==", name),
-          where("DateCreated", ">=", firstDayOfLastMonth.toISOString()),
-          where("DateCreated", "<=", lastDayOfLastMonth.toISOString())
-        );
-        const querySnapshot = await getDocs(q);
-
-        let total = 0;
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          total += parseFloat(data.Amount);
-        });
-        // Calculating 85% of the total earnings
-        const eightyFivePercent = total * 0.85;
-        const roundPercentage = eightyFivePercent.toFixed(0);
-
-
-        setData(list);
-        setFieldSum(total);
-        setTotalProfits(roundPercentage);
-      }
-
-      //Calculate for two month ago earnings
-      else if (Selected === getPreviousMonth(2)) {
-        // Calculate today
-        const today = new Date();
-
-        // Calculate the first day of last month
-        const firstDayOfLastTwoMonths = new Date(
-          today.getFullYear(),
-          today.getMonth() - 2,
-          1
-        );
-
-        // Calculate the last day of last month
-        const lastDayOfLastTwoMonths = new Date(
-          today.getFullYear(),
-          today.getMonth() - 1,
-          0,
-          23,
-          59,
-          59,
-          999
-        );
-
-        const q = query(
-          collection(db, "Earnings"),
-          where("Company", "==", name),
-          where("DateCreated", ">=", firstDayOfLastTwoMonths.toISOString()),
-          where("DateCreated", "<=", lastDayOfLastTwoMonths.toISOString())
-        );
-        const querySnapshot = await getDocs(q);
-
-        let total = 0;
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          total += parseFloat(data.Amount);
-        });
-        // Calculating 85% of the total earnings
-        const eightyFivePercent = total * 0.85;
-        const roundPercentage = eightyFivePercent.toFixed(0);
-
-
-        setData(list);
-        setFieldSum(total);
-        setTotalProfits(roundPercentage);
-      }
-
-      //Calculate for three month ago earnings
-      else if (Selected === getPreviousMonth(3)) {
-        // Calculate today
-        const today = new Date();
-
-        // Calculate the first day of last month
-        const firstDayOfLastThreeMonths = new Date(
-          today.getFullYear(),
-          today.getMonth() - 3,
-          1
-        );
-
-        // Calculate the last day of last month
-        const lastDayOfLastThreeMonths = new Date(
-          today.getFullYear(),
-          today.getMonth() - 2,
-          0,
-          23,
-          59,
-          59,
-          999
-        );
-
-        const q = query(
-          collection(db, "Earnings"),
-          where("Company", "==", name),
-          where("DateCreated", ">=", firstDayOfLastThreeMonths.toISOString()),
-          where("DateCreated", "<=", lastDayOfLastThreeMonths.toISOString())
-        );
-        const querySnapshot = await getDocs(q);
-
-        let total = 0;
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          total += parseFloat(data.Amount);
-        });
-        // Calculating 85% of the total earnings
-        const eightyFivePercent = total * 0.85;
-        const roundPercentage = eightyFivePercent.toFixed(0);
-
-
-        setData(list);
-        setFieldSum(total);
-        setTotalProfits(roundPercentage);
-      }
-
-      //Calculate for four month ago earnings
-      else if (Selected === getPreviousMonth(4)) {
-        // Calculate today
-        const today = new Date();
-
-        // Calculate the first day of last month
-        const firstDayOfLastFourMonths = new Date(
-          today.getFullYear(),
-          today.getMonth() - 4,
-          1
-        );
-
-        // Calculate the last day of last month
-        const lastDayOfLastFourMonths = new Date(
-          today.getFullYear(),
-          today.getMonth() - 3,
-          0,
-          23,
-          59,
-          59,
-          999
-        );
-
-        const q = query(
-          collection(db, "Earnings"),
-          where("Company", "==", name),
-          where("DateCreated", ">=", firstDayOfLastFourMonths.toISOString()),
-          where("DateCreated", "<=", lastDayOfLastFourMonths.toISOString())
-        );
-        const querySnapshot = await getDocs(q);
-
-        let total = 0;
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          total += parseFloat(data.Amount);
-        });
-
-        // Calculating 85% of the total earnings
-        const eightyFivePercent = total * 0.85;
-        const roundPercentage = eightyFivePercent.toFixed(0);
-
-        setData(list);
-        setFieldSum(total);
-        setTotalProfits(roundPercentage);
-      }
-
-      //Calculate for five month ago earnings
-      else if (Selected === getPreviousMonth(5)) {
-        // Calculate today
-        const today = new Date();
-
-        // Calculate the first day of last month
-        const firstDayOfLastFiveMonths = new Date(
-          today.getFullYear(),
-          today.getMonth() - 5,
-          1
-        );
-
-        // Calculate the last day of last month
-        const lastDayOfLastFiveMonths = new Date(
-          today.getFullYear(),
-          today.getMonth() - 4,
-          0,
-          23,
-          59,
-          59,
-          999
-        );
-
-        const q = query(
-          collection(db, "Earnings"),
-          where("Company", "==", name),
-          where("DateCreated", ">=", firstDayOfLastFiveMonths.toISOString()),
-          where("DateCreated", "<=", lastDayOfLastFiveMonths.toISOString())
-        );
-        const querySnapshot = await getDocs(q);
-
-        let total = 0;
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          total += parseFloat(data.Amount);
-        });
-
-        // Calculating 85% of the total earnings
-        const eightyFivePercent = total * 0.85;
-        const roundPercentage = eightyFivePercent.toFixed(0);
-
-
-        setData(list);
-        setFieldSum(total);
-        setTotalProfits(roundPercentage);
-      }
-
-      //Calculate for six month ago earnings
-      else if (Selected === getPreviousMonth(6)) {
-        // Calculate today
-        const today = new Date();
-
-        // Calculate the first day of last month
-        const firstDayOfLastSixMonths = new Date(
-          today.getFullYear(),
-          today.getMonth() - 6,
-          1
-        );
-
-        // Calculate the last day of last month
-        const lastDayOfLastSixMonths = new Date(
-          today.getFullYear(),
-          today.getMonth() - 5,
-          0,
-          23,
-          59,
-          59,
-          999
-        );
-
-        const q = query(
-          collection(db, "Earnings"),
-          where("Company", "==", name),
-          where("DateCreated", ">=", firstDayOfLastSixMonths.toISOString()),
-          where("DateCreated", "<=", lastDayOfLastSixMonths.toISOString())
-        );
-        const querySnapshot = await getDocs(q);
-
-        let total = 0;
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          total += parseFloat(data.Amount);
-        });
-
-        // Calculating 85% of the total earnings
-        const eightyFivePercent = total * 0.85;
-        const roundPercentage = eightyFivePercent.toFixed(0);
-
-
-        setData(list);
-        setFieldSum(total);
-        setTotalProfits(roundPercentage);
-      }
-
-      // Calculate for all the earnings
-      else if (Selected === "Total") {
-        const sumEarnings = async () => {
-          const querySnapshot = await getDocs(
-            query(
+            // Use startOfWeek and endOfWeek in your Firestore query
+            const earningsQuery = query(
               collection(db, "Earnings"),
-              where("Company", "==", name)
-            )
-          );
+              where("Company", "==", name),
+              where("DateCreated", ">=", startOfPeriod.toISOString()),
+              where("DateCreated", "<=", endOfPeriod.toISOString())
+            );
 
-          let total = 0;
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            total += parseFloat(data.Amount);
-          });
+            const earningsSnapshot = await getDocs(earningsQuery);
+            // const earningsData = earningsSnapshot.docs.map((doc) => doc.data());
 
-          // Calculating 85% of the total earnings
-          const eightyFivePercent = total * 0.85;
-          const roundPercentage = eightyFivePercent.toFixed(0);
+            // Collecting Bookings IDs
+            const bookingNumbers = earningsSnapshot.docs.map(
+              (bookingrDoc) => bookingrDoc.data().BookingID,
+            );
 
-          setFieldSum(total);
-          setTotalProfits(roundPercentage);
-        };
-        sumEarnings();
+            earningsSnapshot.forEach((doc) => {
+              const data = doc.data();
+              earningsTotal += parseFloat(data.Amount);
+            });
+
+            // Calculating 85% of the total earnings
+            const eightyFivePercent = earningsTotal * 0.85;
+            const roundEightyFivePercentage = eightyFivePercent.toFixed(0);
+
+            // Calculating 15% of the total earnings
+            const fifteenPercent = earningsTotal * 0.15;
+            const roundFifteenPercent = fifteenPercent.toFixed(0);
+
+            const chunkSize = 30;
+            const bookingChunks = [];
+            for (let i = 0; i < bookingNumbers.length; i += chunkSize) {
+              const chunk = bookingNumbers.slice(i, i + chunkSize);
+              bookingChunks.push(chunk);
+            }
+
+            const allBookings = [];
+
+            for (const chunk of bookingChunks) {
+              const bookingsQuery = query(
+                collection(db, "Bookings"),
+                where("Booking Number", "in", chunk)
+              );
+
+              try {
+                const bookingsSnapshot = await getDocs(bookingsQuery);
+
+                if (!bookingsSnapshot.empty) {
+                  const bookings = bookingsSnapshot.docs.map((bookingDoc) => bookingDoc.data());
+                  // Separate amounts based on payment method and calculate the sum
+                  const cardPayments = bookings.filter((booking) => booking["Payment Method"] === "Card");
+                  const cashPayments = bookings.filter((booking) => booking["Payment Method"] === "Cash on Delivery");
+
+                  sumCardPayments += cardPayments.reduce((total, booking) => total + parseFloat(booking.Amount), 0);
+                  sumCashPayments += cashPayments.reduce((total, booking) => total + parseFloat(booking.Amount), 0);
+
+                  allBookings.push(...bookings);
+                } else {
+                  console.log("No bookings found with the given Booking Numbers in this chunk.");
+                }
+              } catch (error) {
+                console.error("Error fetching bookings:", error);
+              }
+            }
+
+            console.log("Total Card Payments:", sumCardPayments);
+            console.log("Total Cash Payments:", sumCashPayments);
+
+            if (sumCardPayments > roundFifteenPercent) {
+
+              totalReceive = sumCardPayments - roundFifteenPercent;
+
+              if (isMounted) {
+                setToReceive(totalReceive);
+                setPayOut(0);
+              }
+            } else if (sumCardPayments < roundFifteenPercent) {
+
+              totalPayOut = roundFifteenPercent - sumCardPayments;
+
+              if (isMounted) {
+                setPayOut(totalPayOut);
+                setToReceive(0);
+              }
+            } else {
+              totalPayOut = roundFifteenPercent - sumCardPayments;
+              totalReceive = sumCardPayments - roundFifteenPercent;
+
+              console.log('Total receive: ', totalReceive);
+              console.log('Total payout: ', totalPayOut);
+
+              if (isMounted) {
+                setToReceive(totalReceive);
+                setPayOut(totalPayOut);
+              }
+
+            }
+
+            setTotal(earningsTotal);
+            setInFlow(roundEightyFivePercentage);
+            setOutFlow(roundFifteenPercent);
+            setCardPayments(sumCardPayments);
+            setCashPayments(sumCashPayments);
+
+            allBookings.sort(
+              (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
+            );
+
+            if (isMounted) {
+              setData(allBookings); // Set the filtered data to the state
+            }
+          }
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setLoading(false);
+        }
       }
-
     };
-    FetchData();
-  }, [Selected, data, name]);
+
+    fetchDataByWeek();
+    return () => {
+      isMounted = false;
+    };
+  }, [name, selectedFilter]);
 
 
-
+  // Fetching the company information
   const fetchUser = async () => {
     try {
       const profile = [];
-      const docRef = doc(db, "Companies", userID);
+      const docRef = doc(db, "Companies", companyId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         profile.push({ id: docSnap.id, ...docSnap.data() });
@@ -431,8 +290,18 @@ const SingleCompany = (props) => {
         totalAmount += parseFloat(booking.Amount);
       });
 
+      // Calculating 85% of the total earnings
+      const eightyFivePercent = totalAmount * 0.85;
+      const roundEightyFivePercentage = eightyFivePercent.toFixed(0);
 
-      setTotalEarnings(totalAmount);
+      // Calculating 15% of the total earnings
+      const fifteenPercent = totalAmount * 0.15;
+      const roundFifteenPercent = fifteenPercent.toFixed(0);
+
+
+      setTotal(totalAmount);
+      setInFlow(roundEightyFivePercentage);
+      setOutFlow(roundFifteenPercent);
       setEarnL(querySnapshot.docs.length);
     } catch (error) {
       console.error("Error fetching earnings:", error);
@@ -545,30 +414,161 @@ const SingleCompany = (props) => {
 
       const querySnapshot = await getDocs(ridersQuery);
 
-      const bookingsData = [];
+      const ridersData = [];
       querySnapshot.forEach((doc) => {
-        const booking = doc.data();
-        const bookingId = doc.id; // unique ID for this booking document
-        bookingsData.push({ ...booking, id: bookingId }); // include ID in booking data
+        const rider = doc.data();
+        const riderId = doc.id;
+        ridersData.push({ ...rider, id: riderId });
       });
 
-      bookingsData.sort(
+      ridersData.sort(
         (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
       );
 
-      setRData(bookingsData);
+      setRData(ridersData);
       setRiderL(querySnapshot.docs.length);
     } catch (error) {
       console.error("Error fetching riders:", error);
     }
   };
 
-  const getPreviousMonth = (monthsAgo = 1) => {
-    const today = new Date();
-    today.setMonth(today.getMonth() - monthsAgo);
-    return new Intl.DateTimeFormat("en-US", { month: "long" }).format(today);
+  const fetchEarningsData = async () => {
+    const allBookings = [];
+    let sumCardPayments = 0;
+    let sumCashPayments = 0;
+    let totalReceive = 0;
+    let totalPayOut = 0;
+    let isMounted = true;
+
+
+    if (isMounted) {
+      try {
+        setLoading(true);
+
+        if (isMounted) {
+          const earningsQuery = query(
+            collection(db, "Earnings"),
+            where("Company", "==", name)
+          );
+          const earningsSnapshot = await getDocs(earningsQuery);
+
+          // Collecting Bookings IDs
+          const bookingNumbers = earningsSnapshot.docs.map(
+            (bookingrDoc) => bookingrDoc.data().BookingID,
+          );
+          let earningsTotal = 0;
+
+          earningsSnapshot.forEach((doc) => {
+            const data = doc.data();
+            earningsTotal += parseFloat(data.Amount);
+          });
+
+
+          // Calculating 85% of the total earnings
+          const eightyFivePercent = earningsTotal * 0.85;
+          const roundPercentage = eightyFivePercent.toFixed(0);
+
+          // Calculating 15% of the total earnings
+          const fifteenPercent = earningsTotal * 0.15;
+          const roundFifteenPercent = fifteenPercent.toFixed(0);
+
+          const chunkSize = 30;
+          const bookingChunks = [];
+          for (let i = 0; i < bookingNumbers.length; i += chunkSize) {
+            const chunk = bookingNumbers.slice(i, i + chunkSize);
+            bookingChunks.push(chunk);
+          }
+
+
+          for (const chunk of bookingChunks) {
+            const bookingsQuery = query(
+              collection(db, "Bookings"),
+              where("Booking Number", "in", chunk)
+            );
+
+            try {
+              const bookingsSnapshot = await getDocs(bookingsQuery);
+
+              if (!bookingsSnapshot.empty) {
+                const bookings = bookingsSnapshot.docs.map((bookingDoc) => bookingDoc.data());
+
+                // Separating amounts based on payment method and calculating the sum
+                const cardPayments = bookings.filter((booking) => booking["Payment Method"] === "Card");
+                const cashPayments = bookings.filter((booking) => booking["Payment Method"] === "Cash on Delivery");
+
+                sumCardPayments += cardPayments.reduce((total, booking) => total + parseFloat(booking.Amount), 0);
+                sumCashPayments += cashPayments.reduce((total, booking) => total + parseFloat(booking.Amount), 0);
+
+                allBookings.push(...bookings);
+              } else {
+                console.log("No bookings found with the given Booking Numbers in this chunk.");
+              }
+            } catch (error) {
+              console.error("Error fetching bookings:", error);
+              // toast.error("Error fetching bookings.");
+            }
+          }
+
+          if (sumCardPayments > roundFifteenPercent) {
+
+            totalReceive = sumCardPayments - roundFifteenPercent;
+
+            if (isMounted) {
+              setToReceive(totalReceive);
+              setPayOut(0);
+            }
+          } else if (sumCardPayments < roundFifteenPercent) {
+
+            totalPayOut = roundFifteenPercent - sumCardPayments;
+
+            if (isMounted) {
+              setPayOut(totalPayOut);
+              setToReceive(0);
+            }
+          } else {
+            totalPayOut = roundFifteenPercent - sumCardPayments;
+            totalReceive = sumCardPayments - roundFifteenPercent;
+
+
+            if (isMounted) {
+              setToReceive(totalReceive);
+              setPayOut(totalPayOut);
+            }
+
+          }
+
+          setTotal(earningsTotal);
+          setInFlow(roundPercentage);
+          setOutFlow(roundFifteenPercent);
+          setCardPayments(sumCardPayments);
+          setCashPayments(sumCashPayments);
+          allBookings.sort(
+            (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // toast.error("Error fetching data.");
+      } finally {
+        setLoading(false);
+        if (isMounted) {
+          setData(allBookings);
+        }
+      }
+    }
   };
 
+  const switchToRiders = () => {
+    setTimeout(() => {
+      setActiveTab("riders")
+    })
+  }
+
+  const switchToEarnings = () => {
+    setTimeout(() => {
+      setActiveTab("earnings")
+    })
+  }
 
   return (
     <div className="singleCompany">
@@ -579,7 +579,7 @@ const SingleCompany = (props) => {
           <div className="left">
             <div className="editButton">
               <Link
-                to={`/editcompany/${userID}`}
+                to={`/editcompany/${companyId}`}
                 style={{ textDecoration: "none" }}
               >
                 Edit
@@ -644,20 +644,17 @@ const SingleCompany = (props) => {
               <div className="top">
                 <h1 className="title">Total Earnings & Profits</h1>
                 <select
-                  className="chart-select"
-                  onChange={(e) => {
-                    e.preventDefault();
-                    setSelected(e.target.value);
-                  }}
+                  className="chart-selects"
+                  value={selectedFilter}
+                  onChange={(e) => setSelectedFilter(e.target.value)}
                 >
-                  <option value="Total">Total</option>
-                  <option value={getPreviousMonth(0)}>Current Month</option>
-                  <option value={getPreviousMonth()}>{getPreviousMonth()}</option>
-                  <option value={getPreviousMonth(2)}>{getPreviousMonth(2)}</option>
-                  <option value={getPreviousMonth(3)}>{getPreviousMonth(3)}</option>
-                  <option value={getPreviousMonth(4)}>{getPreviousMonth(4)}</option>
-                  <option value={getPreviousMonth(5)}>{getPreviousMonth(5)}</option>
-                  <option value={getPreviousMonth(6)}>{getPreviousMonth(6)}</option>
+                  <option value="all">All</option>
+                  <option value="7">Last Week</option>
+                  <option value="1">Two Weeks Ago</option>
+                  <option value="2">Three Weeks Ago</option>
+                  <option value="3">Four Weeks Ago</option>
+                  <option value="30">Last Month</option>
+                  <option value="60">Two Months Ago</option>
                 </select>
               </div>
               <div className="bottom">
@@ -667,7 +664,7 @@ const SingleCompany = (props) => {
                     style: "currency",
                     currency: "NGN",
                   })
-                    .format(fieldSum)
+                    .format(total)
                     .replace(".00", "")}
                 </p>
 
@@ -677,9 +674,20 @@ const SingleCompany = (props) => {
                     style: "currency",
                     currency: "NGN",
                   })
-                    .format(totalProfits)
+                    .format(inFlow)
                     .replace(".00", "")}
                 </p>
+
+                <div className="itemTitle">Pay-Out</div>
+                <p className="amount">
+                  {new Intl.NumberFormat("en-NG", {
+                    style: "currency",
+                    currency: "NGN",
+                  })
+                    .format(outFlow)
+                    .replace(".00", "")}
+                </p>
+
                 <div className="summary">
                   <div className="item">
                     <div className="itemTitle">This Month</div>
@@ -697,6 +705,7 @@ const SingleCompany = (props) => {
                           .replace(".00", "")}
                       </div>
                     </div>
+
                     <div className="itemTitle">Total Trips</div>
                     <div className="itemResult positive">
                       <KeyboardArrowUpOutlinedIcon
@@ -723,9 +732,20 @@ const SingleCompany = (props) => {
             </div>
           </div>
         </div>
+
+        {/* Riders table */}
         <div className="bottom">
-          <h1 className="title">Riders</h1>
-          <TableContainer component={Paper} className="table">
+          <div className="table-navs">
+            {/* Riders tab */}
+            <h1 className={`title ${activeTab === "riders" ? "active" : ""}`} onClick={switchToRiders}>
+              Riders
+            </h1>
+            {/* Earnings tab */}
+            <h1 className={`title ${activeTab === "earnings" ? "active" : ""}`} onClick={switchToEarnings}>
+              Earnings
+            </h1>
+          </div>
+          {activeTab === "riders" && (<TableContainer component={Paper} className="table">
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
@@ -770,7 +790,69 @@ const SingleCompany = (props) => {
                 )}
               </TableBody>
             </Table>
-          </TableContainer>
+          </TableContainer>)}
+
+          {activeTab === "earnings" && (
+            <TableContainer component={Paper} className="table">
+              <Table sx={{ minWidth: 780 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell className="tableCell" width={80}>
+                      Booking Number
+                    </TableCell>
+                    <TableCell className="tableCell" width={80}>
+                      Package
+                    </TableCell>
+                    <TableCell className="tableCell" width={130}>
+                      Customer Name
+                    </TableCell>
+                    <TableCell className="tableCell" width={80}>
+                      Date
+                    </TableCell>
+                    <TableCell className="tableCell" width={50}>
+                      Amount
+                    </TableCell>
+                    <TableCell className="tableCell" width={20}>
+                      Payment Method
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {data.map((row) => (
+                    <TableRow key={row["Booking Number"]}>
+                      <TableCell className="tableCell">
+                        {row["Booking Number"]}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {row["Package Type"]}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {row["Customer Name"]}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {new Date(row["Date Created"]).toLocaleDateString("en-US", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {new Intl.NumberFormat("en-NG", {
+                          style: "currency",
+                          currency: "NGN",
+                        })
+                          .format(row["Amount"])
+                          .replace(".00", "")}</TableCell>
+                      <TableCell className="tableCell">
+                        {row["Payment Method"]}
+                      </TableCell>
+
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
         </div>
       </div>
     </div>

@@ -113,10 +113,22 @@
 
         }
 
-        .title{
-            font-size: 16px;
-            color: lightgray;
-            margin-bottom: 10px;
-        }
     }
+}
+
+.table-navs {
+    display: flex;
+}
+
+.title {
+    font-size: 18px;
+    margin-right: 20px;
+    color: lightgray;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.title.active {
+    color: #e290fa;
+    font-weight: bold;
 }

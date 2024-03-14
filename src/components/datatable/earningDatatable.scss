@@ -1,6 +1,6 @@
 .datatable{
     height: 600px;
-    width: 100vw;
+    width: 100%;
     min-width: 100vw;
     padding: 20px;
 
@@ -17,6 +17,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+    box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+    padding: 10px;
 
     .link{
         text-decoration: none;
@@ -80,4 +83,22 @@
         }
        
     }
+}
+
+.chart-selects {
+    width: 100%;
+    font-size: 16px;
+    border: 1px solid #3498db;
+    border-radius: 4px;
+    background-color: #ecf0f1;
+    color: #141618;
+    cursor: pointer;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+/* Style for selected option */
+.chart-selects option:checked {
+    background-color: #3498db;
+    color: #fff;
 }
