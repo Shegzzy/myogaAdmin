@@ -22,6 +22,10 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import TablePagination from '@mui/material/TablePagination';
+
+import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
+
 
 const SingleCompany = (props) => {
   // const location = useLocation();
@@ -53,7 +57,20 @@ const SingleCompany = (props) => {
   const [payOut, setPayOut] = useState(0);
   const [toReceive, setToReceive] = useState(0);
   const [activeTab, setActiveTab] = useState("riders");
+  const [isMounted, setIsMounted] = useState("true");
+  const [companyRatings, setCompanyRating] = useState(0);
 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   console.log(companyId)
 
@@ -63,6 +80,7 @@ const SingleCompany = (props) => {
     getData();
     getRiders();
     fetchEarningsData();
+    fetchCompanyRatings();
   }, [companyId, name]);
 
   // Function for weekly query
@@ -233,6 +251,7 @@ const SingleCompany = (props) => {
             setOutFlow(roundFifteenPercent);
             setCardPayments(sumCardPayments);
             setCashPayments(sumCashPayments);
+            setEarnL(earningsSnapshot.docs.length);
 
             allBookings.sort(
               (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
@@ -275,19 +294,20 @@ const SingleCompany = (props) => {
     }
   };
 
+  // Company's earnings
   const getEarnings = async () => {
     try {
-      const bookingsQuery = query(
+      const earningsQuery = query(
         collection(db, "Earnings"),
         where("Company", "==", name)
       );
 
-      const querySnapshot = await getDocs(bookingsQuery);
+      const querySnapshot = await getDocs(earningsQuery);
 
       let totalAmount = 0;
       querySnapshot.forEach((doc) => {
-        const booking = doc.data();
-        totalAmount += parseFloat(booking.Amount);
+        const earnings = doc.data();
+        totalAmount += parseFloat(earnings.Amount);
       });
 
       // Calculating 85% of the total earnings
@@ -309,6 +329,7 @@ const SingleCompany = (props) => {
   };
 
 
+  // Querys
   const getData = async () => {
     // let dataArray = [];
     // let dataOArray = [];
@@ -405,6 +426,7 @@ const SingleCompany = (props) => {
     });
   };
 
+  // company's riders
   const getRiders = async () => {
     try {
       const ridersQuery = query(
@@ -432,6 +454,7 @@ const SingleCompany = (props) => {
     }
   };
 
+  // Company's earnings data for table
   const fetchEarningsData = async () => {
     const allBookings = [];
     let sumCardPayments = 0;
@@ -558,6 +581,80 @@ const SingleCompany = (props) => {
     }
   };
 
+  // Company's ratings
+  const fetchCompanyRatings = async () => {
+    let isMounted = true;
+
+    if (isMounted) {
+      try {
+        const driversQuery = query(
+          collection(db, "Drivers"),
+          where("Company", "==", name)
+        );
+
+        const driversSnapshot = await getDocs(driversQuery);
+        const totalRiders = driversSnapshot.size;
+
+        let totalRatings = 0;
+
+        // Creating an array of promises to fetch Ratings for each Driver
+        const ratingPromises = driversSnapshot.docs.map(async (driverDoc) => {
+          const ratingsQuerySnapshot = await getDocs(
+            collection(db, "Drivers", driverDoc.id, "Ratings")
+          );
+
+          let riderTotalRatings = 0;
+          let riderTotalReviews = 0;
+
+          // Iterating through the ratings and calculating the total for each rider
+          ratingsQuerySnapshot.forEach((ratingDoc) => {
+            const ratingData = ratingDoc.data();
+            riderTotalRatings += ratingData.rating;
+            riderTotalReviews++;
+          });
+
+          const riderAverageRating =
+            riderTotalReviews > 0 ? riderTotalRatings / riderTotalReviews : 0;
+
+          // console.log(`Rider ${driverDoc.id} Average Rating:`, riderAverageRating);
+
+          // Adding rider's average rating to the total
+          totalRatings += riderAverageRating;
+        });
+
+        await Promise.all(ratingPromises);
+
+        // Calculating the overall average rating for the company
+        const averageRating = totalRiders > 0 ? totalRatings / totalRiders : 0;
+
+        setCompanyRating(averageRating);
+        // console.log("Total Riders:", totalRiders);
+        // console.log("Total Rating:", totalRatings);
+        // console.log("Overall Average Rating:", averageRating);
+
+      } catch (error) {
+        console.log("Error fetching data:");
+      } finally {
+        setIsMounted(false);
+      }
+    }
+  };
+
+  // Function to render star icons based on the average rating
+  const renderStars = (averageRating) => {
+    const stars = [];
+    for (let i = 0; i < 5.0; i++) {
+      stars.push(
+        i < Math.floor(averageRating) ? (
+          <AiFillStar key={i} style={{ color: averageRating < 3.0 ? 'red' : 'green' }} />
+        ) : (
+          <AiOutlineStar key={i} style={{ color: averageRating < 3.0 ? 'red' : 'green' }} />
+        )
+      );
+    }
+    return stars;
+  };
+
   const switchToRiders = () => {
     setTimeout(() => {
       setActiveTab("riders")
@@ -621,6 +718,14 @@ const SingleCompany = (props) => {
                       <span className="itemKey">Date Joined:</span>
                       <span className="itemValue">{row.date}</span>
                     </div>
+                    <div className="detailItem">
+                      <span className="itemKey">Ratings: </span>
+
+                      <span className="itemValue">
+                        {companyRatings.toFixed(1)}
+                        {renderStars(companyRatings)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))
@@ -648,7 +753,7 @@ const SingleCompany = (props) => {
                   value={selectedFilter}
                   onChange={(e) => setSelectedFilter(e.target.value)}
                 >
-                  <option value="all">All</option>
+                  <option value="all">Total Earnings</option>
                   <option value="7">Last Week</option>
                   <option value="1">Two Weeks Ago</option>
                   <option value="2">Three Weeks Ago</option>
@@ -818,7 +923,7 @@ const SingleCompany = (props) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {data.map((row) => (
+                  {data.length !== 0 ? (data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
                     <TableRow key={row["Booking Number"]}>
                       <TableCell className="tableCell">
                         {row["Booking Number"]}
@@ -848,11 +953,27 @@ const SingleCompany = (props) => {
                       </TableCell>
 
                     </TableRow>
-                  ))}
+                  ))) : (
+                    <TableRow>
+                      <TableCell colSpan={10} align="center">
+                        No data available.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
           )}
+          {activeTab === "earnings" && (<TablePagination
+            rowsPerPageOptions={[10, 20, 30]}
+            component="div"
+            count={data.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />)}
+
         </div>
       </div>
     </div>
