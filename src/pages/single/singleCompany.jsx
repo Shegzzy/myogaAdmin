@@ -23,7 +23,7 @@ import {
   TableRow,
 } from "@mui/material";
 import TablePagination from '@mui/material/TablePagination';
-
+import ImageViewModal from '../../components/modal/image-view-modal';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 
 
@@ -34,7 +34,7 @@ const SingleCompany = (props) => {
 
   const [user, setUser] = useState(null);
   const [name, setName] = useState("");
-  const [rData, setRData] = useState(null);
+  const [rData, setRData] = useState([]);
   const [riderL, setRiderL] = useState(null);
   const [earnL, setEarnL] = useState(null);
   const [oData, setOData] = useState([]);
@@ -279,12 +279,19 @@ const SingleCompany = (props) => {
   // Fetching the company information
   const fetchUser = async () => {
     try {
-      const profile = [];
       const docRef = doc(db, "Companies", companyId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        profile.push({ id: docSnap.id, ...docSnap.data() });
-        setUser(profile);
+        // profile.push({ id: docSnap.id, ...docSnap.data() });
+        const profile = docSnap.data() || {};
+        setUser({
+          ...profile,
+          documents: Array.isArray(profile.documents) ? profile.documents : [],
+          utilityBill: Array.isArray(profile.utilityBill) ? profile.utilityBill : [],
+          cacDocuments: Array.isArray(profile.cacDocuments) ? profile.cacDocuments : [],
+          courierLicense: Array.isArray(profile.courierLicense) ? profile.courierLicense : [],
+          amacDocuments: Array.isArray(profile.amacDocuments) ? profile.amacDocuments : [],
+        });
         setName(docSnap.data().company);
       } else {
         alert("No such document!");
@@ -655,6 +662,19 @@ const SingleCompany = (props) => {
     return stars;
   };
 
+  const [selectedImagePath, setSelectedImagePath] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleImageClick = (imageUrl) => {
+    setSelectedImagePath(imageUrl);
+    setIsModalOpen(true); // Open the modal when an image is clicked
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+
   const switchToRiders = () => {
     setTimeout(() => {
       setActiveTab("riders")
@@ -685,50 +705,211 @@ const SingleCompany = (props) => {
 
             <h1 className="title">Information</h1>
             {user ? (
-              user.map((row) => (
-                <div className="item">
-                  <img src={row["Profile Photo"]} alt="" className="itemImg" />
-                  <div className="details">
-                    <h1 className="itemTitle">{row.company}</h1>
-                    <div className="detailItem">
-                      <span className="itemKey">Email:</span>
-                      <span className="itemValue">{row.email}</span>
-                    </div>
-                    <div className="detailItem">
-                      <span className="itemKey">Phone:</span>
-                      <span className="itemValue">{row.phone}</span>
-                    </div>
-                    <div className="detailItem">
-                      <span className="itemKey">Address:</span>
-                      <span className="itemValue">{row.address}</span>
-                    </div>
-                    <div className="detailItem">
-                      <span className="itemKey">State:</span>
-                      <span className="itemValue">{row.location}</span>
-                    </div>
-                    <div className="detailItem">
-                      <span className="itemKey">CAC Reg Number:</span>
-                      <span className="itemValue">{row.regnumber}</span>
-                    </div>
-                    <div className="detailItem">
-                      <span className="itemKey">Account Number:</span>
-                      <span className="itemValue">{row.account}</span>
-                    </div>
-                    <div className="detailItem">
-                      <span className="itemKey">Date Joined:</span>
-                      <span className="itemValue">{row.date}</span>
-                    </div>
-                    <div className="detailItem">
-                      <span className="itemKey">Ratings: </span>
+              <div className="item">
+                <img src={user["Profile Photo"]} alt="" className="itemImg" />
+                <div className="details">
+                  <h1 className="itemTitle">{user.company}</h1>
+                  <div className="detailItem">
+                    <span className="itemKey">Email:</span>
+                    <span className="itemValue">{user.email}</span>
+                  </div>
+                  <div className="detailItem">
+                    <span className="itemKey">Phone:</span>
+                    <span className="itemValue">{user.phone}</span>
+                  </div>
+                  <div className="detailItem">
+                    <span className="itemKey">Address:</span>
+                    <span className="itemValue">{user.address}</span>
+                  </div>
+                  <div className="detailItem">
+                    <span className="itemKey">State:</span>
+                    <span className="itemValue">{user.location}</span>
+                  </div>
+                  <div className="detailItem">
+                    <span className="itemKey">CAC Reg Number:</span>
+                    <span className="itemValue">{user.regnumber}</span>
+                  </div>
+                  <div className="detailItem">
+                    <span className="itemKey">Account Name:</span>
+                    <span className="itemValue">{user.accountName}</span>
+                  </div>
+                  <div className="detailItem">
+                    <span className="itemKey">Bank:</span>
+                    <span className="itemValue">{user.bank}</span>
+                  </div>
+                  <div className="detailItem">
+                    <span className="itemKey">Account Number:</span>
+                    <span className="itemValue">{user.account}</span>
+                  </div>
+                  <div className="detailItem">
+                    <span className="itemKey">Date Joined:</span>
+                    <span className="itemValue">{user.date}</span>
+                  </div>
+                  <div className="detailItem">
+                    <span className="itemKey">Ratings: </span>
 
-                      <span className="itemValue">
-                        {companyRatings.toFixed(1)}
-                        {renderStars(companyRatings)}
-                      </span>
-                    </div>
+                    <span className="itemValue">
+                      {companyRatings.toFixed(1)}
+                      {renderStars(companyRatings)}
+                    </span>
+                  </div>
+
+                  <div className="detailItem">
+                    <span className="itemKey">ID Card:</span>
+                    <span className="itemValue">
+                      <div className="documents-container">
+                        {user.documents && user.documents.length > 0 ? (
+                          user.documents.map((imageUrl, index) => (
+                            <div key={index}>
+                              <img
+                                src={imageUrl}
+                                alt={`Company's Documents ${index + 1}`}
+                                className="documents-itemImg"
+                                onClick={() => handleImageClick(imageUrl)}
+                                style={{ cursor: 'pointer' }}
+                              />
+
+                              <ImageViewModal
+                                title={'Company\'s Document'}
+                                show={isModalOpen}
+                                onHide={handleCloseModal}
+                                imagePath={selectedImagePath}
+                              />
+                            </div>
+                          ))
+                        ) : (
+                          <p> No documents available.</p>
+                        )}
+                      </div>
+                    </span>
+
+                  </div>
+
+                  <div className="detailItem">
+                    <span className="itemKey">CAC Documents:</span>
+                    <span className="itemValue">
+                      <div className="documents-container">
+                        {user.cacDocuments && user.cacDocuments.length > 0 ? (
+                          user.cacDocuments.map((imageUrl, index) => (
+                            <div key={index}>
+                              <img
+                                src={imageUrl}
+                                alt={`Company's Documents ${index + 1}`}
+                                className="documents-itemImg"
+                                onClick={() => handleImageClick(imageUrl)}
+                                style={{ cursor: 'pointer' }}
+                              />
+
+                              <ImageViewModal
+                                title={'Company\'s Document'}
+                                show={isModalOpen}
+                                onHide={handleCloseModal}
+                                imagePath={selectedImagePath}
+                              />
+                            </div>
+                          ))
+                        ) : (
+                          <p> No documents available.</p>
+                        )}
+                      </div>
+                    </span>
+
+                  </div>
+
+                  <div className="detailItem">
+                    <span className="itemKey">Utility Documents:</span>
+                    <span className="itemValue">
+                      <div className="documents-container">
+                        {user.utilityBill && user.utilityBill.length > 0 ? (
+                          user.utilityBill.map((imageUrl, index) => (
+                            <div key={index}>
+                              <img
+                                src={imageUrl}
+                                alt={`Company's Documents ${index + 1}`}
+                                className="documents-itemImg"
+                                onClick={() => handleImageClick(imageUrl)}
+                                style={{ cursor: 'pointer' }}
+                              />
+
+                              <ImageViewModal
+                                title={'Company\'s Document'}
+                                show={isModalOpen}
+                                onHide={handleCloseModal}
+                                imagePath={selectedImagePath}
+                              />
+                            </div>
+                          ))
+                        ) : (
+                          <p> No documents available.</p>
+                        )}
+                      </div>
+                    </span>
+
+                  </div>
+
+                  <div className="detailItem">
+                    <span className="itemKey">Courier Lincense:</span>
+                    <span className="itemValue">
+                      <div className="documents-container">
+                        {user.courierLicense && user.courierLicense.length > 0 ? (
+                          user.courierLicense.map((imageUrl, index) => (
+                            <div key={index}>
+                              <img
+                                src={imageUrl}
+                                alt={`Company's Documents ${index + 1}`}
+                                className="documents-itemImg"
+                                onClick={() => handleImageClick(imageUrl)}
+                                style={{ cursor: 'pointer' }}
+                              />
+
+                              <ImageViewModal
+                                title={'Company\'s Document'}
+                                show={isModalOpen}
+                                onHide={handleCloseModal}
+                                imagePath={selectedImagePath}
+                              />
+                            </div>
+                          ))
+                        ) : (
+                          <p> No documents available.</p>
+                        )}
+                      </div>
+                    </span>
+
+                  </div>
+
+                  <div className="detailItem">
+                    <span className="itemKey">AMAC Documents:</span>
+                    <span className="itemValue">
+                      <div className="documents-container">
+                        {user.amacDocuments && user.amacDocuments.length > 0 ? (
+                          user.amacDocuments.map((imageUrl, index) => (
+                            <div key={index}>
+                              <img
+                                src={imageUrl}
+                                alt={`Company's Documents ${index + 1}`}
+                                className="documents-itemImg"
+                                onClick={() => handleImageClick(imageUrl)}
+                                style={{ cursor: 'pointer' }}
+                              />
+
+                              <ImageViewModal
+                                title={'Company\'s Document'}
+                                show={isModalOpen}
+                                onHide={handleCloseModal}
+                                imagePath={selectedImagePath}
+                              />
+                            </div>
+                          ))
+                        ) : (
+                          <p> No documents available.</p>
+                        )}
+                      </div>
+                    </span>
+
                   </div>
                 </div>
-              ))
+              </div>
             ) : (
               <div className="detailItem">
                 <span className="itemKey">
@@ -864,8 +1045,8 @@ const SingleCompany = (props) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rData ? (
-                  rData.map((row) => (
+                {rData.length !== 0 ? (
+                  rData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
                     <TableRow key={row.id}>
                       <TableCell className="tableCell">
                         {row.FullName}
@@ -968,6 +1149,16 @@ const SingleCompany = (props) => {
             rowsPerPageOptions={[10, 20, 30]}
             component="div"
             count={data.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />)}
+
+          {activeTab === "riders" && (<TablePagination
+            rowsPerPageOptions={[10, 20, 30]}
+            component="div"
+            count={rData.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

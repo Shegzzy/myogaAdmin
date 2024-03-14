@@ -50,7 +50,8 @@
                             }
 
                             .itemValue svg{
-                                display: flex;
+                                display: inline;
+                                margin-left: 5px;
                             }
                         }
                     }
@@ -135,4 +136,17 @@
 .title.active {
     color: #e290fa;
     font-weight: bold;
+}
+
+.documents-itemImg {
+    width: 50px;
+    height: 50px;
+    border-radius: 20%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.documents-container {
+    display: flex;
+    flex-direction: row;
 }
