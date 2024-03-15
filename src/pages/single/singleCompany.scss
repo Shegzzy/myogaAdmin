@@ -85,6 +85,7 @@
                             display: flex;
                             align-items: flex-start;
                             justify-content: flex-start;
+                            gap: 10px;
                         
                             .item{
                                 display: flex;
@@ -92,11 +93,15 @@
 
                                 .itemTitle{
                                     align-items: flex-start;
-                                    justify-content: flex-start;
+                                    justify-content: center;
+                                    display: flex;
                                 }
 
                                 .itemResult{
                                     font-size: 20px;
+                                    text-align: center;
+                                    display: flex;
+                                    justify-content: center;
                                 }
                             }
                         }
@@ -149,4 +154,28 @@
 .documents-container {
     display: flex;
     flex-direction: row;
+}
+
+.profit-amount {
+    font-size: 20px;
+}
+
+.percentage {
+    font-size: 10px;
+    color: rgb(141, 139, 139);
+}
+
+.left-summary {
+    flex: 2;
+    -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+    box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+    padding: 10px;
+}
+
+.right-summary {
+    flex: 2;
+    -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+    box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+    padding: 10px;
+    justify-content: center;
 }

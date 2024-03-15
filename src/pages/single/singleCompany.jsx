@@ -954,8 +954,8 @@ const SingleCompany = (props) => {
                     .replace(".00", "")}
                 </p>
 
-                <div className="itemTitle">Profit</div>
-                <p className="amount">
+                <div className="itemTitle">Profit <span className="percentage">(85%)</span></div>
+                <p className="profit-amount">
                   {new Intl.NumberFormat("en-NG", {
                     style: "currency",
                     currency: "NGN",
@@ -964,8 +964,8 @@ const SingleCompany = (props) => {
                     .replace(".00", "")}
                 </p>
 
-                <div className="itemTitle">Pay-Out</div>
-                <p className="amount">
+                <div className="itemTitle">Pay-Out <span className="percentage">(15%)</span></div>
+                <p className="profit-amount">
                   {new Intl.NumberFormat("en-NG", {
                     style: "currency",
                     currency: "NGN",
@@ -975,42 +975,89 @@ const SingleCompany = (props) => {
                 </p>
 
                 <div className="summary">
-                  <div className="item">
-                    <div className="itemTitle">This Month</div>
-                    <div className="itemResult positive">
-                      <KeyboardArrowUpOutlinedIcon
-                        fontSize="small"
-                        style={{ color: "green" }}
-                      />
-                      <div className="resultAmount" style={{ color: "green" }}>
-                        {new Intl.NumberFormat("en-NG", {
-                          style: "currency",
-                          currency: "NGN",
-                        })
-                          .format(mData)
-                          .replace(".00", "")}
-                      </div>
-                    </div>
+                  <div className="left-summary">
+                    <div className="item">
+                      <div className="itemTitle">This Month</div>
+                      <div className="itemResult positive">
 
-                    <div className="itemTitle">Total Trips</div>
-                    <div className="itemResult positive">
-                      <KeyboardArrowUpOutlinedIcon
-                        fontSize="small"
-                        style={{ color: "green" }}
-                      />
-                      <div className="resultAmount" style={{ color: "green" }}>
-                        {earnL}
+                        <div className="resultAmount" style={{ color: "green" }}>
+                          {new Intl.NumberFormat("en-NG", {
+                            style: "currency",
+                            currency: "NGN",
+                          })
+                            .format(mData)
+                            .replace(".00", "")}
+                        </div>
+                      </div>
+
+                      <div className="itemTitle">Total Trips</div>
+                      <div className="itemResult positive">
+
+                        <div className="resultAmount" style={{ color: "green" }}>
+                          {earnL}
+                        </div>
+                      </div>
+                      <div className="itemTitle">Total Riders</div>
+                      <div className="itemResult positive">
+
+                        <div className="resultAmount" style={{ color: "green" }}>
+                          {riderL}
+                        </div>
                       </div>
                     </div>
-                    <div className="itemTitle">Total Riders</div>
-                    <div className="itemResult positive">
-                      <KeyboardArrowUpOutlinedIcon
-                        fontSize="small"
-                        style={{ color: "green" }}
-                      />
-                      <div className="resultAmount" style={{ color: "green" }}>
-                        {riderL}
+                  </div>
+
+                  <div className="right-summary">
+                    <div className="item">
+                      <div className="itemTitle">Cash Payments</div>
+                      <div className="itemResult positive">
+
+                        <div className="resultAmount" style={{ color: "green" }}>
+                          {new Intl.NumberFormat("en-NG", {
+                            style: "currency",
+                            currency: "NGN",
+                          })
+                            .format(cashPayments)
+                            .replace(".00", "")}
+                        </div>
                       </div>
+
+                      <div className="itemTitle">Card Payments</div>
+                      <div className="itemResult positive">
+                        <div className="resultAmount" style={{ color: "green" }}>
+                          {new Intl.NumberFormat("en-NG", {
+                            style: "currency",
+                            currency: "NGN",
+                          })
+                            .format(cardPayments)
+                            .replace(".00", "")}
+                        </div>
+                      </div>
+
+                      <div className="itemTitle">To Be Balanced</div>
+                      <div className="itemResult positive">
+                        <div className="resultAmount" style={{ color: "green" }}>
+                          {new Intl.NumberFormat("en-NG", {
+                            style: "currency",
+                            currency: "NGN",
+                          })
+                            .format(toReceive)
+                            .replace(".00", "")}
+                        </div>
+                      </div>
+
+                      <div className="itemTitle">To Pay</div>
+                      <div className="itemResult positive">
+                        <div className="resultAmount" style={{ color: "green" }}>
+                          {new Intl.NumberFormat("en-NG", {
+                            style: "currency",
+                            currency: "NGN",
+                          })
+                            .format(payOut)
+                            .replace(".00", "")}
+                        </div>
+                      </div>
+
                     </div>
                   </div>
                 </div>
