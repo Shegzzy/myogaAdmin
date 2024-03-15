@@ -17,6 +17,10 @@ const EditCompany = ({ inputs, title }) => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [utilityBill, setUtilityBill] = useState([]);
+    const [cac, setCAC] = useState([]);
+    const [courierLicense, setCourierLicense] = useState([]);
+    const [amac, setAmac] = useState([]);
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -39,6 +43,11 @@ const EditCompany = ({ inputs, title }) => {
             // Upload new photo to Firebase Storage
             let photoUrl = userProfile["Profile Photo"] || "";
             let docUrls = userProfile["documents"] || [];
+            let utilityBillUrls = userProfile["utilityBill"] || [];
+            let cacUrls = userProfile["cacDocuments"] || [];
+            let courierLicenseUrls = userProfile["courierLicense"] || [];
+            let amacUrls = userProfile["amacDocuments"] || [];
+
             if (file) {
                 const storageRef = ref(storage, file.name);
                 const snapshot = await uploadBytes(storageRef, file);
@@ -54,12 +63,53 @@ const EditCompany = ({ inputs, title }) => {
                 docUrls = await Promise.all(docUrlsPromises);
             }
 
+            if (utilityBill.length > 0) {
+                const docUrlsPromises = utilityBill.map(async (docFile) => {
+                    const storageRef = ref(storage, docFile.name);
+                    const snapshot = await uploadBytes(storageRef, docFile);
+                    return await getDownloadURL(snapshot.ref);
+                });
+                utilityBillUrls = await Promise.all(docUrlsPromises);
+            }
+
+            if (cac.length > 0) {
+                const docUrlsPromises = cac.map(async (docFile) => {
+                    const storageRef = ref(storage, docFile.name);
+                    const snapshot = await uploadBytes(storageRef, docFile);
+                    return await getDownloadURL(snapshot.ref);
+                });
+                cacUrls = await Promise.all(docUrlsPromises);
+            }
+
+            if (courierLicense.length > 0) {
+                const docUrlsPromises = courierLicense.map(async (docFile) => {
+                    const storageRef = ref(storage, docFile.name);
+                    const snapshot = await uploadBytes(storageRef, docFile);
+                    return await getDownloadURL(snapshot.ref);
+                });
+                courierLicenseUrls = await Promise.all(docUrlsPromises);
+            }
+
+            if (amac.length > 0) {
+                const docUrlsPromises = amac.map(async (docFile) => {
+                    const storageRef = ref(storage, docFile.name);
+                    const snapshot = await uploadBytes(storageRef, docFile);
+                    return await getDownloadURL(snapshot.ref);
+                });
+                amacUrls = await Promise.all(docUrlsPromises);
+            }
+
             // Update user profile with new photo URL
             const updatedProfile = {
                 ...userProfile,
                 "Profile Photo": photoUrl,
                 documents: docUrls,
+                utilityBill: utilityBillUrls,
+                cacDocuments: cacUrls,
+                courierLicense: courierLicenseUrls,
+                amacDocuments: amacUrls,
             };
+
             const userRef = doc(db, "Companies", id);
             await updateDoc(userRef, updatedProfile);
             toast.success("Profile Updated");
@@ -113,7 +163,28 @@ const EditCompany = ({ inputs, title }) => {
                                         <input
                                             id={input.id}
                                             type="file"
-                                            onChange={(e) => setFiles([...files, ...e.target.files])}
+                                            onChange={(e) => {
+                                                const selectedFiles = e.target.files;
+                                                switch (input.id) {
+                                                    case "documents":
+                                                        setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+                                                        break;
+                                                    case "utilityBill":
+                                                        setUtilityBill(Array.from(selectedFiles));
+                                                        break;
+                                                    case "cacDocuments":
+                                                        setCAC(Array.from(selectedFiles));
+                                                        break;
+                                                    case "courierLicense":
+                                                        setCourierLicense(Array.from(selectedFiles));
+                                                        break;
+                                                    case "amacDocuments":
+                                                        setAmac(Array.from(selectedFiles));
+                                                        break;
+                                                    default:
+                                                        break;
+                                                }
+                                            }}
                                             multiple
                                         />
                                     ) : (

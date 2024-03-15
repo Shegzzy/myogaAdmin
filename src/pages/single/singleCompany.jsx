@@ -687,6 +687,12 @@ const SingleCompany = (props) => {
     })
   }
 
+  const switchToTransactions = () => {
+    setTimeout(() => {
+      setActiveTab("transactions")
+    })
+  }
+
   return (
     <div className="singleCompany">
       <Sidebar />
@@ -1073,9 +1079,15 @@ const SingleCompany = (props) => {
             <h1 className={`title ${activeTab === "riders" ? "active" : ""}`} onClick={switchToRiders}>
               Riders
             </h1>
+
             {/* Earnings tab */}
             <h1 className={`title ${activeTab === "earnings" ? "active" : ""}`} onClick={switchToEarnings}>
               Earnings
+            </h1>
+
+            {/* Transaction tab */}
+            <h1 className={`title ${activeTab === "transactions" ? "active" : ""}`} onClick={switchToTransactions}>
+              Transaction History
             </h1>
           </div>
           {activeTab === "riders" && (<TableContainer component={Paper} className="table">

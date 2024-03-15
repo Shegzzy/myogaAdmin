@@ -193,9 +193,9 @@ export const companyInputs = [
   },
 
   {
-    id: "password",
-    label: "Password",
-    type: "password",
+    id: "accountName",
+    label: "Account Name",
+    type: "text",
   },
 
   {
@@ -204,13 +204,25 @@ export const companyInputs = [
     type: "text",
     placeholder: "Elton St. 216 NewYork",
   },
+  
   {
     id: "location",
     label: "State",
     type: "text",
   },
 
+ {
+    id: "bank",
+    label: "Bank Name",
+    type: "text",
+  },
 
+  {
+    id: "account",
+    label: "Account Number",
+    type: "text",
+  },
+  
   {
     id: "regnumber",
     label: "Registered Number",
@@ -219,12 +231,44 @@ export const companyInputs = [
 
   {
     id: "documents",
-    label: "Documents",
+    label: "ID Card",
     type: "file",
     multiple: true,
-    placeholder: "upload documents",
+    placeholder: "upload id card",
   },
 
+
+  {
+    id: "cacDocuments",
+    label: "CAC Documents",
+    type: "file",
+    multiple: true,
+    placeholder: "upload your cac documents",
+  },
+
+  {
+    id: "utilityBill",
+    label: "Utility Bill",
+    type: "file",
+    multiple: true,
+    placeholder: "upload your utility bill",
+  },
+
+  {
+    id: "courierLicense",
+    label: "Courier License",
+    type: "file",
+    multiple: true,
+    placeholder: "upload your courier license",
+  },
+
+  {
+    id: "amacDocuments",
+    label: "AMAC Documents",
+    type: "file",
+    multiple: true,
+    placeholder: "upload your amac documents",
+  },
 ];
 
 export const adminInputs = [
