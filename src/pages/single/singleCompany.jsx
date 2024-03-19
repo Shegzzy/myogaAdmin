@@ -41,11 +41,8 @@ const SingleCompany = (props) => {
   const [lWData, setLWData] = useState([]);
   const [lMData, setLData] = useState([]);
   const [mData, setMData] = useState([]);
-  const [totalEarnings, setTotalEarnings] = useState(0);
-  const [totalProfits, setTotalProfits] = useState(0);
-  const [Selected, setSelected] = useState("Total");
   const [data, setData] = useState([]);
-  const [fieldSum, setFieldSum] = useState(0);
+  const [bookingsData, setBookingsData] = useState([]);
 
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [loading, setLoading] = useState(true);
@@ -61,7 +58,7 @@ const SingleCompany = (props) => {
   const [companyRatings, setCompanyRating] = useState(0);
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -101,6 +98,7 @@ const SingleCompany = (props) => {
 
           if (selectedFilter === "all") {
             getEarnings();
+            fetchEarningsData();
           } else {
             const today = new Date();
 
@@ -450,12 +448,39 @@ const SingleCompany = (props) => {
         ridersData.push({ ...rider, id: riderId });
       });
 
+      // fetching company's bookings
+      const driverMap = new Map();
+
+      querySnapshot.forEach((driverDoc) => {
+        driverMap.set(driverDoc.id, driverDoc.data().FullName);
+      });
+
+      const bookingsQuery = query(
+        collection(db, "Bookings"),
+        where("Driver ID", "in", Array.from(driverMap.keys()))
+      );
+
+      const bookingsSnapshot = await getDocs(bookingsQuery);
+
+      const bookings = bookingsSnapshot.docs.map((bookingDoc) => {
+        const bookingData = bookingDoc.data();
+        return {
+          ...bookingData,
+          driverName: driverMap.get(bookingData["Driver ID"]),
+        };
+      });
+
+      bookings.sort((a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"]));
+
       ridersData.sort(
         (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
       );
 
+
+      setBookingsData(bookings);
       setRData(ridersData);
       setRiderL(querySnapshot.docs.length);
+
     } catch (error) {
       console.error("Error fetching riders:", error);
     }
@@ -667,7 +692,7 @@ const SingleCompany = (props) => {
 
   const handleImageClick = (imageUrl) => {
     setSelectedImagePath(imageUrl);
-    setIsModalOpen(true); // Open the modal when an image is clicked
+    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
@@ -684,6 +709,12 @@ const SingleCompany = (props) => {
   const switchToEarnings = () => {
     setTimeout(() => {
       setActiveTab("earnings")
+    })
+  }
+
+  const switchToBookings = () => {
+    setTimeout(() => {
+      setActiveTab("bookings")
     })
   }
 
@@ -1085,58 +1116,66 @@ const SingleCompany = (props) => {
               Earnings
             </h1>
 
+            {/* Bookings tab */}
+            <h1 className={`title ${activeTab === "bookings" ? "active" : ""}`} onClick={switchToBookings}>
+              Bookings
+            </h1>
+
             {/* Transaction tab */}
             <h1 className={`title ${activeTab === "transactions" ? "active" : ""}`} onClick={switchToTransactions}>
               Transaction History
             </h1>
           </div>
-          {activeTab === "riders" && (<TableContainer component={Paper} className="table">
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell className="tableCell">Rider Name</TableCell>
-                  <TableCell className="tableCell">Email</TableCell>
-                  <TableCell className="tableCell">Address</TableCell>
-                  <TableCell className="tableCell">Location </TableCell>
-                  <TableCell className="tableCell">Vehicle Number</TableCell>
-                  <TableCell className="tableCell">Status</TableCell>
-                  <TableCell className="tableCell">Date Joined</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rData.length !== 0 ? (
-                  rData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
-                    <TableRow key={row.id}>
-                      <TableCell className="tableCell">
-                        {row.FullName}
-                      </TableCell>
-                      <TableCell className="tableCell">{row.Email}</TableCell>
-                      <TableCell className="tableCell">{row.Address}</TableCell>
-                      <TableCell className="tableCell">{row.State}</TableCell>
-                      <TableCell className="tableCell" width={200}>
-                        {row["Vehicle Number"]}
-                      </TableCell>
-                      <TableCell className="tableCell">
-                        {row.Verified === "1" ? "Verified" : "Unverified"}
-                      </TableCell>
-                      <TableCell className="tableCell">
-                        {new Date(row["Date Created"]).toLocaleDateString(
-                          "en-US"
-                        )}
+          {/* riders table */}
+          {activeTab === "riders" && (
+            <TableContainer component={Paper} className="table">
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell className="tableCell">Rider Name</TableCell>
+                    <TableCell className="tableCell">Email</TableCell>
+                    <TableCell className="tableCell">Address</TableCell>
+                    <TableCell className="tableCell">Location </TableCell>
+                    <TableCell className="tableCell">Vehicle Number</TableCell>
+                    <TableCell className="tableCell">Status</TableCell>
+                    <TableCell className="tableCell">Date Joined</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rData.length !== 0 ? (
+                    rData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                      <TableRow key={row.id}>
+                        <TableCell className="tableCell">
+                          {row.FullName}
+                        </TableCell>
+                        <TableCell className="tableCell">{row.Email}</TableCell>
+                        <TableCell className="tableCell">{row.Address}</TableCell>
+                        <TableCell className="tableCell">{row.State}</TableCell>
+                        <TableCell className="tableCell" width={200}>
+                          {row["Vehicle Number"]}
+                        </TableCell>
+                        <TableCell className="tableCell">
+                          {row.Verified === "1" ? "Verified" : "Unverified"}
+                        </TableCell>
+                        <TableCell className="tableCell">
+                          {new Date(row["Date Created"]).toLocaleDateString(
+                            "en-US"
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={10} align="center">
+                        No data available.
                       </TableCell>
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={10} align="center">
-                      No data available.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>)}
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>)}
 
+          {/* earnings table */}
           {activeTab === "earnings" && (
             <TableContainer component={Paper} className="table">
               <Table sx={{ minWidth: 780 }} aria-label="simple table">
@@ -1204,6 +1243,121 @@ const SingleCompany = (props) => {
               </Table>
             </TableContainer>
           )}
+
+          {/* company's booking table */}
+          {activeTab === "bookings" && (
+            <TableContainer component={Paper} className="table">
+              <Table sx={{ minWidth: 780 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell className="tableCell" width={80}>
+                      Booking Number
+                    </TableCell>
+                    <TableCell className="tableCell" width={80}>
+                      Package
+                    </TableCell>
+                    <TableCell className="tableCell" width={130}>
+                      Customer Name
+                    </TableCell>
+                    <TableCell className="tableCell" width={130}>
+                      Date
+                    </TableCell>
+                    <TableCell className="tableCell" width={50}>
+                      Amount
+                    </TableCell>
+                    <TableCell className="tableCell" width={20}>
+                      Payment Method
+                    </TableCell>
+                    <TableCell className="tableCell" width={130}>
+                      Pickup Location
+                    </TableCell>
+                    <TableCell className="tableCell" width={130}>
+                      Dropoff Location
+                    </TableCell>
+                    <TableCell className="tableCell" width={130}>
+                      Phone
+                    </TableCell>
+                    <TableCell className="tableCell" width={130}>
+                      Rider
+                    </TableCell>
+                    <TableCell className="tableCell" width={80}>
+                      Distance
+                    </TableCell>
+                    <TableCell className="tableCell" width={130}>
+                      Ride Type
+                    </TableCell>
+                    <TableCell className="tableCell" width={100}>
+                      Status
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {bookingsData.length !== 0 ? (bookingsData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                    <TableRow key={row["Booking Number"]}>
+                      <TableCell className="tableCell" width={80}>
+                        {row["Booking Number"]}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {row["Package Type"]}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {row["Customer Name"]}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {new Date(row["Date Created"]).toLocaleDateString("en-US", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {new Intl.NumberFormat("en-NG", {
+                          style: "currency",
+                          currency: "NGN",
+                        })
+                          .format(row["Amount"])
+                          .replace(".00", "")}</TableCell>
+                      <TableCell className="tableCell">
+                        {row["Payment Method"]}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {row["PickUp Address"]}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {row["DropOff Address"]}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {row["Customer Phone"]}
+                      </TableCell>
+                      <TableCell className="tableCell" width={100}>
+                        <Link to={`/drivers/${row["Driver ID"]}`}>
+                          {row.driverName}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {row["Distance"]}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {row["Ride Type"]}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        <div className={`cellWithStatus ${row["Status"]}`}>
+                          {row["Status"]}
+                          {/* {<ModalContainer id={row["Booking Number"]} />} */}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))) : (
+                    <TableRow>
+                      <TableCell colSpan={10} align="center">
+                        No data available.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>)}
+
           {activeTab === "earnings" && (<TablePagination
             rowsPerPageOptions={[10, 20, 30]}
             component="div"
@@ -1218,6 +1372,16 @@ const SingleCompany = (props) => {
             rowsPerPageOptions={[10, 20, 30]}
             component="div"
             count={rData.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />)}
+
+          {activeTab === "bookings" && (<TablePagination
+            rowsPerPageOptions={[10, 20, 30]}
+            component="div"
+            count={bookingsData.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

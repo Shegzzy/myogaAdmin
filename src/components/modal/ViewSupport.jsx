@@ -1,30 +1,26 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-// import Form from 'react-bootstrap/Form';
-// import { doc, updateDoc } from "firebase/firestore";
-// import { db } from '../../firebase';
+import { updateDoc, doc, serverTimestamp } from "firebase/firestore";
+import { db } from '../../firebase';
+
 
 function ViewSupport(props) {
 
-    //const ID = props.id;
-    // const [Name, setName] = useState(props.name);
-    // const [Rate, setRate] = useState(props.rate);
-    // const [Duration, setDuration] = useState(props.duration);
     const [show, setShow] = useState(false);
+    const [status, setStatus] = useState("");
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    // const handleUpdate = async () => {
-    //     const DocRef = doc(db, "Settings", "deliverymodes", "modes", ID);
-    //     await updateDoc(DocRef, {
-    //         name: Name,
-    //         rate: Rate,
-    //         duration: Duration
-    //     });
-    //     handleClose();
-    // }
+    const handleUpdate = async () => {
+        const docRef = doc(db, 'Drivers', props.id);
+
+        await updateDoc(docRef, {
+            status: status,
+            timeStamp: serverTimestamp()
+        });
+    }
 
     return (
         <>
@@ -41,19 +37,21 @@ function ViewSupport(props) {
                     <Modal.Title>Support Detail</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p class="text-slate-400 hover:text-purple-400">{props.type}</p>
-                    <p class="text-slate-500 hover:text-purple-400">{props.subject}</p>
+                    <p class="text-slate-400 hover:text-purple-400">Type: {props.type}</p>
+                    <p class="text-slate-500 hover:text-purple-400">Subject: {props.subject}</p>
+                    <p class="text-black hover:text-gray-400">Name: {props.name}</p>
+                    <p class="text-black hover:text-gray-400">Email: {props.email}</p>
+                    <p class="text-black hover:text-gray-400">Date: {new Date(props.date).toLocaleDateString(
+                        "en-US"
+                    )}</p>
                     <p class="text-slate-500 hover:text-purple-400">{props.message}</p>
-                    <p class="text-black hover:text-gray-400">{props.name}</p>
-                    <p class="text-black hover:text-gray-400">{props.email}</p>
-                    <p class="text-black hover:text-gray-400">{props.date}</p>
 
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
                         Close
                     </Button>
-                    <button className="primaryBtn text-purple-600" form="verifyForm" type="submit">Attend</button>
+                    {props.status === "new" && (<button className="primaryBtn text-purple-600" form="verifyForm" type="submit" onClick={setStatus("assigned")}>Attend</button>)}
                 </Modal.Footer>
             </Modal>
         </>
