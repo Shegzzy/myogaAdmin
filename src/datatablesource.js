@@ -32,16 +32,7 @@ export const userColumns = [
     {
         field: "Address", headerName: "Address", width: 150,
     },
-    {
-        field: "Status", headerName: "Status", width: 100,
-        renderCell: (params) => {
-            return (
-                <div className={`cellWithStatus ${params.row.Status}`}>
-                    {params.row.Status}
-                </div>
-            )
-        }
-    },
+
     {
         field: ['Date Created'], headerName: "Date Created", width: 150,
         renderCell: (params) => {
@@ -192,6 +183,10 @@ export const companyColumns = [
     },
     {
         field: "date", headerName: "Date Created",
+        renderCell: (params) => {
+            const formattedDate = format(new Date(params.value), 'dd/MM/yyyy'); // Format the date
+            return <div>{formattedDate || ''}</div>;
+        }
     },
 ];
 

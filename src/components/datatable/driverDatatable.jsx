@@ -75,19 +75,19 @@ const DriverDatatable = () => {
     setSData(list);
   };
 
-  const handleDelete = async (id) => {
-    try {
-      await deleteDoc(doc(db, "Drivers", id));
-      setData(data.filter((item) => item.id !== id));
-      setMsg("User Deleted Succesfully");
-      setType("success");
-      snackbarRef.current.show();
-    } catch (erre) {
-      setMsg(erre.message);
-      setType("error");
-      snackbarRef.current.show();
-    }
-  };
+  // const handleDelete = async (id) => {
+  //   try {
+  //     await deleteDoc(doc(db, "Drivers", id));
+  //     setData(data.filter((item) => item.id !== id));
+  //     setMsg("User Deleted Succesfully");
+  //     setType("success");
+  //     snackbarRef.current.show();
+  //   } catch (erre) {
+  //     setMsg(erre.message);
+  //     setType("error");
+  //     snackbarRef.current.show();
+  //   }
+  // };
 
   // const handleTrackButtonClick = async (id) => {
   //   try {
@@ -113,11 +113,6 @@ const DriverDatatable = () => {
   //     toast.error("Error fetching rider data.");
   //   }
   // };
-
-  // Function to close the map modal
-  const handleCloseMapModal = () => {
-    setShowMapModal(false);
-  };
 
   const actionColumn = [
     {
@@ -145,13 +140,6 @@ const DriverDatatable = () => {
             >
               Track Rider
             </div> */}
-
-            <div
-              className="deleteButton"
-              onClick={() => handleDelete(params.row.id)}
-            >
-              Delete
-            </div>
           </div>
         );
       },
@@ -162,14 +150,8 @@ const DriverDatatable = () => {
     <div className="datatable">
       <Snakbar ref={snackbarRef} message={msg} type={sType} />
       <div className="datatableTitle">
-        Add New Driver
-        <Link
-          to="/drivers/new"
-          style={{ textDecoration: "none" }}
-          className="link"
-        >
-          Add New
-        </Link>
+        Riders
+
       </div>
       <div className="search">
         <form
@@ -210,14 +192,6 @@ const DriverDatatable = () => {
 
       )}
 
-      {showMapModal && (
-        <MapModal
-          riderLocation={selectedRiderLocation}
-          show={showMapModal}
-          handleClose={handleCloseMapModal}
-          loadScriptKey={loadScriptKey}
-        />
-      )}
     </div>
   );
 };
