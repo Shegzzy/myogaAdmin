@@ -431,7 +431,7 @@ const SingleCompany = (props) => {
     });
   };
 
-  // company's riders
+  // company's riders and bookings
   const getRiders = async () => {
     try {
       const ridersQuery = query(
