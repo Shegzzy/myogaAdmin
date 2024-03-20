@@ -75,7 +75,7 @@ const StatusDatatable = () => {
 
           list.push({
             id: docs.id,
-            ...rest,
+            ...docs.data(),
             "Customer Name": customerName,
             "Driver Name": driverName
           });

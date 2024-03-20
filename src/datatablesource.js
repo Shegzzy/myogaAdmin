@@ -290,30 +290,30 @@ export const statusColumns = [
     },
     {
         field: 'Customer Name', headerName: "Customer Name", width: 100,
-        // renderCell: (params) => {
-        //     return (
-        //         <div className='cellStatus'>
-        //             <Link to={`/users/${params.row["Customer ID"]}`}>
-        //                 {params.row["Customer ID"]}
-        //             </Link>
-        //         </div>
+        renderCell: (params) => {
+            return (
+                <div className='cellStatus'>
+                    <Link to={`/users/${params.row["Customer ID"]}`}>
+                        {params.row["Customer Name"]}
+                    </Link>
+                </div>
 
-        //     )
-        // }
+            )
+        }
 
     },
     {
         field: "Driver Name", headerName: "Rider Name", width: 100,
-        // renderCell: (params) => {
-        //     return (
-        //         <div className='cellStatus'>
-        //             <Link to={`/drivers/${params.row["Driver ID"]}`}>
-        //                 {params.row["Driver ID"]}
-        //             </Link>
-        //         </div>
+        renderCell: (params) => {
+            return (
+                <div className='cellStatus'>
+                    <Link to={`/drivers/${params.row["Driver ID"]}`}>
+                        {params.row["Driver Name"]}
+                    </Link>
+                </div>
 
-        //     )
-        // }
+            )
+        }
 
     },
     {
