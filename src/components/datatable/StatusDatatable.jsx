@@ -45,7 +45,6 @@ const StatusDatatable = () => {
             }
           } catch (error) {
             console.error(`Error fetching driver with ID ${driverID}: ${error}`);
-            // Handle error (e.g., show error message)
           }
         }));
 
@@ -70,8 +69,6 @@ const StatusDatatable = () => {
           const { "Driver ID": driverID, "Customer ID": customerID, ...rest } = docs.data();
           const customerName = userMap.get(customerID);
           const driverName = driverMap.get(driverID);
-
-          console.log(driverName)
 
           list.push({
             id: docs.id,

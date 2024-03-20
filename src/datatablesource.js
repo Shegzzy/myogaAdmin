@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 
 
 export const userColumns = [
-    { field: 'id', headerName: 'ID', width: 150 },
+    // { field: 'id', headerName: 'ID', width: 150 },
     {
         field: "user", headerName: "User", width: 200, renderCell: (params) => {
             return (
@@ -52,7 +52,7 @@ export const userColumns = [
 ];
 
 export const driverColumns = [
-    { field: 'id', headerName: 'ID', width: 150 },
+    // { field: 'id', headerName: 'ID', width: 150 },
     {
         field: "FullName", headerName: "Driver Name", width: 200, renderCell: (params) => {
             return (
@@ -201,34 +201,31 @@ export const bookingColumns = [
     {
         field: "Booking Number", headerName: "Booking Number", width: 150,
     },
-    {
-        field: "Customer Name", headerName: "Cusomer Name", width: 150,
-    },
+    // {
+    //     field: "Customer Name", headerName: "Cusomer Name", width: 150,
+    // },
     {
         field: "Customer Phone", headerName: "Customer Phone", width: 150,
     },
     {
-        field: 'Customer ID', headerName: "Customer ID", width: 100,
+        field: 'Customer Name', headerName: "Customer Name", width: 100,
         renderCell: (params) => {
             return (
                 <div className='cellStatus'>
-                    {/* <a href='./'>
-                        {params.row.Customer}
-                    </a> */}
                     <Link to={`/users/${params.row["Customer ID"]}`}>
-                        {params.row["Customer ID"]}
+                        {params.row["Customer Name"]}
                     </Link>
                 </div>
             )
         }
     },
     {
-        field: "Driver ID", headerName: "Driver ID", width: 100,
+        field: "Driver Name", headerName: "Rider's Name", width: 100,
         renderCell: (params) => {
             return (
                 <div className='cellStatus'>
                     <Link to={`/drivers/${params.row["Driver ID"]}`}>
-                        {params.row["Driver ID"]}
+                        {params.row["Driver Name"]}
                     </Link>
                 </div>
 

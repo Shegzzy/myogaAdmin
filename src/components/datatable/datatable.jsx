@@ -59,19 +59,19 @@ const Datatable = () => {
     };
   }, []);
 
-  const handleDelete = async (id) => {
-    try {
-      await deleteDoc(doc(db, "Users", id));
-      setData(data.filter((item) => item.id !== id));
-      setMsg("User Deleted Succesfully");
-      setType("success");
-      snackbarRef.current.show();
-    } catch (erre) {
-      setMsg(erre.message);
-      setType("error");
-      snackbarRef.current.show();
-    }
-  };
+  // const handleDelete = async (id) => {
+  //   try {
+  //     await deleteDoc(doc(db, "Users", id));
+  //     setData(data.filter((item) => item.id !== id));
+  //     setMsg("User Deleted Succesfully");
+  //     setType("success");
+  //     snackbarRef.current.show();
+  //   } catch (erre) {
+  //     setMsg(erre.message);
+  //     setType("error");
+  //     snackbarRef.current.show();
+  //   }
+  // };
 
   const actionColumn = [
     {
@@ -92,12 +92,6 @@ const Datatable = () => {
             >
               View
             </div>
-            <div
-              className="deleteButton"
-              onClick={() => handleDelete(params.row.id)}
-            >
-              Delete
-            </div>
           </div>
         );
       },
@@ -108,14 +102,7 @@ const Datatable = () => {
     <div className="datatable">
       <Snakbar ref={snackbarRef} message={msg} type={sType} />
       <div className="datatableTitle">
-        Add New User
-        <Link
-          to="/users/new"
-          style={{ textDecoration: "none" }}
-          className="link"
-        >
-          Add New
-        </Link>
+        Users
       </div>
       <DataGrid
         className="datagrid"
