@@ -1,9 +1,9 @@
 import "./statusDatatable.scss";
 import { DataGrid } from "@mui/x-data-grid";
 import { statusColumns } from "../../datatablesource";
-import { useNavigate, Link } from "react-router-dom";
+// import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { collection, deleteDoc, doc, onSnapshot, getDoc, getDocs, query } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
 import { db } from "./../../firebase";
 import Snakbar from "../snackbar/Snakbar";
 import SearchIcon from "@mui/icons-material/Search";
@@ -15,7 +15,7 @@ const StatusDatatable = () => {
   const snackbarRef = useRef(null);
   const [msg, setMsg] = useState("");
   const [sType, setType] = useState("");
-  const [loading, setLoading] = useState("true");
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -113,9 +113,9 @@ const StatusDatatable = () => {
       try {
         setLoading(true);
 
-        const querySnapshot = await getDocs(query(
+        const querySnapshot = await getDocs(
           collection(db, "Order_Status"),
-        ));
+        );
 
         let list = [];
         const driverMap = new Map();

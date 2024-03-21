@@ -54,7 +54,7 @@ const SingleCompany = (props) => {
   const [payOut, setPayOut] = useState(0);
   const [toReceive, setToReceive] = useState(0);
   const [activeTab, setActiveTab] = useState("riders");
-  const [isMounted, setIsMounted] = useState("true");
+  const [isMounted, setIsMounted] = useState(true);
   const [companyRatings, setCompanyRating] = useState(0);
 
   const [page, setPage] = useState(0);

@@ -2,14 +2,15 @@ import './settingData.scss';
 import Dmode from '../settings/Dmode';
 import LocationSet from '../settings/LocationSet';
 import VehicleSet from '../settings/VehicleSet';
-import React, { useState, useEffect } from 'react';
-import { collection, onSnapshot } from "firebase/firestore";
+import React, { useState, useEffect, useRef } from 'react';
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from '../../firebase';
 import SupportSet from '../settings/SupportSet';
 import AddModeModal from '../modal/AddModeModal';
 import AddVehicleModal from '../modal/AddVehicleModal';
 import AddLocationModal from '../modal/AddLocationModal';
 import AddSupportModal from '../modal/AddSupportModal';
+import Snakbar from "../snackbar/Snakbar";
 
 const SettingData = () => {
 
@@ -17,99 +18,112 @@ const SettingData = () => {
     const [Ldata, setLData] = useState([]);
     const [Vdata, setVData] = useState([]);
     const [Sdata, setSData] = useState([]);
+    const [msg, setMsg] = useState("");
+    const [sType, setType] = useState("");
+    const snackbarRef = useRef(null);
+    const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
-        fetchMode();
-        fetchVehicle();
-        fetchLocation();
-        fetchSupport();
+        try {
+            setLoading(true);
 
-    });
+            fetchMode();
+            fetchVehicle();
+            fetchLocation();
+            fetchSupport();
 
-    const fetchMode = () => {
-        const unsub = onSnapshot(collection(db, "Settings/deliverymodes/modes"), (snapShot) => {
+        } catch (error) {
+            setMsg(error.message);
+            setType("error");
+            snackbarRef.current.show();
+        } finally {
+            setLoading(false);
+        }
+    }, [loading, Mdata]);
+
+    const fetchMode = async () => {
+        try {
             let list = [];
-            snapShot.docs.forEach(doc => {
+            const fetchDeliveryModes = await getDocs(
+                collection(db, "Settings/deliverymodes/modes"),
+            );
+
+            fetchDeliveryModes.forEach((doc) => {
                 list.push({ id: doc.id, name: doc.data().name, rate: doc.data().rate, duration: doc.data().duration, minimumPrice: doc.data().minimumPrice, startPrice: doc.data().startPrice });
-            });
+            })
             setMData(list);
-            // setMsg(" Displaying Users Information ");
-            // setType("success");
-            // snackbarRef.current.show();
-        }, (error) => {
-            // setMsg(error.message);
-            // setType("error");
-            // snackbarRef.current.show();
-        });
 
-        return () => {
-            unsub();
+        } catch (error) {
+            setMsg(error.message);
+            setType("error");
+            snackbarRef.current.show();
         }
     }
-    const fetchVehicle = () => {
-        const unsub = onSnapshot(collection(db, "Settings/deliveryVehicles/vehicles"), (snapShot) => {
+
+    const fetchVehicle = async () => {
+
+        try {
             let list = [];
-            snapShot.docs.forEach(doc => {
+            const fetchVehicles = await getDocs(
+                collection(db, "Settings/deliveryVehicles/vehicles"),
+            );
+
+            fetchVehicles.forEach((doc) => {
                 list.push({ id: doc.id, name: doc.data().name });
-            });
+            })
             setVData(list);
-            // setMsg(" Displaying Users Information ");
-            // setType("success");
-            // snackbarRef.current.show();
-        }, (error) => {
-            // setMsg(error.message);
-            // setType("error");
-            // snackbarRef.current.show();
-        });
 
-        return () => {
-            unsub();
+        } catch (error) {
+            setMsg(error.message);
+            setType("error");
+            snackbarRef.current.show();
         }
+
     }
-    const fetchLocation = () => {
-        const unsub = onSnapshot(collection(db, "Settings/locations/states"), (snapShot) => {
+
+    const fetchLocation = async () => {
+        try {
             let list = [];
-            snapShot.docs.forEach(doc => {
+            const fetchLocations = await getDocs(
+                collection(db, "Settings/locations/states"),
+            );
+
+            fetchLocations.forEach((doc) => {
                 list.push({ id: doc.id, name: doc.data().name });
-            });
+            })
             setLData(list);
-            // setMsg(" Displaying Users Information ");
-            // setType("success");
-            // snackbarRef.current.show();
-        }, (error) => {
-            // setMsg(error.message);
-            // setType("error");
-            // snackbarRef.current.show();
-        });
 
-        return () => {
-            unsub();
+        } catch (error) {
+            setMsg(error.message);
+            setType("error");
+            snackbarRef.current.show();
         }
     }
 
-    const fetchSupport = () => {
-        const unsub = onSnapshot(collection(db, "Settings/supports/types"), (snapShot) => {
+    const fetchSupport = async () => {
+        try {
             let list = [];
-            snapShot.docs.forEach(doc => {
-                list.push({ id: doc.id, name: doc.data().name });
-            });
-            setSData(list);
-            // setMsg(" Displaying Users Information ");
-            // setType("success");
-            // snackbarRef.current.show();
-        }, (error) => {
-            // setMsg(error.message);
-            // setType("error");
-            // snackbarRef.current.show();
-        });
+            const fetchLocations = await getDocs(
+                collection(db, "Settings/supports/types"),
+            );
 
-        return () => {
-            unsub();
+            fetchLocations.forEach((doc) => {
+                list.push({ id: doc.id, name: doc.data().name });
+            })
+            setSData(list);
+
+        } catch (error) {
+            setMsg(error.message);
+            setType("error");
+            snackbarRef.current.show();
         }
     }
 
     return (
         <div class="container mx-auto">
+            <Snakbar ref={snackbarRef} message={msg} type={sType} />
+
             <div className="setTile p-4"><p class="text-slate-400 hover:text-sky-400">System Settings</p></div>
             <div className="top">
                 <div className="leftCard p-4">
@@ -117,7 +131,7 @@ const SettingData = () => {
                     <div className="shadow-md flex flex-wrap justify-center">
                         {Mdata.map((data) => {
                             return (
-                                < Dmode name={data.name} id={data.id} rate={data.rate} duration={data.duration} minimumPrice={data.minimumPrice} startPrice={data.startPrice} />)
+                                < Dmode key={data.id} name={data.name} id={data.id} rate={data.rate} duration={data.duration} minimumPrice={data.minimumPrice} startPrice={data.startPrice} />)
                         })}
                     </div>
                 </div>
@@ -126,7 +140,7 @@ const SettingData = () => {
                     <div className='shadow-md flex flex-wrap justify-center'>
                         {Ldata.map((data) => {
                             return (
-                                < LocationSet name={data.name} id={data.id} />
+                                < LocationSet key={data.id} name={data.name} id={data.id} />
                             )
                         })}
                     </div>
@@ -138,7 +152,7 @@ const SettingData = () => {
                     <div className="shadow-md flex flex-wrap justify-center">
                         {Vdata.map((data) => {
                             return (
-                                < VehicleSet name={data.name} id={data.id} />
+                                < VehicleSet key={data.id} name={data.name} id={data.id} />
                             )
                         })}
                     </div>
@@ -148,7 +162,7 @@ const SettingData = () => {
                     <div className="shadow-md flex flex-wrap justify-center">
                         {Sdata.map((data) => {
                             return (
-                                <SupportSet name={data.name} id={data.id} />
+                                <SupportSet key={data.id} name={data.name} id={data.id} />
                             )
                         })}
                     </div>

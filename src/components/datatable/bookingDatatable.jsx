@@ -1,18 +1,16 @@
 import "./bookingDatatable.scss";
 import { DataGrid } from "@mui/x-data-grid";
 import { bookingColumns } from "../../datatablesource";
-import { useNavigate, Link } from "react-router-dom";
+// import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import {
   collection,
-  deleteDoc,
   doc,
   onSnapshot,
   query,
   where,
   getDocs,
   getDoc,
-  or,
 } from "firebase/firestore";
 import { db } from "./../../firebase";
 import Snakbar from "../snackbar/Snakbar";
@@ -23,7 +21,7 @@ const BookingDatatable = () => {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
-  const [loading, setLoading] = useState("true");
+  const [loading, setLoading] = useState(true);
 
   const snackbarRef = useRef(null);
   const [msg, setMsg] = useState("");

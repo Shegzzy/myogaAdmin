@@ -112,8 +112,8 @@ const SingleDriver = (props) => {
         const bookingsData = [];
         snapshot.forEach((doc) => {
           const booking = doc.data();
-          const bookingId = doc.id; // unique ID for this booking document
-          bookingsData.push({ ...booking, id: bookingId }); // include ID in booking data
+          const bookingId = doc.id;
+          bookingsData.push({ ...booking, id: bookingId });
         });
         if (isMounted) {
           bookingsData.sort(
@@ -428,7 +428,7 @@ const SingleDriver = (props) => {
         <div className="bottom">
           <h1 className="title">Last Bookings</h1>
           <div className="b-bottom">
-            <DriverTable id={id} />
+            <DriverTable id={bookingData} />
           </div>
         </div>
       </div>
