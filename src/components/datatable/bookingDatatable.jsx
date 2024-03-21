@@ -421,7 +421,7 @@ const BookingDatatable = () => {
     <div className="datatable">
       <Snakbar ref={snackbarRef} message={msg} type={sType} />
       <div className="datatableTitle">
-        AllBookings
+        All Bookings
 
         <div className="search">
           <input
