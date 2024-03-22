@@ -1,19 +1,20 @@
 import "./singleDriver.scss";
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
-import { useLocation, Link, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { db } from "../../firebase";
 import {
   collection,
   doc,
   getDoc,
-  onSnapshot,
   getDocs,
   query,
   where,
 } from "firebase/firestore";
 import DriverTable from "../../components/table/DriverTable";
+import ImageViewModal from '../../components/modal/image-view-modal';
+
 
 const SingleDriver = (props) => {
   //   const location = useLocation();
@@ -30,6 +31,7 @@ const SingleDriver = (props) => {
   const [lMData, setLData] = useState([]);
   const [mData, setMData] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState("all");
+  const [loading, setLoading] = useState(true);
 
 
   // fetching riders details
@@ -40,7 +42,10 @@ const SingleDriver = (props) => {
       const userRef = doc(db, "Drivers", id);
       const userDoc = await getDoc(userRef);
       if (isMounted && userDoc.exists()) {
-        setData(userDoc.data());
+        setData({
+          ...userDoc.data(),
+          documents: Array.isArray(userDoc.data().Documents) ? userDoc.data().Documents : [],
+        });
       }
     };
 
@@ -136,7 +141,7 @@ const SingleDriver = (props) => {
       try {
         let bookingsData = [];
         let totalAmount = 0;
-        // setLoading(true);
+        setLoading(true);
 
         if (selectedFilter === "all") {
           const earningsQuery = query(
@@ -170,7 +175,6 @@ const SingleDriver = (props) => {
           earningsData.forEach((earnings) => {
             const booking = earnings.data();
             totalAmount += parseFloat(booking.Amount);
-            console.log(booking.BookingID);
           });
 
           if (isMounted) {
@@ -265,7 +269,6 @@ const SingleDriver = (props) => {
           earningsData.forEach((earnings) => {
             const booking = earnings.data();
             totalAmount += parseFloat(booking.Amount);
-            console.log(booking.BookingID);
           });
 
           if (isMounted) {
@@ -282,7 +285,7 @@ const SingleDriver = (props) => {
       } catch (error) {
         console.log(error);
       } finally {
-        // setLoading(false);
+        setLoading(false);
       }
     }
 
@@ -400,6 +403,18 @@ const SingleDriver = (props) => {
     });
   };
 
+  const [selectedImagePath, setSelectedImagePath] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleImageClick = (imageUrl) => {
+    setSelectedImagePath(imageUrl);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="singleDriver">
       <Sidebar />
@@ -508,11 +523,28 @@ const SingleDriver = (props) => {
                     {/* {row?.Documents.map((doc) => (
                       <img src={doc} alt="avatar" className="itemImg" />
                     ))} */}
-                    <img
-                      src={data.Documents}
-                      alt="avatar"
-                      className="itemImg"
-                    />
+                    {data.documents && data.documents.length > 0 ? (
+                      data.documents.map((imageUrl, index) => (
+                        <div key={index}>
+                          <img
+                            src={imageUrl}
+                            alt={`Rider's Documents ${index + 1}`}
+                            className="documents-itemImg"
+                            onClick={() => handleImageClick(imageUrl)}
+                            style={{ cursor: 'pointer' }}
+                          />
+
+                          <ImageViewModal
+                            title={'Rider\'s Document'}
+                            show={isModalOpen}
+                            onHide={handleCloseModal}
+                            imagePath={selectedImagePath}
+                          />
+                        </div>
+                      ))
+                    ) : (
+                      <p> No documents available.</p>
+                    )}
                   </div>
                 </div>
               </div>
