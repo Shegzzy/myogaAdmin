@@ -6,9 +6,10 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { useState, useEffect } from "react";
-import { getDocs, where, query, collection } from "firebase/firestore";
-import { db } from "./../../firebase";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+// import { getDocs, where, query, collection } from "firebase/firestore";
+// import { db } from "./../../firebase";
 import { format } from 'date-fns';
 import TablePagination from '@mui/material/TablePagination';
 
@@ -53,7 +54,9 @@ const DriverTable = (props) => {
                   {row["Booking Number"]}
                 </TableCell>
                 <TableCell className="tableCell">
-                  {row["Customer Name"]}
+                  <Link to={`/users/${row["Customer ID"]}`}>
+                    {row["Customer Name"]}
+                  </Link>
                 </TableCell>
                 <TableCell className="tableCell">
                   {row["Customer Phone"]}

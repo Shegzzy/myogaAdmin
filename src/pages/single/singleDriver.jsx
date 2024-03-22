@@ -520,9 +520,6 @@ const SingleDriver = (props) => {
                   </div>
                   <div className="detailItem">
                     <span className="itemKey">Documents: </span>
-                    {/* {row?.Documents.map((doc) => (
-                      <img src={doc} alt="avatar" className="itemImg" />
-                    ))} */}
                     {data.documents && data.documents.length > 0 ? (
                       data.documents.map((imageUrl, index) => (
                         <div key={index}>

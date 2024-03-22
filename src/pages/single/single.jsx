@@ -12,6 +12,7 @@ const Single = (props) => {
   const { id } = useParams();
   const [data, setData] = useState([]);
 
+  // fetching users details
   useEffect(() => {
     const fetchData = async () => {
       let isMounted = true;
@@ -30,6 +31,8 @@ const Single = (props) => {
     };
     fetchData();
   }, [id]);
+
+
   return (
     <div className="single">
       <Sidebar />
