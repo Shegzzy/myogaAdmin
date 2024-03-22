@@ -29,7 +29,10 @@ const SingleDriver = (props) => {
   const [lWData, setLWData] = useState([]);
   const [lMData, setLData] = useState([]);
   const [mData, setMData] = useState([]);
+  const [selectedFilter, setSelectedFilter] = useState("all");
 
+
+  // fetching riders details
   useEffect(() => {
     let isMounted = true;
 
@@ -48,89 +51,244 @@ const SingleDriver = (props) => {
     };
   }, [id]);
 
-  //   useEffect(() => {
-  //     const fetchData = async () => {
-  //       try {
-  //         const profile = [];
-  //         const docRef = doc(db, "Drivers", userID);
-  //         const docSnap = await getDoc(docRef);
-  //         if (docSnap.exists()) {
-  //           profile.push({ id: docSnap.id, ...docSnap.data() });
-  //           setData(profile);
-  //         } else {
-  //           alert("No such document!");
-  //         }
-  //       } catch (error) {
-  //         alert(error);
-  //       }
-  //     };
-  //     fetchData();
-  //     getEarnings();
-  //     getBookings();
-  //     getData();
-  //   });
-
+  // fetching rider's earnings
   useEffect(() => {
-    const getEarnings = async () => {
-      let isMounted = true;
+    let isMounted = true;
+    try {
+      const getEarnings = async () => {
 
-      const bookingsQuery = query(
-        collection(db, "Bookings"),
-        where("Driver ID", "==", id),
-        where("Status", "==", "completed")
-      );
-      const unsubscribe = onSnapshot(bookingsQuery, (snapshot) => {
         let totalAmount = 0;
-        snapshot.forEach((doc) => {
-          const booking = doc.data();
+
+        const earningsQuery = query(
+          collection(db, "Earnings"),
+          where("Driver", "==", id),
+        );
+
+        const earningsData = await getDocs(earningsQuery);
+
+        earningsData.forEach((earnings) => {
+          const booking = earnings.data();
           totalAmount += parseFloat(booking.Amount);
         });
+
         if (isMounted) {
           setTotalEarnings(totalAmount);
-          setEarnL(snapshot.docs.length);
         }
-      });
-
-      return () => {
-        isMounted = false;
-        unsubscribe();
       };
-    };
 
-    getEarnings();
+      getEarnings();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      isMounted = false;
+    }
+
   }, [id]);
 
+  // fetching rider's handled bookings
   useEffect(() => {
     const getBookings = async () => {
       let isMounted = true;
+      let bookingsData = [];
 
       const bookingsQuery = query(
         collection(db, "Bookings"),
         where("Driver ID", "==", id)
       );
-      const unsubscribe = onSnapshot(bookingsQuery, (snapshot) => {
-        const bookingsData = [];
-        snapshot.forEach((doc) => {
-          const booking = doc.data();
-          const bookingId = doc.id;
-          bookingsData.push({ ...booking, id: bookingId });
-        });
-        if (isMounted) {
-          bookingsData.sort(
-            (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
-          );
-          setBookingData(bookingsData);
-          setBookL(snapshot.docs.length);
-        }
+
+      const completedBookingsQuery = query(
+        collection(db, "Bookings"),
+        where("Driver ID", "==", id),
+        where("Status", "==", "completed")
+      );
+
+      const querySnapshot = await getDocs(bookingsQuery);
+      const queryCompletedSnapshot = await getDocs(completedBookingsQuery);
+
+      querySnapshot.forEach((doc) => {
+        const booking = doc.data();
+        const bookingId = doc.id;
+        bookingsData.push({ ...booking, id: bookingId });
       });
+      if (isMounted) {
+        bookingsData.sort(
+          (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
+        );
+        setBookingData(bookingsData);
+        setBookL(bookingsData.length);
+        setEarnL(queryCompletedSnapshot.docs.length);
+      }
 
       return () => {
         isMounted = false;
-        unsubscribe();
       };
     };
     getBookings();
   }, [id]);
+
+  // Function for weekly and monthly query
+  useEffect(() => {
+    let isMounted = true;
+    let startOfPeriod, endOfPeriod;
+
+
+    const fetchDataByWeek = async () => {
+      try {
+        let bookingsData = [];
+        let totalAmount = 0;
+        // setLoading(true);
+
+        if (selectedFilter === "all") {
+          const earningsQuery = query(
+            collection(db, "Earnings"),
+            where("Driver", "==", id)
+          );
+
+          const bookingsQuery = query(
+            collection(db, "Bookings"),
+            where("Driver ID", "==", id)
+          );
+
+          const completedBookingsQuery = query(
+            collection(db, "Bookings"),
+            where("Driver ID", "==", id),
+            where("Status", "==", "completed")
+          );
+
+          const earningsData = await getDocs(earningsQuery);
+          const querySnapshot = await getDocs(bookingsQuery);
+          const queryCompletedSnapshot = await getDocs(completedBookingsQuery);
+
+
+          querySnapshot.forEach((doc) => {
+            const booking = doc.data();
+            const bookingId = doc.id;
+            bookingsData.push({ ...booking, id: bookingId });
+          });
+
+
+          earningsData.forEach((earnings) => {
+            const booking = earnings.data();
+            totalAmount += parseFloat(booking.Amount);
+            console.log(booking.BookingID);
+          });
+
+          if (isMounted) {
+            bookingsData.sort(
+              (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
+            );
+            setBookingData(bookingsData);
+            setBookL(bookingsData.length);
+            setTotalEarnings(totalAmount);
+            setEarnL(queryCompletedSnapshot.docs.length);
+          }
+        } else {
+          const today = new Date();
+
+          // Calculate the start and end dates based on the selected filter
+          if (selectedFilter === "7") {
+            // Last Week
+            startOfPeriod = new Date(today);
+            startOfPeriod.setDate(today.getDate() - today.getDay() - 7);
+            endOfPeriod = new Date(today);
+            endOfPeriod.setDate(today.getDate() - today.getDay() - 1);
+          } else if (selectedFilter === "1") {
+            // Two Weeks Ago
+            startOfPeriod = new Date(today);
+            startOfPeriod.setDate(today.getDate() - today.getDay() - 14);
+            endOfPeriod = new Date(today);
+            endOfPeriod.setDate(today.getDate() - today.getDay() - 8);
+          } else if (selectedFilter === "2") {
+            // Three Weeks Ago
+            startOfPeriod = new Date(today);
+            startOfPeriod.setDate(today.getDate() - today.getDay() - 21);
+            endOfPeriod = new Date(today);
+            endOfPeriod.setDate(today.getDate() - today.getDay() - 15);
+          } else if (selectedFilter === "3") {
+            // Four Weeks Ago
+            startOfPeriod = new Date(today);
+            startOfPeriod.setDate(today.getDate() - today.getDay() - 28);
+            endOfPeriod = new Date(today);
+            endOfPeriod.setDate(today.getDate() - today.getDay() - 22);
+          } else if (selectedFilter === "30") {
+            // Last Month
+            startOfPeriod = new Date(today);
+            startOfPeriod.setMonth(today.getMonth() - 1, 1);
+            startOfPeriod.setHours(0, 0, 0, 0);
+            endOfPeriod = new Date(startOfPeriod.getFullYear(), startOfPeriod.getMonth() + 1, 0);
+            // endOfPeriod.setHours(23, 59, 59, 999);
+          } else if (selectedFilter === "60") {
+            // Two Months Ago
+            startOfPeriod = new Date(today);
+            startOfPeriod.setMonth(today.getMonth() - 2, 1);
+            startOfPeriod.setHours(0, 0, 0, 0);
+            endOfPeriod = new Date(today);
+            endOfPeriod.setMonth(today.getMonth() - 1, 0);
+          }
+
+
+
+          const earningsQuery = query(
+            collection(db, "Earnings"),
+            where("Driver", "==", id),
+            where("DateCreated", ">=", startOfPeriod.toISOString()),
+            where("DateCreated", "<=", endOfPeriod.toISOString())
+          );
+
+          const bookingsQuery = query(
+            collection(db, "Bookings"),
+            where("Driver ID", "==", id),
+            where("Date Created", ">=", startOfPeriod.toISOString()),
+            where("Date Created", "<=", endOfPeriod.toISOString())
+          );
+
+          const completedBookingsQuery = query(
+            collection(db, "Bookings"),
+            where("Driver ID", "==", id),
+            where("Status", "==", "completed"),
+            where("Date Created", ">=", startOfPeriod.toISOString()),
+            where("Date Created", "<=", endOfPeriod.toISOString())
+          );
+
+          const earningsData = await getDocs(earningsQuery);
+          const querySnapshot = await getDocs(bookingsQuery);
+          const queryCompletedSnapshot = await getDocs(completedBookingsQuery);
+
+
+          querySnapshot.forEach((doc) => {
+            const booking = doc.data();
+            const bookingId = doc.id;
+            bookingsData.push({ ...booking, id: bookingId });
+          });
+
+
+          earningsData.forEach((earnings) => {
+            const booking = earnings.data();
+            totalAmount += parseFloat(booking.Amount);
+            console.log(booking.BookingID);
+          });
+
+          if (isMounted) {
+            bookingsData.sort(
+              (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
+            );
+            setBookingData(bookingsData);
+            setBookL(bookingsData.length);
+            setTotalEarnings(totalAmount);
+            setEarnL(queryCompletedSnapshot.docs.length);
+          }
+
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        // setLoading(false);
+      }
+    }
+
+    fetchDataByWeek();
+
+  }, [selectedFilter]);
 
   useEffect(() => {
     getData();
@@ -366,8 +524,22 @@ const SingleDriver = (props) => {
             <div className="featured">
               <div className="top">
                 <h1 className="title">Total Earning</h1>
+                <select
+                  className="chart-selects"
+                  value={selectedFilter}
+                  onChange={(e) => setSelectedFilter(e.target.value)}
+                >
+                  <option value="all">Total Earnings</option>
+                  <option value="7">Last Week</option>
+                  <option value="1">Two Weeks Ago</option>
+                  <option value="2">Three Weeks Ago</option>
+                  <option value="3">Four Weeks Ago</option>
+                  <option value="30">Last Month</option>
+                  <option value="60">Two Months Ago</option>
+                </select>
               </div>
               <div className="bottom">
+                <div className="itemTitle">Total Earning</div>
                 <p className="amount">
                   {new Intl.NumberFormat("en-NG", {
                     style: "currency",
@@ -388,7 +560,7 @@ const SingleDriver = (props) => {
                         .format(mData)
                         .replace(".00", "")}
                     </div>
-                    <div className="itemTitle">Last Month Earning</div>
+                    {/* <div className="itemTitle">Last Month Earning</div>
                     <div className="itemResult">
                       {new Intl.NumberFormat("en-NG", {
                         style: "currency",
@@ -414,7 +586,7 @@ const SingleDriver = (props) => {
                       })
                         .format(lWData)
                         .replace(".00", "")}
-                    </div>
+                    </div> */}
                     <div className="itemTitle">Total Trips</div>
                     <div className="itemResult">{bookL}</div>
                     <div className="itemTitle">Completed Trips</div>

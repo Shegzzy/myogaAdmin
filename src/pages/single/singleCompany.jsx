@@ -1,9 +1,9 @@
 import "./singleCompany.scss";
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
+// import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
 import { db } from "../../firebase";
 import {
   collection,
@@ -25,6 +25,8 @@ import {
 import TablePagination from '@mui/material/TablePagination';
 import ImageViewModal from '../../components/modal/image-view-modal';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
+import { format } from 'date-fns';
+
 
 
 const SingleCompany = (props) => {
@@ -69,15 +71,17 @@ const SingleCompany = (props) => {
     setPage(0);
   };
 
-  console.log(companyId)
-
   useEffect(() => {
-    fetchUser();
-    getEarnings();
-    getData();
-    getRiders();
-    fetchEarningsData();
-    fetchCompanyRatings();
+    try {
+      fetchUser();
+      getEarnings();
+      getData();
+      getRiders();
+      fetchEarningsData();
+      fetchCompanyRatings();
+    } catch (error) {
+      console.log(error);
+    }
   }, [companyId, name]);
 
   // Function for weekly query
@@ -327,7 +331,6 @@ const SingleCompany = (props) => {
       setTotal(totalAmount);
       setInFlow(roundEightyFivePercentage);
       setOutFlow(roundFifteenPercent);
-      setEarnL(querySnapshot.docs.length);
     } catch (error) {
       console.error("Error fetching earnings:", error);
     }
@@ -480,6 +483,7 @@ const SingleCompany = (props) => {
       setBookingsData(bookings);
       setRData(ridersData);
       setRiderL(querySnapshot.docs.length);
+      setEarnL(bookings.length);
 
     } catch (error) {
       console.error("Error fetching riders:", error);
@@ -1158,9 +1162,7 @@ const SingleCompany = (props) => {
                           {row.Verified === "1" ? "Verified" : "Unverified"}
                         </TableCell>
                         <TableCell className="tableCell">
-                          {new Date(row["Date Created"]).toLocaleDateString(
-                            "en-US"
-                          )}
+                          {format(new Date(row["Date Created"]), 'dd/MM/yyyy')}
                         </TableCell>
                       </TableRow>
                     ))
@@ -1214,11 +1216,7 @@ const SingleCompany = (props) => {
                         {row["Customer Name"]}
                       </TableCell>
                       <TableCell className="tableCell">
-                        {new Date(row["Date Created"]).toLocaleDateString("en-US", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })}
+                        {format(new Date(row["Date Created"]), "dd/MM/yyyy")}
                       </TableCell>
                       <TableCell className="tableCell">
                         {new Intl.NumberFormat("en-NG", {
@@ -1304,11 +1302,7 @@ const SingleCompany = (props) => {
                         {row["Customer Name"]}
                       </TableCell>
                       <TableCell className="tableCell">
-                        {new Date(row["Date Created"]).toLocaleDateString("en-US", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })}
+                        {format(new Date(row["Date Created"]), "dd/MM/yyyy")}
                       </TableCell>
                       <TableCell className="tableCell">
                         {new Intl.NumberFormat("en-NG", {

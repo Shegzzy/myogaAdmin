@@ -81,18 +81,22 @@
                             align-items: flex-start;
                             justify-content: flex-start;
                         
-                            .item{
-                                display: flex;
-                                flex-direction: column;
-
-                                .itemTitle{
-                                    align-items: flex-start;
-                                    justify-content: flex-start;
-                                }
-
-                                .itemResult{
-                                    font-size: 20px;
-                                }
+                            .item {
+                                    display: flex;
+                                    flex-direction: column;
+                            
+                                    .itemTitle {
+                                        align-items: flex-start;
+                                        // justify-content: center;
+                                        display: flex;
+                                    }
+                            
+                                    .itemResult {
+                                        font-size: 20px;
+                                        text-align: center;
+                                        display: flex;
+                                        // justify-content: center;
+                                    }
                             }
                         }
 
