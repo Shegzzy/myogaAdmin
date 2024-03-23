@@ -92,6 +92,12 @@ const Sidebar = () => {
               <span>Bookings</span>
             </li>
           </Link>
+          <Link to="/cancelled-bookings" style={{ textDecoration: "none" }}>
+            <li tabindex="0">
+              <LibraryBooksIcon className="icon" />
+              <span>Cancelled Bookings</span>
+            </li>
+          </Link>
           <Link to="/bookingstatus" style={{ textDecoration: "none" }}>
             <li tabindex="0">
               <GpsFixedIcon className="icon" />

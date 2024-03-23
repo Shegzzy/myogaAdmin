@@ -36,6 +36,7 @@ import EditCompany from './pages/edit/editCompany';
 import EditUser from './pages/edit/editUser';
 import EditProfile from './pages/edit/editProfile';
 import styled from "styled-components";
+import CancelledBookingList from './pages/list/cancelledBookingsList';
 
 
 
@@ -60,6 +61,7 @@ function App() {
 
   return (
     <div className={darkMode ? "app dark" : "app"}>
+      
       <BrowserRouter>
         <Routes>
           <Route path="/">
@@ -146,6 +148,14 @@ function App() {
               <Route path="new" element={
                 <RequireAuth>
                   <NewBooking />
+                </RequireAuth>
+              }
+              />
+            </Route>
+            <Route path="cancelled-bookings">
+              <Route index element={
+                <RequireAuth>
+                  <CancelledBookingList />
                 </RequireAuth>
               }
               />

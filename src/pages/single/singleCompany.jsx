@@ -102,6 +102,7 @@ const SingleCompany = (props) => {
 
           if (selectedFilter === "all") {
             getEarnings();
+            getRiders();
             fetchEarningsData();
           } else {
             const today = new Date();
@@ -197,8 +198,46 @@ const SingleCompany = (props) => {
               try {
                 const bookingsSnapshot = await getDocs(bookingsQuery);
 
+                const driverMap = new Map();
+                const driverBookings = [];
+
+                // Fetch driver and user IDs
+
+
                 if (!bookingsSnapshot.empty) {
                   const bookings = bookingsSnapshot.docs.map((bookingDoc) => bookingDoc.data());
+
+                  bookingsSnapshot.forEach((doc) => {
+                    const { "Driver ID": driverID } = doc.data();
+                    driverMap.set(driverID, "");
+                  });
+
+
+                  // Populate driver names
+                  await Promise.all(Array.from(driverMap.keys()).map(async (driverID) => {
+                    try {
+                      const driverDoc = await getDoc(doc(db, "Drivers", driverID));
+                      if (driverDoc.exists()) {
+                        const driverName = driverDoc.data().FullName;
+                        driverMap.set(driverID, driverName);
+                      } else {
+                        console.log(`Driver with ID ${driverID} does not exist.`);
+                        driverMap.delete(driverID);
+                      }
+                    } catch (error) {
+                      console.error(`Error fetching driver with ID ${driverID}: ${error}`);
+                    }
+                  }));
+
+                  bookingsSnapshot.forEach((doc) => {
+                    const { "Driver ID": driverID } = doc.data();
+                    const driverName = driverMap.get(driverID);
+
+                    driverBookings.push({ ...doc.data(), driverName: driverName });
+                  });
+
+                  setBookingsData(driverBookings);
+
                   // Separate amounts based on payment method and calculate the sum
                   const cardPayments = bookings.filter((booking) => booking["Payment Method"] === "Card");
                   const cashPayments = bookings.filter((booking) => booking["Payment Method"] === "Cash on Delivery");
@@ -253,14 +292,14 @@ const SingleCompany = (props) => {
             setOutFlow(roundFifteenPercent);
             setCardPayments(sumCardPayments);
             setCashPayments(sumCashPayments);
-            setEarnL(earningsSnapshot.docs.length);
+            setEarnL(allBookings.length);
 
             allBookings.sort(
               (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
             );
 
             if (isMounted) {
-              setData(allBookings); // Set the filtered data to the state
+              setData(allBookings);
             }
           }
         } catch (error) {
@@ -601,6 +640,7 @@ const SingleCompany = (props) => {
           setOutFlow(roundFifteenPercent);
           setCardPayments(sumCardPayments);
           setCashPayments(sumCashPayments);
+
           allBookings.sort(
             (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
           );

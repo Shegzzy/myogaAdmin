@@ -85,7 +85,38 @@ const EarningDatatable = () => {
           setLoading(true);
 
           if (selectedFilter === "all") {
+            const companiesSnapshot = await getDocs(collection(db, "Companies"));
+            const companies = companiesSnapshot.docs.map(doc => ({
+              id: doc.id,
+              name: doc.data().company,
+            }));
 
+            // Fetch earnings for each company
+            const totalEarningsPromises = companies.map(async (company) => {
+              const earningsQuery = query(
+                collection(db, "Earnings"),
+                where("Company", "==", company.name)
+              );
+
+              const earningsSnapshot = await getDocs(earningsQuery);
+              const totalEarnings = earningsSnapshot.docs.reduce((total, doc) => {
+                return total + parseFloat(doc.data().Amount);
+              }, 0);
+
+              return {
+                id: company.id,
+                name: company.name,
+                totalEarnings: totalEarnings.toFixed(0),
+                fifteenPercent: (totalEarnings * 0.15).toFixed(0),
+                eightyFivePercent: (totalEarnings * 0.85).toFixed(0),
+              };
+            });
+
+            const totalEarningsResults = await Promise.all(totalEarningsPromises);
+
+            if (isMounted) {
+              setData(totalEarningsResults);
+            }
           } else {
             const today = new Date();
 
@@ -198,6 +229,7 @@ const EarningDatatable = () => {
         >{params.row.name}</Link>
       ),
     },
+
     {
       field: 'totalEarnings', headerName: 'Total Earnings', width: 150, renderCell: (params) => {
         return (
@@ -212,6 +244,7 @@ const EarningDatatable = () => {
         )
       }
     },
+
     {
       field: 'fifteenPercent', headerName: '15% of Total Earnings', width: 200, renderCell: (params) => {
         return (
@@ -226,6 +259,7 @@ const EarningDatatable = () => {
         )
       }
     },
+
     {
       field: 'eightyFivePercent', headerName: '85% of Total Earnings', width: 200, renderCell: (params) => {
         return (
@@ -240,6 +274,15 @@ const EarningDatatable = () => {
         )
       }
     },
+
+    {
+      field: '', headerName: 'To be Balanced', width: 200,
+    },
+
+    {
+      field: '_', headerName: 'To Pay', width: 200,
+    },
+
   ];
 
   return (
@@ -262,14 +305,24 @@ const EarningDatatable = () => {
           </select>
         </div>
       </div>
-      <DataGrid
+      {!loading ? (<DataGrid
         className="datagrid"
         rows={data}
         columns={companyEarningColumns}
         pageSize={9}
         rowsPerPageOptions={[9]}
-        checkboxSelection
-      />
+      />) : (<div className="detailItem">
+        <span className="itemKey">
+          <div className="no-data-message">
+            <div className="single-container">
+              <div className="loader">
+                <div className="lds-dual-ring"></div>
+                <div>Loading... </div>
+              </div>
+            </div>
+          </div>
+        </span>
+      </div>)}
     </div>
   );
 };

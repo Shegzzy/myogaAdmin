@@ -3,6 +3,7 @@ import ModalContainer from './components/modal/ModalContainer';
 import VerifyModal from './components/modal/VerifyModal';
 import { Link } from "react-router-dom";
 import { format } from 'date-fns';
+import RefundModal from './components/modal/refundModal';
 
 
 export const userColumns = [
@@ -268,7 +269,177 @@ export const bookingColumns = [
     {
         field: "Date Created", headerName: "Date Created", width: 150,
         renderCell: (params) => {
-            const formattedDate = format(new Date(params.value), 'MM/dd/yyyy'); // Format the date
+            const formattedDate = format(new Date(params.value), 'dd/MM/yyyy'); // Format the date
+            return <div>{formattedDate}</div>;
+        }
+    },
+];
+
+export const cancelledBookingColumns = [
+    // { field: 'id', headerName: 'ID', width: 100 },
+    {
+        field: "Booking Number", headerName: "Booking Number", width: 150,
+    },
+    // {
+    //     field: "Customer Name", headerName: "Cusomer Name", width: 150,
+    // },
+    {
+        field: "Customer Phone", headerName: "Customer Phone", width: 150,
+    },
+    {
+        field: 'Customer Name', headerName: "Customer Name", width: 100,
+        renderCell: (params) => {
+            return (
+                <div className='cellStatus'>
+                    <Link to={`/users/${params.row["Customer ID"]}`}>
+                        {params.row["Customer Name"]}
+                    </Link>
+                </div>
+            )
+        }
+    },
+    {
+        field: "Driver Name", headerName: "Rider's Name", width: 100,
+        renderCell: (params) => {
+            return (
+                <div className='cellStatus'>
+                    <Link to={`/drivers/${params.row["Driver ID"]}`}>
+                        {params.row["Driver Name"]}
+                    </Link>
+                </div>
+
+            )
+        }
+    },
+    {
+        field: ['PickUp Address'], headerName: "Pick Up Address", width: 150,
+    },
+    {
+        field: ['DropOff Address'], headerName: "Drop Off Address", width: 150,
+    },
+    {
+        field: "Distance", headerName: "Distance", width: 80,
+    },
+    {
+        field: "Amount", headerName: "Amount NGN", width: 100,
+        renderCell: (params) => {
+            return (
+                <div className='cellStatus'>
+                    {new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: "NGN",
+                    })
+                        .format(params.row.Amount)
+                        .replace(".00", "")}
+                </div>
+            )
+        }
+    },
+    {
+        field: "Payment Method", headerName: "Payment Method", width: 150,
+    },
+    {
+        field: "Status", headerName: "Status", width: 100,
+        renderCell: (params) => {
+            return (
+                <div className={`cellWithStatus ${params.row.Status}`}>
+                    {params.row.Status}
+                    {<RefundModal id={params.row['Booking Number']} customerName={params.row["Customer Name"]} amount= {new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: "NGN",
+                    })
+                        .format(params.row.Amount)
+                        .replace(".00", "")}/>}
+                </div>
+            )
+        }
+    },
+    {
+        field: "Date Created", headerName: "Date Created", width: 150,
+        renderCell: (params) => {
+            const formattedDate = format(new Date(params.value), 'dd/MM/yyyy'); // Format the date
+            return <div>{formattedDate}</div>;
+        }
+    },
+];
+
+export const refundedBookingColumns = [
+    // { field: 'id', headerName: 'ID', width: 100 },
+    {
+        field: "Booking Number", headerName: "Booking Number", width: 150,
+    },
+    
+    {
+        field: "Customer Phone", headerName: "Customer Phone", width: 150,
+    },
+    {
+        field: 'Customer Name', headerName: "Customer Name", width: 100,
+        renderCell: (params) => {
+            return (
+                <div className='cellStatus'>
+                    <Link to={`/users/${params.row["Customer ID"]}`}>
+                        {params.row["Customer Name"]}
+                    </Link>
+                </div>
+            )
+        }
+    },
+    {
+        field: "Driver Name", headerName: "Rider's Name", width: 100,
+        renderCell: (params) => {
+            return (
+                <div className='cellStatus'>
+                    <Link to={`/drivers/${params.row["Driver ID"]}`}>
+                        {params.row["Driver Name"]}
+                    </Link>
+                </div>
+
+            )
+        }
+    },
+    {
+        field: ['PickUp Address'], headerName: "Pick Up Address", width: 150,
+    },
+    {
+        field: ['DropOff Address'], headerName: "Drop Off Address", width: 150,
+    },
+    {
+        field: "Distance", headerName: "Distance", width: 80,
+    },
+    {
+        field: "Amount", headerName: "Amount NGN", width: 100,
+        renderCell: (params) => {
+            return (
+                <div className='cellStatus'>
+                    {new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: "NGN",
+                    })
+                        .format(params.row.Amount)
+                        .replace(".00", "")}
+                </div>
+            )
+        }
+    },
+    {
+        field: "Payment Method", headerName: "Payment Method", width: 150,
+    },
+    {
+        field: "Status", headerName: "Status", width: 100,
+    },
+
+    {
+        field: "Date Created", headerName: "Date Created", width: 150,
+        renderCell: (params) => {
+            const formattedDate = format(new Date(params.value), 'dd/MM/yyyy'); // Format the date
+            return <div>{formattedDate}</div>;
+        }
+    },
+
+    {
+        field: "Refunded Date", headerName: "Date Refunded", width: 150,
+        renderCell: (params) => {
+            const formattedDate = format(new Date(params.value), 'dd/MM/yyyy'); // Format the date
             return <div>{formattedDate}</div>;
         }
     },
