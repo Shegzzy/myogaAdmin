@@ -14,10 +14,10 @@ function ViewSupport(props) {
     const handleShow = () => setShow(true);
 
     const handleUpdate = async () => {
-        const docRef = doc(db, 'Drivers', props.id);
+        const docRef = doc(db, 'supportTickets', props.id);
 
         await updateDoc(docRef, {
-            status: status,
+            status: "attended",
             timeStamp: serverTimestamp()
         });
     }
@@ -51,7 +51,7 @@ function ViewSupport(props) {
                     <Button variant="secondary" onClick={handleClose}>
                         Close
                     </Button>
-                    {props.status === "new" && (<button className="primaryBtn text-purple-600" form="verifyForm" type="submit" onClick={setStatus("assigned")}>Attend</button>)}
+                    {props.status === "new" && (<button className="primaryBtn text-purple-600" form="verifyForm" type="submit" onClick={handleUpdate}>Attend</button>)}
                 </Modal.Footer>
             </Modal>
         </>

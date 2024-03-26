@@ -37,6 +37,8 @@ import EditUser from './pages/edit/editUser';
 import EditProfile from './pages/edit/editProfile';
 import styled from "styled-components";
 import CancelledBookingList from './pages/list/cancelledBookingsList';
+import UnverifiedDriversList from './components/datatable/unverifiedDriverList';
+import UnverifiedDrivers from './pages/list/unverifiedDrivers';
 
 
 
@@ -105,12 +107,7 @@ function App() {
                 </RequireAuth>
               }
               />
-              <Route path="new" element={
-                <RequireAuth>
-                  <NewDriver />
-                </RequireAuth>
-              }
-              />
+              
             </Route>
             <Route path="company">
               <Route index element={
@@ -164,6 +161,14 @@ function App() {
               <Route index element={
                 <RequireAuth>
                   <StatusList />
+                </RequireAuth>
+              }
+              />
+            </Route>
+            <Route path="unverified-drivers">
+              <Route index element={
+                <RequireAuth>
+                  <UnverifiedDrivers />
                 </RequireAuth>
               }
               />

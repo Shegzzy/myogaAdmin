@@ -36,7 +36,11 @@ const DriverDatatable = () => {
       try {
         setLoading(true);
         if (selectedFilter === "all") {
-          const querySnapshot = await getDocs(collection(db, "Drivers"));
+          const querySnapshot = await getDocs(
+            query(collection(db, "Drivers"),
+              where("Verified", "==", "1")
+            )
+          );
           let list = [];
 
           querySnapshot.forEach((doc) => {
@@ -96,6 +100,7 @@ const DriverDatatable = () => {
 
           const querySnapshot = await getDocs(query(
             collection(db, "Drivers"),
+            where("Verified", "==", "1"),
             where("Date Created", ">=", startOfPeriod.toISOString()),
             where("Date Created", "<=", endOfPeriod.toISOString())
           ));
@@ -111,6 +116,7 @@ const DriverDatatable = () => {
 
         }
       } catch (error) {
+        console.log(error);
         setMsg(error.message);
         setType("error");
         snackbarRef.current.show();

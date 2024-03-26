@@ -1,7 +1,7 @@
 import './supportPage.scss';
 import SupportCard from '../support/SupportCard';
 import React, { useState, useEffect } from 'react';
-import { collection, onSnapshot, where, query, getDocs } from "firebase/firestore";
+import { collection, where, query, getDocs } from "firebase/firestore";
 import { db } from '../../firebase';
 import ViewSupport from '../modal/ViewSupport';
 
@@ -38,8 +38,11 @@ const SupportPage = () => {
 
         const supportData = await getDocs(unsub);
         let list = [];
-        const support = supportData.docs.map((supportDoc) => supportDoc.data());
-        list.push(...support);
+        // const support = supportData.docs.map((supportDoc) => supportDoc.data());
+        supportData.forEach((support) => {
+            list.push({ id: support.id, ...support.data() });
+
+        });
 
         list.sort(
             (a, b) => new Date(b.date) - new Date(a.date)
@@ -60,8 +63,9 @@ const SupportPage = () => {
 
         const supportData = await getDocs(unsub);
         let list = [];
-        const support = supportData.docs.map((supportDoc) => supportDoc.data());
-        list.push(...support);
+        supportData.forEach((support) => {
+            list.push({ id: support.id, ...support.data() });
+        });
 
         list.sort(
             (a, b) => new Date(b.date) - new Date(a.date)

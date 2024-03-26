@@ -15,7 +15,115 @@ const EarningProfits = () => {
   const [data, setData] = useState([]);
   const [fieldSum, setFieldSum] = useState(0);
   const [profitSum, setProfitSum] = useState(0);
+  const [lastMonthTotal, setLastMonthTotal] = useState(0);
+  const [lastMonthProfit, setLastMonthProfit] = useState(0);
+  const [lastTwoMonthTotal, setLastTwoMonthTotal] = useState(0);
+  const [lastTwoMonthProfit, setLastTwoMonthProfit] = useState(0);
 
+  //Calculate for last month earnings
+  useEffect(() => {
+    const fetchLastMonthTotal = async () => {
+
+      let list = [];
+      // Calculate today
+      const today = new Date();
+
+      // Calculate the first day of last month
+      const firstDayOfLastMonth = new Date(
+        today.getFullYear(),
+        today.getMonth() - 1,
+        1
+      );
+
+      // Calculate the last day of last month
+      const lastDayOfLastMonth = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        0,
+        23,
+        59,
+        59,
+        999
+      );
+
+      const q = query(
+        collection(db, "Earnings"),
+        where("DateCreated", ">=", firstDayOfLastMonth.toISOString()),
+        where("DateCreated", "<=", lastDayOfLastMonth.toISOString()),
+      );
+      const querySnapshot = await getDocs(q);
+
+      let total = 0;
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        total += parseFloat(data.Amount);
+      });
+      // Calculating 15% of the total earnings
+      const fifteenPercent = total * 0.15;
+      const roundPercentage = fifteenPercent.toFixed(0);
+
+
+
+      setData(list);
+      setLastMonthTotal(total);
+      setLastMonthProfit(roundPercentage);
+    }
+
+
+    fetchLastMonthTotal();
+  }, [lastMonthTotal, lastMonthProfit]);
+
+
+  //Calculate for last month earnings
+  useEffect(() => {
+    const fetchTwoMonthTotal = async () => {
+
+      // Calculate today
+      const today = new Date();
+
+      // Calculate the first day of last month
+      const firstDayOfLastTwoMonths = new Date(
+        today.getFullYear(),
+        today.getMonth() - 2,
+        1
+      );
+
+      // Calculate the last day of last month
+      const lastDayOfLastTwoMonths = new Date(
+        today.getFullYear(),
+        today.getMonth() - 1,
+        0,
+        23,
+        59,
+        59,
+        999
+      );
+
+      const q = query(
+        collection(db, "Earnings"),
+        where("DateCreated", ">=", firstDayOfLastTwoMonths.toISOString()),
+        where("DateCreated", "<=", lastDayOfLastTwoMonths.toISOString()),
+      );
+      const querySnapshot = await getDocs(q);
+
+      let total = 0;
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        total += parseFloat(data.Amount);
+      });
+      // Calculating 15% of the total earnings
+      const fifteenPercent = total * 0.15;
+      const roundPercentage = fifteenPercent.toFixed(0);
+
+
+
+      setLastTwoMonthTotal(total);
+      setLastTwoMonthProfit(roundPercentage);
+    }
+
+
+    fetchTwoMonthTotal();
+  }, [lastTwoMonthTotal, lastTwoMonthProfit]);
 
   useEffect(() => {
 
@@ -374,10 +482,36 @@ const EarningProfits = () => {
     .format(fieldSum)
     .replace(".00", "");
 
+  const formattedLastMonthTotal = new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+  })
+    .format(lastMonthTotal)
+    .replace(".00", "");
+
+  const formattedLastTwoMonthTotal = new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+  })
+    .format(lastTwoMonthTotal)
+    .replace(".00", "");
+
   const formattedProfit = new Intl.NumberFormat("en-NG", {
     style: "currency",
     currency: "NGN",
   }).format(profitSum)
+    .replace(".00", "");
+
+  const formattedLastMonthProfit = new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+  }).format(lastMonthProfit)
+    .replace(".00", "");
+
+  const formattedLastTwoMonthProfit = new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+  }).format(lastTwoMonthProfit)
     .replace(".00", "");
 
   return (
@@ -401,26 +535,63 @@ const EarningProfits = () => {
           <option value={getPreviousMonth(6)}>{getPreviousMonth(6)}</option>
         </select>
       </div>
-      <div className="bottom">
-        <p className="title">{Selected} Earnings and Profits</p>
-        <div className="bottoms">
-          <div className="place__holder">
-            <div className="featuredChart total__holder">
+      {Selected === "Total" ? (
+        <div className="bottom">
+          <p className="title">Last Six Months Earnings and Profits</p>
+          <div className="bottoms">
+            <div className="place__holder">
               <p className="amounts" id="dynamicFontSize">{formattedAmount}</p>
+              <p className="title">Monthly Earnings</p>
             </div>
 
-            <p className="title">Monthly Earnings</p>
-          </div>
-
-          <div className="place__holder">
-            <div className="featuredChart total__holder">
+            <div className="place__holder">
               <p className="amounts" id="dynamicFontSize">{formattedProfit}</p>
+
+              <p className="title">Monthly Profits</p>
+            </div>
+          </div>
+
+          <div className="bottoms">
+            <div className="place__holder">
+              <p className="amounts" id="dynamicFontSize">{formattedLastMonthTotal}</p>
+              <p className="title">{getPreviousMonth()} Earnings</p>
             </div>
 
-            <p className="title">Monthly Profits</p>
+            <div className="place__holder">
+              <p className="amounts" id="dynamicFontSize">{formattedLastMonthProfit}</p>
+
+              <p className="title">{getPreviousMonth()} Profits</p>
+            </div>
           </div>
-        </div>
-      </div>
+
+          <div className="bottoms">
+            <div className="place__holder">
+              <p className="amounts" id="dynamicFontSize">{formattedLastTwoMonthTotal}</p>
+              <p className="title">{getPreviousMonth(2)} Earnings</p>
+            </div>
+
+            <div className="place__holder">
+              <p className="amounts" id="dynamicFontSize">{formattedLastTwoMonthProfit}</p>
+
+              <p className="title">{getPreviousMonth(2)} Profits</p>
+            </div>
+          </div>
+        </div>) : (
+        <div className="bottom">
+          <p className="title">{Selected} Earnings and Profits</p>
+          <div className="bottoms">
+            <div className="place__holder">
+              <p className="amounts" id="dynamicFontSize">{formattedAmount}</p>
+              <p className="title">Monthly Earnings</p>
+            </div>
+
+            <div className="place__holder">
+              <p className="amounts" id="dynamicFontSize">{formattedProfit}</p>
+
+              <p className="title">Monthly Profits</p>
+            </div>
+          </div>
+        </div>)}
     </div>
   );
 };

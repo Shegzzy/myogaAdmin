@@ -36,7 +36,7 @@ const OrderStatus = (props) => {
     fetchBooking();
     fetchUser();
     fetchDriver();
-  });
+  }, [Bdata, Cdata, Ddata]);
 
   const fetchBooking = async () => {
     try {
@@ -66,7 +66,7 @@ const OrderStatus = (props) => {
           arrivedD: doc.data()["Arrive DropOff"],
           complete: doc.data().Completed,
         });
-        console.log(doc.id, " => ", doc.data());
+        // console.log(doc.id, " => ", doc.data());
       });
       setBdata(booking);
     } catch (error) {
@@ -88,7 +88,7 @@ const OrderStatus = (props) => {
           img: docSnap.data()["Profile Photo"],
         });
         setCdata(userData);
-        console.log("Document USER data:", docSnap.data());
+        // console.log("Document USER data:", docSnap.data());
       } else {
         console.log("No such document!");
       }
@@ -115,7 +115,7 @@ const OrderStatus = (props) => {
           vehicleC: docSnap.data()["Vehicle Color"],
         });
         setDdata(DriverData);
-        console.log("Document DRIVER data:", docSnap.data());
+        // console.log("Document DRIVER data:", docSnap.data());
       } else {
         console.log("No such document!");
       }

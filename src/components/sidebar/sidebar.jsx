@@ -20,6 +20,7 @@ import { auth } from "./../../firebase";
 import { signOut } from "firebase/auth";
 import Snakbar from "../snackbar/Snakbar";
 import MyOga from "../../myogaIcon3.png";
+import { AttachMoney, CancelPresentation, CarCrash } from "@mui/icons-material";
 
 const Sidebar = () => {
   const { dispatch } = useContext(DarkModeContext, AuthContext);
@@ -80,6 +81,13 @@ const Sidebar = () => {
               <span>Riders</span>
             </li>
           </Link>
+          <Link to="/unverified-drivers" style={{ textDecoration: "none" }}>
+            <li tabindex="0">
+              <CarCrash className="icon" />
+              <span>Unverified Riders</span>
+            </li>
+          </Link>
+
           <Link to="/company" style={{ textDecoration: "none" }}>
             <li tabindex="0">
               <EmojiTransportationIcon className="icon" />
@@ -94,7 +102,7 @@ const Sidebar = () => {
           </Link>
           <Link to="/cancelled-bookings" style={{ textDecoration: "none" }}>
             <li tabindex="0">
-              <LibraryBooksIcon className="icon" />
+              <CancelPresentation className="icon" />
               <span>Cancelled Bookings</span>
             </li>
           </Link>
@@ -106,7 +114,7 @@ const Sidebar = () => {
           </Link>
           <Link to="/earnings" style={{ textDecoration: "none" }}>
             <li tabindex="0">
-              <DonutSmallIcon className="icon" />
+              <AttachMoney className="icon" />
               <span>Earnings</span>
             </li>
           </Link>
