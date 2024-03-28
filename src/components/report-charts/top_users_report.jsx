@@ -1,21 +1,18 @@
 import "../featured/featured.scss";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import { useState, useEffect } from "react";
 import {
     collection,
     getDocs,
     where,
     query,
-    getDoc,
-    doc,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 
 const TopUsers = () => {
     const [userData, setUserData] = useState([]);
-    useEffect(() => {
 
+
+    useEffect(() => {
         const getUser = async () => {
             const usersBookingsInfo = {};
 
@@ -27,39 +24,50 @@ const TopUsers = () => {
             // Collecting Users IDs
             const usersIds = usersSnapshot.docs.map((usersDoc) => usersDoc.id);
 
-            const bookingsQuery = query(
-                collection(db, "Bookings"),
-                where("Customer ID", "in", usersIds),
-            );
+            // Split usersIds into chunks of 30 or fewer IDs
+            const chunks = [];
+            for (let i = 0; i < usersIds.length; i += 30) {
+                chunks.push(usersIds.slice(i, i + 30));
+            }
 
-            const bookingSnapshot = await getDocs(bookingsQuery);
+            // Perform queries for each chunk of usersIds
+            for (const chunk of chunks) {
+                const bookingsQuery = query(
+                    collection(db, "Bookings"),
+                    where("Customer ID", "in", chunk),
+                );
 
-            // Count the bookings and store user information
-            bookingSnapshot.forEach((bookingDoc) => {
-                const bookingData = bookingDoc.data();
-                const customerId = bookingData["Customer ID"];
+                const bookingSnapshot = await getDocs(bookingsQuery);
 
-                if (!usersBookingsInfo[customerId]) {
-                    usersBookingsInfo[customerId] = {
-                        bookingCount: 0,
-                        userName: "",
-                    };
-                }
+                // Count the bookings and store user information
+                bookingSnapshot.forEach((bookingDoc) => {
+                    const bookingData = bookingDoc.data();
+                    const customerId = bookingData["Customer ID"];
 
-                usersBookingsInfo[customerId].bookingCount++;
+                    if (!usersBookingsInfo[customerId]) {
+                        usersBookingsInfo[customerId] = {
+                            bookingCount: 0,
+                            userName: "",
+                        };
+                    }
 
-                // Fetch user name from the usersSnapshot
-                const userDoc = usersSnapshot.docs.find((userDoc) => userDoc.id === customerId);
-                if (userDoc) {
-                    const userData = userDoc.data();
-                    usersBookingsInfo[customerId].userName = userData.FullName; // Replace with the actual field name for user name
-                }
-            });
+                    usersBookingsInfo[customerId].bookingCount++;
+
+                    // Fetch user name from the usersSnapshot
+                    const userDoc = usersSnapshot.docs.find((userDoc) => userDoc.id === customerId);
+                    if (userDoc) {
+                        const userData = userDoc.data();
+                        usersBookingsInfo[customerId].userName = userData.FullName;
+                    }
+                });
+            }
+
             setUserData(usersBookingsInfo);
         };
 
         getUser();
-    });
+    }, []);
+
 
 
     return (
@@ -77,17 +85,23 @@ const TopUsers = () => {
                     </thead>
                     <tbody>
                         {Object.keys(userData)
-                            .filter(userId => userData[userId].bookingCount > 5)
-                            .slice(0, 50)
+                            .filter(userId => userData[userId].bookingCount >= 5)
                             .map(userId => {
                                 const userEntry = userData[userId];
-                                return (
-                                    <tr key={userId} className="user-entry">
-                                        <td>{userEntry.userName}</td>
-                                        <td>{userEntry.bookingCount}</td>
-                                    </tr>
-                                );
-                            })}
+                                return {
+                                    userId: userId,
+                                    userName: userEntry.userName,
+                                    bookingCount: userEntry.bookingCount
+                                };
+                            })
+                            .sort((a, b) => b.bookingCount - a.bookingCount)
+                            .slice(0, 50)
+                            .map((user, index) => (
+                                <tr key={user.userId} className="user-entry">
+                                    <td>{user.userName}</td>
+                                    <td>{user.bookingCount}</td>
+                                </tr>
+                            ))}
                     </tbody>
                 </table>
             </div>
