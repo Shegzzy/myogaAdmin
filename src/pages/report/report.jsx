@@ -19,19 +19,27 @@ const Report = () => {
         <div className="reportTitle">Reports</div>
         <div className="charts">
           <div class="row">
-            <div class="col-sm-5">
+            <div class="col-sm-6">
               <TopUsers title="Top 50 Users" />
+              <br />
               <CompletedBookingsChart
                 title="Completed Bookings Chart"
                 aspect={4 / 1}
               />
+              <br />
               <UsersChart title="Registered Users" aspect={4 / 1} />
-            </div>
-            <div class="col-sm-7">
-              <EarningProfits title="Monthly Earnings and Profits" />
-              <Chart title="Earnings (Revenue) 6 Months Curve" aspect={4 / 1} />
-              <ReportChart title="Registered Riders" aspect={4 / 1} />
+              <br />
               <CompanyChart title="Registered Companies" aspect={4 / 1} />
+            </div>
+            <div class="col-sm-6">
+              <EarningProfits title="Monthly Earnings and Profits" />
+              <br />
+              <Chart title="Earnings (Revenue) 6 Months Curve" aspect={4 / 1} />
+              <br />
+
+              <ReportChart title="Registered Riders" aspect={4 / 1} />
+
+
             </div>
 
           </div>
