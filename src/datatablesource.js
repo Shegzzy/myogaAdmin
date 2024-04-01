@@ -89,7 +89,7 @@ export const driverColumns = [
             return (
                 <div className={`cellWithVerify ${params.row.Verified}`}>
                     {params.row.Verified === "1" ? "verified" : "not verified"}
-                    {params.row.Verified === "0" ? <AssignModal value={params.row.Verified} Id={params.row.id} /> : <div className="verifiedButton">Verified</div>}
+                    {/* {params.row.Verified === "0" ? <AssignModal value={params.row.Verified} Id={params.row.id} /> : <div className="verifiedButton">Verified</div>} */}
                 </div>
             )
         }

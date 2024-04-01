@@ -34,14 +34,13 @@ const Report = () => {
             <div class="col-sm-6">
               <EarningProfits title="Monthly Earnings and Profits" />
               <br />
-              <Chart title="Earnings (Revenue) 6 Months Curve" aspect={4 / 1} />
-              <br />
 
               <ReportChart title="Registered Riders" aspect={4 / 1} />
-
+              <br />
 
             </div>
-
+            <br />
+            <Chart title="Earnings (Revenue) 6 Months Curve" aspect={4 / 1} />
           </div>
 
         </div>

@@ -6,6 +6,9 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  BarChart,
+  YAxis,
+  Bar,
 } from "recharts";
 import { collection, getDocs, where, query } from "firebase/firestore";
 import { db } from "../../firebase";
@@ -244,7 +247,6 @@ const Chart = ({ aspect, title }) => {
   };
 
   const data = [
-    { name: "Start", Total: 0 },
     { name: getPreviousMonth(6), Total: lastSixMonthData },
     { name: getPreviousMonth(5), Total: lastFiveMonthData },
     { name: getPreviousMonth(4), Total: lastFourMonthData },
@@ -258,40 +260,13 @@ const Chart = ({ aspect, title }) => {
         <div className="title">{title}</div>
       </div>
       <ResponsiveContainer width="100%" aspect={aspect}>
-        <AreaChart
-          width={730}
-          height={250}
-          data={data}
-          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-        >
-          <defs>
-            <linearGradient id="Total" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
-            </linearGradient>
-          </defs>
-          <XAxis dataKey="name" stroke="gray" />
-          <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
-          <Tooltip
-            formatter={(value) =>
-              new Intl.NumberFormat("en-NG", {
-                style: "currency",
-                currency: "NGN",
-              })
-                .format(value)
-                .replace(".00", "")
-            }
-            labelStyle={{ color: "black" }}
-          />
-          <Area
-            type="monotone"
-            dataKey="Total"
-            stroke="#8884d8"
-            fillOpacity={1}
-            fill="url(#Total)"
-            baseLine={0}
-          />
-        </AreaChart>
+        <BarChart width={800} height={800} data={data}>
+          <XAxis dataKey="name" stroke="#8884d8" />
+          <YAxis />
+          <Tooltip wrapperStyle={{ width: 100, backgroundColor: "#ccc" }} />
+          <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+          <Bar dataKey="Total" fill="#8884d8" barSize={25} label={{ position: "top" }} />
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );

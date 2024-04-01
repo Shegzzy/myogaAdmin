@@ -427,14 +427,25 @@ const CancelledBookingDataTable = () => {
                     </h1>
                 </div>
 
-                {activeTab === "cancelled" && !loading ? (<DataGrid
-                    className="datagrid"
-                    rows={data}
-                    columns={cancelledBookingColumns}
-                    pageSize={9}
-                    rowsPerPageOptions={[9]}
-                // checkboxSelection
-                />) : (<div className="detailItem">
+                {!loading ? (<div>
+                    {activeTab === "cancelled" && (<DataGrid
+                        className="datagrid"
+                        rows={data}
+                        columns={cancelledBookingColumns}
+                        pageSize={9}
+                        rowsPerPageOptions={[9]}
+                    // checkboxSelection
+                    />)}
+
+                    {activeTab === "refunded" && (<DataGrid
+                        className="datagrid"
+                        rows={refunds}
+                        columns={refundedBookingColumns}
+                        pageSize={9}
+                        rowsPerPageOptions={[9]}
+                    // checkboxSelection
+                    />)}
+                </div>) : (<div className="detailItem">
                     <span className="itemKey">
                         <div className="no-data-message">
                             <div className="single-container">
@@ -447,14 +458,7 @@ const CancelledBookingDataTable = () => {
                     </span>
                 </div>)}
 
-                {activeTab === "refunded" && (<DataGrid
-                    className="datagrid"
-                    rows={refunds}
-                    columns={refundedBookingColumns}
-                    pageSize={9}
-                    rowsPerPageOptions={[9]}
-                // checkboxSelection
-                />)}
+
             </div>
         </div>
     );

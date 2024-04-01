@@ -3,9 +3,11 @@ import { DataGrid } from "@mui/x-data-grid";
 import { earningColumns } from "../../datatablesource";
 import { useNavigate, Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import { collection, deleteDoc, doc, onSnapshot, getDocs, query, where } from "firebase/firestore";
+import { collection, deleteDoc, doc, onSnapshot, getDocs, query, where, limit } from "firebase/firestore";
 import { db } from "./../../firebase";
 import Snakbar from "../snackbar/Snakbar";
+import SearchIcon from "@mui/icons-material/Search";
+
 
 const EarningDatatable = () => {
   const navigate = useNavigate();
@@ -13,69 +15,15 @@ const EarningDatatable = () => {
   const snackbarRef = useRef(null);
   const [msg, setMsg] = useState("");
   const [sType, setType] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("all");
+  const [selectedFilter, setSelectedFilter] = useState("7");
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
 
-
-  useEffect(() => {
-
-    const fetchData = async () => {
-      try {
-        // Fetch all companies
-        const companiesSnapshot = await getDocs(collection(db, "Companies"));
-        const companies = companiesSnapshot.docs.map(doc => ({
-          id: doc.id,
-          name: doc.data().company,
-        }));
-
-        // Fetch earnings for each company
-        const totalEarningsPromises = companies.map(async (company) => {
-          const earningsQuery = query(
-            collection(db, "Earnings"),
-            where("Company", "==", company.name)
-          );
-
-          const earningsSnapshot = await getDocs(earningsQuery);
-          const totalEarnings = earningsSnapshot.docs.reduce((total, doc) => {
-            return total + parseFloat(doc.data().Amount);
-          }, 0);
-
-          return {
-            id: company.id,
-            name: company.name,
-            totalEarnings: totalEarnings.toFixed(0),
-            fifteenPercent: (totalEarnings * 0.15).toFixed(0),
-            eightyFivePercent: (totalEarnings * 0.85).toFixed(0),
-          };
-        });
-
-        const totalEarningsResults = await Promise.all(totalEarningsPromises);
-        setData(totalEarningsResults);
-
-        setMsg(" Displaying Earnings Information ");
-        setType("success");
-        snackbarRef.current.show();
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setMsg(error.message);
-        setType("error");
-        snackbarRef.current.show();
-      }
-    };
-
-    fetchData();
-
-  }, []);
 
   // Function for weekly query
   useEffect(() => {
     let isMounted = true;
-    let earningsTotal = 0;
-    let sumCardPayments = 0;
-    let sumCashPayments = 0;
-    let totalPayOut = 0;
-    let totalReceive = 0;
     let startOfPeriod, endOfPeriod;
 
 
@@ -98,17 +46,49 @@ const EarningDatatable = () => {
                 where("Company", "==", company.name)
               );
 
+              let cashEarnings = 0;
+              let cardEarnings = 0;
+              // let bookingNumbers = [];
+
+
               const earningsSnapshot = await getDocs(earningsQuery);
-              const totalEarnings = earningsSnapshot.docs.reduce((total, doc) => {
-                return total + parseFloat(doc.data().Amount);
-              }, 0);
+
+              // Iterate through earnings
+              for (const doc of earningsSnapshot.docs) {
+                const bookingID = doc.data().BookingID;
+                // bookingNumbers.push(doc.data().BookingID);
+                // console.log(bookingNumbers);
+
+                // Query the "Bookings" collection directly
+                const bookingQuery = query(
+                  collection(db, "Bookings"),
+                  where("Booking Number", "==", bookingID),
+                  limit(1)
+                );
+
+                const bookingSnapshot = await getDocs(bookingQuery);
+
+                if (!bookingSnapshot.empty) {
+                  const paymentMethod = bookingSnapshot.docs[0].data()["Payment Method"];
+                  const amount = parseFloat(doc.data().Amount);
+
+                  // Add earnings based on payment method
+                  if (paymentMethod === 'Cash on Delivery') {
+                    cashEarnings += amount;
+                  } else if (paymentMethod === 'Card') {
+                    cardEarnings += amount;
+                  }
+                }
+              }
 
               return {
                 id: company.id,
                 name: company.name,
-                totalEarnings: totalEarnings.toFixed(0),
-                fifteenPercent: (totalEarnings * 0.15).toFixed(0),
-                eightyFivePercent: (totalEarnings * 0.85).toFixed(0),
+                cashEarnings: cashEarnings.toFixed(0),
+                cardEarnings: cardEarnings.toFixed(0),
+                totalEarnings: (cashEarnings + cardEarnings).toFixed(0),
+                fifteenPercent: ((cashEarnings + cardEarnings) * 0.15).toFixed(0),
+                eightyFivePercent: ((cashEarnings + cardEarnings) * 0.85).toFixed(0),
               };
             });
 
@@ -117,6 +97,7 @@ const EarningDatatable = () => {
             if (isMounted) {
               setData(totalEarningsResults);
             }
+
           } else {
             const today = new Date();
 
@@ -151,7 +132,6 @@ const EarningDatatable = () => {
               startOfPeriod.setMonth(today.getMonth() - 1, 1);
               startOfPeriod.setHours(0, 0, 0, 0);
               endOfPeriod = new Date(startOfPeriod.getFullYear(), startOfPeriod.getMonth() + 1, 0);
-              // endOfPeriod.setHours(23, 59, 59, 999);
             } else if (selectedFilter === "60") {
               // Two Months Ago
               startOfPeriod = new Date(today);
@@ -160,9 +140,6 @@ const EarningDatatable = () => {
               endOfPeriod = new Date(today);
               endOfPeriod.setMonth(today.getMonth() - 1, 0);
             }
-
-            console.log('Start of period: ' + startOfPeriod);
-            console.log('End of period: ' + endOfPeriod);
 
             // Fetch all companies
             const companiesSnapshot = await getDocs(collection(db, "Companies"));
@@ -180,17 +157,49 @@ const EarningDatatable = () => {
                 where("DateCreated", "<=", endOfPeriod.toISOString())
               );
 
+              let cashEarnings = 0;
+              let cardEarnings = 0;
+              // let bookingNumbers = [];
+
+
               const earningsSnapshot = await getDocs(earningsQuery);
-              const totalEarnings = earningsSnapshot.docs.reduce((total, doc) => {
-                return total + parseFloat(doc.data().Amount);
-              }, 0);
+
+              // Iterate through earnings
+              for (const doc of earningsSnapshot.docs) {
+                const bookingID = doc.data().BookingID;
+                // bookingNumbers.push(doc.data().BookingID);
+                // console.log(bookingNumbers);
+
+                // Query the "Bookings" collection directly
+                const bookingQuery = query(
+                  collection(db, "Bookings"),
+                  where("Booking Number", "==", bookingID),
+                  limit(1)
+                );
+
+                const bookingSnapshot = await getDocs(bookingQuery);
+
+                if (!bookingSnapshot.empty) {
+                  const paymentMethod = bookingSnapshot.docs[0].data()["Payment Method"];
+                  const amount = parseFloat(doc.data().Amount);
+
+                  // Add earnings based on payment method
+                  if (paymentMethod === 'Cash on Delivery') {
+                    cashEarnings += amount;
+                  } else if (paymentMethod === 'Card') {
+                    cardEarnings += amount;
+                  }
+                }
+              }
 
               return {
                 id: company.id,
                 name: company.name,
-                totalEarnings: totalEarnings.toFixed(0),
-                fifteenPercent: (totalEarnings * 0.15).toFixed(0),
-                eightyFivePercent: (totalEarnings * 0.85).toFixed(0),
+                cashEarnings: cashEarnings.toFixed(0),
+                cardEarnings: cardEarnings.toFixed(0),
+                totalEarnings: (cashEarnings + cardEarnings).toFixed(0),
+                fifteenPercent: ((cashEarnings + cardEarnings) * 0.15).toFixed(0),
+                eightyFivePercent: ((cashEarnings + cardEarnings) * 0.85).toFixed(0),
               };
             });
 
@@ -275,6 +284,37 @@ const EarningDatatable = () => {
       }
     },
 
+
+    {
+      field: 'cashEarnings', headerName: 'Cash Payments', width: 200, renderCell: (params) => {
+        return (
+          <div className='cellStatus'>
+            {new Intl.NumberFormat("en-NG", {
+              style: "currency",
+              currency: "NGN",
+            })
+              .format(params.row.cashEarnings)
+              .replace(".00", "")}
+          </div>
+        )
+      }
+    },
+
+    {
+      field: 'cardEarnings', headerName: 'Card Payments', width: 200, renderCell: (params) => {
+        return (
+          <div className='cellStatus'>
+            {new Intl.NumberFormat("en-NG", {
+              style: "currency",
+              currency: "NGN",
+            })
+              .format(params.row.cardEarnings)
+              .replace(".00", "")}
+          </div>
+        )
+      }
+    },
+
     {
       field: '', headerName: 'To be Balanced', width: 200,
     },
@@ -285,11 +325,45 @@ const EarningDatatable = () => {
 
   ];
 
+  // Function to search for riders
+  const handleSearch = () => {
+    if (searchTerm.trim() !== '') {
+      const filteredData = data.filter((companyName) => {
+        const name = companyName.name?.toLowerCase() ?? "";
+        return name.includes(searchTerm?.toLowerCase() ?? "");
+      });
+
+      if (filteredData.length === 0) {
+        setMsg('No search results found.');
+        setType("error");
+        snackbarRef.current.show();
+      }
+
+      setData(filteredData);
+    }
+  };
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchTerm]);
+
   return (
     <div className="datatable">
       <Snakbar ref={snackbarRef} message={msg} type={sType} />
       <div className="datatableTitle">
         Earnings Table
+
+        <div className="search">
+          <input
+            type="text"
+            placeholder="Search Booking Number..."
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+            }}
+            value={searchTerm}
+          />
+          <SearchIcon />
+        </div>
 
         <div className="filter-select-container">
           <select

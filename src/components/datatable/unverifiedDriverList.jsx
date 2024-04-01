@@ -205,7 +205,7 @@ const UnverifiedDriversList = () => {
                 <div className="search">
                     <input
                         type="text"
-                        placeholder="Search Driver Name..."
+                        placeholder="Search rider's name..."
                         onChange={(e) => {
                             setSearch(e.target.value);
                         }}
