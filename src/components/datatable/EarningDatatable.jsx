@@ -18,6 +18,8 @@ const EarningDatatable = () => {
   const [selectedFilter, setSelectedFilter] = useState("7");
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [payOut, setPayOut] = useState(0);
+  const [toReceive, setToReceive] = useState(0);
 
 
 
@@ -48,6 +50,8 @@ const EarningDatatable = () => {
 
               let cashEarnings = 0;
               let cardEarnings = 0;
+              let totalReceive = 0;
+              let totalPayOut = 0;
               // let bookingNumbers = [];
 
 
@@ -78,6 +82,43 @@ const EarningDatatable = () => {
                   } else if (paymentMethod === 'Card') {
                     cardEarnings += amount;
                   }
+
+
+
+                  if (cardEarnings > ((cashEarnings + cardEarnings) * 0.15).toFixed(0)) {
+
+                    totalReceive = cardEarnings - ((cashEarnings + cardEarnings) * 0.15).toFixed(0);
+                    totalPayOut = 0;
+                    // console.log(totalReceive);
+
+                    if (isMounted) {
+                      setToReceive(totalReceive);
+                      setPayOut(0);
+                    }
+                  } else if (cardEarnings < ((cashEarnings + cardEarnings) * 0.15).toFixed(0)) {
+
+                    totalPayOut = ((cashEarnings + cardEarnings) * 0.15).toFixed(0) - cardEarnings;
+                    totalReceive = 0;
+                    // console.log(totalPayOut);
+
+                    if (isMounted) {
+                      setPayOut(totalPayOut);
+                      setToReceive(0);
+                    }
+                  } else {
+                    totalPayOut = ((cashEarnings + cardEarnings) * 0.15).toFixed(0) - cardEarnings;
+                    totalReceive = cardEarnings - ((cashEarnings + cardEarnings) * 0.15).toFixed(0);
+
+                    console.log(totalPayOut);
+                    console.log(totalReceive);
+
+
+                    if (isMounted) {
+                      setToReceive(totalReceive);
+                      setPayOut(totalPayOut);
+                    }
+
+                  }
                 }
               }
 
@@ -89,6 +130,8 @@ const EarningDatatable = () => {
                 totalEarnings: (cashEarnings + cardEarnings).toFixed(0),
                 fifteenPercent: ((cashEarnings + cardEarnings) * 0.15).toFixed(0),
                 eightyFivePercent: ((cashEarnings + cardEarnings) * 0.85).toFixed(0),
+                toBeBalanced: totalReceive,
+                toPayOut: totalPayOut
               };
             });
 
@@ -141,6 +184,9 @@ const EarningDatatable = () => {
               endOfPeriod.setMonth(today.getMonth() - 1, 0);
             }
 
+            let totalReceive = 0;
+            let totalPayOut = 0;
+
             // Fetch all companies
             const companiesSnapshot = await getDocs(collection(db, "Companies"));
             const companies = companiesSnapshot.docs.map(doc => ({
@@ -189,6 +235,37 @@ const EarningDatatable = () => {
                   } else if (paymentMethod === 'Card') {
                     cardEarnings += amount;
                   }
+
+                  if (cardEarnings > ((cashEarnings + cardEarnings) * 0.15).toFixed(0)) {
+
+                    totalReceive = cardEarnings - ((cashEarnings + cardEarnings) * 0.15).toFixed(0);
+                    totalPayOut = 0;
+                    // console.log(totalReceive);
+
+                    if (isMounted) {
+                      setToReceive(totalReceive);
+                      setPayOut(0);
+                    }
+                  } else if (cardEarnings < ((cashEarnings + cardEarnings) * 0.15).toFixed(0)) {
+
+                    totalPayOut = ((cashEarnings + cardEarnings) * 0.15).toFixed(0) - cardEarnings;
+                    totalReceive = 0;
+
+                    if (isMounted) {
+                      setPayOut(totalPayOut);
+                      setToReceive(0);
+                    }
+                  } else {
+                    totalPayOut = ((cashEarnings + cardEarnings) * 0.15).toFixed(0) - cardEarnings;
+                    totalReceive = cardEarnings - ((cashEarnings + cardEarnings) * 0.15).toFixed(0);
+
+
+                    if (isMounted) {
+                      setToReceive(totalReceive);
+                      setPayOut(totalPayOut);
+                    }
+
+                  }
                 }
               }
 
@@ -200,6 +277,8 @@ const EarningDatatable = () => {
                 totalEarnings: (cashEarnings + cardEarnings).toFixed(0),
                 fifteenPercent: ((cashEarnings + cardEarnings) * 0.15).toFixed(0),
                 eightyFivePercent: ((cashEarnings + cardEarnings) * 0.85).toFixed(0),
+                toBeBalanced: totalReceive,
+                toPayOut: totalPayOut
               };
             });
 
@@ -316,11 +395,34 @@ const EarningDatatable = () => {
     },
 
     {
-      field: '', headerName: 'To be Balanced', width: 200,
+      field: 'toBeBalanced', headerName: 'To be Balanced', width: 200, renderCell: (params) => {
+        return (
+          <div className='cellStatus'>
+            {new Intl.NumberFormat("en-NG", {
+              style: "currency",
+              currency: "NGN",
+            })
+              .format(params.row.toBeBalanced)
+              .replace(".00", "")}
+          </div>
+        )
+      }
+
     },
 
     {
-      field: '_', headerName: 'To Pay', width: 200,
+      field: 'toPayOut', headerName: 'To Pay', width: 200, renderCell: (params) => {
+        return (
+          <div className='cellStatus'>
+            {new Intl.NumberFormat("en-NG", {
+              style: "currency",
+              currency: "NGN",
+            })
+              .format(params.row.toPayOut)
+              .replace(".00", "")}
+          </div>
+        )
+      }
     },
 
   ];
@@ -356,7 +458,7 @@ const EarningDatatable = () => {
         <div className="search">
           <input
             type="text"
-            placeholder="Search Booking Number..."
+            placeholder="Enter company's name..."
             onChange={(e) => {
               setSearchTerm(e.target.value);
             }}
