@@ -28,15 +28,18 @@ const Report = () => {
               />
               <br />
               <UsersChart title="Registered Users" aspect={4 / 1} />
-              <br />
-              <CompanyChart title="Registered Companies" aspect={4 / 1} />
+
             </div>
             <div class="col-sm-6">
               <EarningProfits title="Monthly Earnings and Profits" />
               <br />
 
               <ReportChart title="Registered Riders" aspect={4 / 1} />
+
               <br />
+              <CompanyChart title="Registered Companies" aspect={4 / 1} />
+              <br />
+
 
             </div>
             <br />

@@ -11,6 +11,8 @@ import AddVehicleModal from '../modal/AddVehicleModal';
 import AddLocationModal from '../modal/AddLocationModal';
 import AddSupportModal from '../modal/AddSupportModal';
 import Snakbar from "../snackbar/Snakbar";
+import RoleAndCredentialsForm from '../modal/rolesModal';
+import RoleSet from '../settings/roles';
 
 const SettingData = () => {
 
@@ -18,6 +20,7 @@ const SettingData = () => {
     const [Ldata, setLData] = useState([]);
     const [Vdata, setVData] = useState([]);
     const [Sdata, setSData] = useState([]);
+    const [roles, setRoles] = useState([]);
     const [msg, setMsg] = useState("");
     const [sType, setType] = useState("");
     const snackbarRef = useRef(null);
@@ -32,6 +35,7 @@ const SettingData = () => {
             fetchVehicle();
             fetchLocation();
             fetchSupport();
+            fetchRoles();
 
         } catch (error) {
             setMsg(error.message);
@@ -40,7 +44,7 @@ const SettingData = () => {
         } finally {
             setLoading(false);
         }
-    }, [loading, Mdata]);
+    }, []);
 
     const fetchMode = async () => {
         try {
@@ -60,6 +64,27 @@ const SettingData = () => {
             snackbarRef.current.show();
         }
     }
+
+    const fetchRoles = async () => {
+        try {
+            let list = [];
+            const querySnapshot = await getDocs(collection(db, "Roles"));
+
+            querySnapshot.forEach((doc) => {
+                list.push({ id: doc.id, name: doc.data().role, email: doc.data().email, password: doc.data().password });
+                // console.log(doc.data().role);
+            });
+
+            setRoles(list);
+        } catch (error) {
+            // Properly handle errors
+            console.error("Error fetching roles:", error);
+            setMsg("Error fetching roles: " + error.message);
+            setType("error");
+            snackbarRef.current.show();
+        }
+    };
+
 
     const fetchVehicle = async () => {
 
@@ -163,6 +188,16 @@ const SettingData = () => {
                         {Sdata.map((data) => {
                             return (
                                 <SupportSet key={data.id} name={data.name} id={data.id} />
+                            )
+                        })}
+                    </div>
+                </div>
+                <div className="rightCard p-4">
+                    <RoleAndCredentialsForm />
+                    <div className="shadow-md flex flex-wrap justify-center">
+                        {roles.map((data) => {
+                            return (
+                                <RoleSet key={data.id} name={data.name} id={data.id} email={data.email} password={data.password} />
                             )
                         })}
                     </div>

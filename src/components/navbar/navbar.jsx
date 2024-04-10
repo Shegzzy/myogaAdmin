@@ -88,7 +88,7 @@ const Navbar = () => {
   return (
     <div className="mNavbar">
       <div className="wrapper">
-        <div className="search">
+        {/* <div className="search">
           <input
             type="text"
             placeholder="Search..."
@@ -113,7 +113,13 @@ const Navbar = () => {
               ))}
             </div>
           )}
-        </div>
+        </div> */}
+        <h4> {user && user.role ? (
+          <h4>{user.role}</h4>
+        ) : (
+          <p>Loading...</p>
+        )}</h4>
+
         <div className="items">
           <div className="item">
             <LanguageIcon className="icon" />

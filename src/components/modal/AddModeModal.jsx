@@ -101,7 +101,7 @@ function AddModeModal() {
                     <Button variant="secondary" onClick={handleClose}>
                         Close
                     </Button>
-                    <button className="primaryBtn text-purple-600" form="verifyForm" type="submit">Add Delivery Mode</button>
+                    <button className="primaryBtn text-purple-600" form="verifyForm" type="submit">Add</button>
                 </Modal.Footer>
             </Modal>
         </>

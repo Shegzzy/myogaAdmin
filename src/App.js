@@ -37,7 +37,6 @@ import EditUser from './pages/edit/editUser';
 import EditProfile from './pages/edit/editProfile';
 import styled from "styled-components";
 import CancelledBookingList from './pages/list/cancelledBookingsList';
-import UnverifiedDriversList from './components/datatable/unverifiedDriverList';
 import UnverifiedDrivers from './pages/list/unverifiedDrivers';
 
 
