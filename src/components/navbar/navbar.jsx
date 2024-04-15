@@ -30,17 +30,21 @@ const Navbar = () => {
     const fetchUser = async () => {
       if (currentUser) {
         const userRef = doc(db, "Admin", currentUser.uid);
+        const roleRef = doc(db, "Roles", currentUser.uid);
         const docs = await getDoc(userRef);
-        if (docs.exists) {
+        const roleDocs = await getDoc(roleRef);
+        if (docs.exists()) {
           setUser(docs.data());
         } else {
-          alert("No such document!");
+          setUser(roleDocs.data());
         }
+      } else {
+        alert("No such document!");
       }
     };
 
     fetchUser();
-  });
+  }, [currentUser]);
 
   useEffect(() => {
     // Fetch the data from Firestore      if (currentUser) {
@@ -77,13 +81,13 @@ const Navbar = () => {
     fetchData();
   }, [searchTerm]);
 
-  const handleSearch = () => {
-    const filtered = items.filter((driver) => {
-      const name = driver.FullName?.toLowerCase() ?? "";
-      return name.includes(searchTerm?.toLowerCase() ?? "");
-    });
-    setFilteredItems(filtered);
-  };
+  // const handleSearch = () => {
+  //   const filtered = items.filter((driver) => {
+  //     const name = driver.FullName?.toLowerCase() ?? "";
+  //     return name.includes(searchTerm?.toLowerCase() ?? "");
+  //   });
+  //   setFilteredItems(filtered);
+  // };
 
   return (
     <div className="mNavbar">

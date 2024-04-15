@@ -50,7 +50,7 @@ const BookingDatatable = () => {
             const driverDoc = await getDoc(doc(db, "Drivers", driverID));
             if (driverDoc.exists()) {
               const driverName = driverDoc.data().FullName;
-              driverMap.set(driverID, driverName); // Set driver name in the map
+              driverMap.set(driverID, driverName);
             } else {
               console.log(`Driver with ID ${driverID} does not exist.`);
               driverMap.delete(driverID);
@@ -66,7 +66,7 @@ const BookingDatatable = () => {
             const userDoc = await getDoc(doc(db, "Users", userID));
             if (userDoc.exists()) {
               const userName = userDoc.data().FullName;
-              userMap.set(userID, userName); // Set user name in the map
+              userMap.set(userID, userName);
             } else {
               console.log(`User with ID ${userID} does not exist.`);
               userMap.delete(userID);

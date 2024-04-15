@@ -36,7 +36,7 @@ const OrderStatus = (props) => {
     fetchBooking();
     fetchUser();
     fetchDriver();
-  }, [Bdata, Cdata, Ddata]);
+  }, [CusID, DriverID, bookID]);
 
   const fetchBooking = async () => {
     try {

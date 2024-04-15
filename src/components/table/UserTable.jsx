@@ -71,10 +71,6 @@ const UserTable = (props) => {
         }
       }));
 
-
-
-
-
       docSnap.forEach((docs) => {
         const { "Driver ID": driverID, ...rest } = docs.data();
         const driverName = driverMap.get(driverID);

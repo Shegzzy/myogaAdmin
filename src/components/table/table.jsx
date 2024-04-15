@@ -22,6 +22,7 @@ const TableJ = () => {
             snapShot.docs.forEach(doc => {
                 list.push({ id: doc.id, ...doc.data() });
             });
+            list.sort((a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"]));
             setData(list);
 
         }, (error) => {

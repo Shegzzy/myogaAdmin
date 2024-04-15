@@ -33,6 +33,7 @@ const Datatable = () => {
             list.push({ id: doc.id, ...doc.data() });
           });
 
+          list.sort((a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"]));
           setData(list);
           setMsg(" Displaying All Users ");
           setType("success");
@@ -91,6 +92,7 @@ const Datatable = () => {
             list.push({ id: doc.id, ...doc.data() });
           });
 
+          list.sort((a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"]));
           setData(list);
         }
       } catch (error) {

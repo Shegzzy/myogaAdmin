@@ -18,13 +18,17 @@ const ProfilePage = () => {
                 const profile = [];
                 const docRef = doc(db, "Admin", userID);
                 const docSnap = await getDoc(docRef);
+                const roleRef = doc(db, "Roles", userID);
+                const roleDocs = await getDoc(roleRef);
                 if (docSnap.exists()) {
                     profile.push({ name: docSnap.data().name, Email: docSnap.data().email, date: docSnap.data().dateCreated, img: docSnap.data().profilePhoto })
                     setData(profile);
                 } else {
-
+                    profile.push({ name: roleDocs.data().role, Email: roleDocs.data().email, })
+                    setData(profile);
                 }
             } catch (error) {
+                console.log(error);
             }
         };
         fetchData()

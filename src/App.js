@@ -5,7 +5,7 @@ import Single from "./pages/single/single";
 import SingleDriver from "./pages/single/singleDriver";
 import List from "./pages/list/list";
 import DriversList from "./pages/list/driversList";
-import NewDriver from './pages/new/newDriver';
+// import NewDriver from './pages/new/newDriver';
 import New from "./pages/new/new";
 import {
   BrowserRouter,
@@ -15,7 +15,7 @@ import {
 } from "react-router-dom";
 import { userInputs, driverInputs, companyInputs, adminInputs } from "./formSource";
 import "./style/dark.scss"
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DarkModeContext } from './context/darkModeContext';
 import { AuthContext } from "./context/authContext";
 import CompanyList from './pages/list/companyList';
@@ -35,9 +35,11 @@ import EditDriver from './pages/edit/editDriver';
 import EditCompany from './pages/edit/editCompany';
 import EditUser from './pages/edit/editUser';
 import EditProfile from './pages/edit/editProfile';
-import styled from "styled-components";
+// import styled from "styled-components";
 import CancelledBookingList from './pages/list/cancelledBookingsList';
 import UnverifiedDrivers from './pages/list/unverifiedDrivers';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from './firebase';
 
 
 
@@ -50,15 +52,27 @@ function App() {
     return currentUser ? (children) : <Navigate to="/login" />;
   }
 
-  const AppContainer = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+            try {
+                const roleRef = doc(db, "Roles", currentUser.uid);
+                const adminRef = doc(db, "Admin", currentUser.uid);
+                console.log(currentUser.uid)
+                const roleDocs = await getDoc(roleRef);
+                const adminDocs = await getDoc(adminRef);
+                if (roleDocs.exists()) {
+                    setUserRole(roleDocs.data());
+                } else {
+                  setUserRole(adminDocs.data());
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchData()
+  }, [currentUser]);
 
   return (
     <div className={darkMode ? "app dark" : "app"}>
@@ -73,6 +87,11 @@ function App() {
               </RequireAuth>
             }
             />
+
+            { userRole && (
+              <>
+              { userRole.role === "Super Admin" && (
+            <>
             <Route path="users">
               <Route index element={
                 <RequireAuth>
@@ -93,6 +112,7 @@ function App() {
               }
               />
             </Route>
+
             <Route path="drivers">
               <Route index element={
                 <RequireAuth>
@@ -100,6 +120,7 @@ function App() {
                 </RequireAuth>
               }
               />
+
               <Route path="/drivers/:id" element={
                 <RequireAuth>
                   <SingleDriver />
@@ -108,6 +129,7 @@ function App() {
               />
               
             </Route>
+
             <Route path="company">
               <Route index element={
                 <RequireAuth>
@@ -128,6 +150,7 @@ function App() {
               }
               />
             </Route>
+
             <Route path="bookings">
               <Route index element={
                 <RequireAuth>
@@ -148,6 +171,7 @@ function App() {
               }
               />
             </Route>
+
             <Route path="cancelled-bookings">
               <Route index element={
                 <RequireAuth>
@@ -156,6 +180,7 @@ function App() {
               }
               />
             </Route>
+
             <Route path="bookingstatus">
               <Route index element={
                 <RequireAuth>
@@ -164,6 +189,7 @@ function App() {
               }
               />
             </Route>
+
             <Route path="unverified-drivers">
               <Route index element={
                 <RequireAuth>
@@ -172,6 +198,7 @@ function App() {
               }
               />
             </Route>
+
             <Route path="reports">
               <Route index element={
                 <RequireAuth>
@@ -180,6 +207,7 @@ function App() {
               }
               />
             </Route>
+
             <Route path="earnings">
               <Route index element={
                 <RequireAuth>
@@ -188,6 +216,7 @@ function App() {
               }
               />
             </Route>
+
             <Route path="setting">
               <Route index element={
                 <RequireAuth>
@@ -196,6 +225,7 @@ function App() {
               }
               />
             </Route>
+            
             <Route path="profile">
               <Route index element={
                 <RequireAuth>
@@ -204,6 +234,7 @@ function App() {
               }
               />
             </Route>
+
             <Route path="notification">
               <Route index element={
                 <RequireAuth>
@@ -212,6 +243,7 @@ function App() {
               }
               />
             </Route>
+
             <Route path="support">
               <Route index element={
                 <RequireAuth>
@@ -220,6 +252,7 @@ function App() {
               }
               />
             </Route>
+            
             <Route path="edit/:id"
               element={
                 <RequireAuth>
@@ -251,6 +284,93 @@ function App() {
                 </RequireAuth>
               }
             />
+            </>
+            )}
+            
+            { userRole.role === "Finance" && (
+            <>
+
+            <Route path="company">
+              <Route index element={
+                <RequireAuth>
+                  <CompanyList />
+                </RequireAuth>
+              }
+              />
+              <Route path=":companyId" element={
+                <RequireAuth>
+                  <SingleCompany />
+                </RequireAuth>
+              }
+              />
+              <Route path="new" element={
+                <RequireAuth>
+                  <NewCompany />
+                </RequireAuth>
+              }
+              />
+            </Route>
+
+            <Route path="bookings">
+              <Route index element={
+                <RequireAuth>
+                  <BookingList />
+                </RequireAuth>
+              }
+              />
+              <Route path=":bookingId" element={
+                <RequireAuth>
+                  <SingleBooking />
+                </RequireAuth>
+              }
+              />
+              <Route path="new" element={
+                <RequireAuth>
+                  <NewBooking />
+                </RequireAuth>
+              }
+              />
+            </Route>
+
+            <Route path="cancelled-bookings">
+              <Route index element={
+                <RequireAuth>
+                  <CancelledBookingList />
+                </RequireAuth>
+              }
+              />
+            </Route>
+
+            <Route path="bookingstatus">
+              <Route index element={
+                <RequireAuth>
+                  <StatusList />
+                </RequireAuth>
+              }
+              />
+            </Route>
+
+            <Route path="unverified-drivers">
+              <Route index element={
+                <RequireAuth>
+                  <UnverifiedDrivers />
+                </RequireAuth>
+              }
+              />
+            </Route>
+
+            <Route path="earnings">
+              <Route index element={
+                <RequireAuth>
+                  <EarningList />
+                </RequireAuth>
+              }
+              />
+            </Route>
+
+            </>
+            )}
+            </>)}
           </Route>
         </Routes>
       </BrowserRouter>
