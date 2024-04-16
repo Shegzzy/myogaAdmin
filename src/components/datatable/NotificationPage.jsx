@@ -1,8 +1,14 @@
 import { useState } from 'react';
 import './notificationPage.scss';
+import { db } from '../../firebase';
+import { collection, getDocs } from 'firebase/firestore';
+import NotificationModal from '../modal/notificationModal';
 
 const NotificationPage = () => {
     const [notifiers, setNotifiers] = useState("");
+    const [title, setTitle] = useState('');
+    const [message, setMessage] = useState('');
+
 
 
 
@@ -10,8 +16,11 @@ const NotificationPage = () => {
         <div className='notify-page'>
             <div className="t-top">
                 <div className="t-title">
-                    Send Notification
+                    Notifications
+
                 </div>
+                <NotificationModal />
+
             </div>
             <div className="t-bottom">
                 <div className="filter-select-container">
