@@ -40,7 +40,6 @@ const NotificationPage = () => {
 
 
 
-
     return (
         <div className='notify-page'>
             <div className="t-top">

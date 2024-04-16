@@ -44,6 +44,7 @@ function ViewSupport(props) {
                     <p class="text-black hover:text-gray-400">Date: {new Date(props.date).toLocaleDateString(
                         "en-US"
                     )}</p>
+                    <p class="text-black hover:text-gray-400">Message:</p>
                     <p class="text-slate-500 hover:text-purple-400">{props.message}</p>
 
                 </Modal.Body>

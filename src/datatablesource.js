@@ -280,6 +280,18 @@ export const messagesColumns = [
     {
         field: "title", headerName: "Title", width: 150,
     },
+
+     {
+        field: "notifier", headerName: "Audience", width: 150,
+    },
+
+    {
+        field: "dateCreated", headerName: "Date Created", width: 150,
+        // renderCell: (params) => {
+        //     const formattedDate = format(new Date(params.value), 'dd/MM/yyyy'); // Format the date
+        //     return <div>{formattedDate}</div>;
+        // }
+    },
     
 ];
 
