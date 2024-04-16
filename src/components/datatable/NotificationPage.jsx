@@ -5,6 +5,7 @@ import { collection, getDocs, query } from 'firebase/firestore';
 import NotificationModal from '../modal/notificationModal';
 import { DataGrid } from '@mui/x-data-grid';
 import { messagesColumns } from '../../datatablesource';
+import ViewNotification from '../modal/viewNotificationModal';
 
 const NotificationPage = () => {
     const [loading, setLoading] = useState(false);
@@ -38,7 +39,18 @@ const NotificationPage = () => {
         fetchMessages();
     }, [])
 
-
+    const actionColumn = [
+        {
+            field: "action",
+            headerName: "Action",
+            width: 100,
+            renderCell: (params) => {
+                return (
+                    <ViewNotification {...params.row} />
+                );
+            },
+        },
+    ];
 
     return (
         <div className='notify-page'>
@@ -52,7 +64,7 @@ const NotificationPage = () => {
                 {!loading ? (<DataGrid
                     className="datagrid"
                     rows={data}
-                    columns={messagesColumns}
+                    columns={messagesColumns.concat(actionColumn)}
                     pageSize={9}
                     rowsPerPageOptions={[9]}
                 // checkboxSelection

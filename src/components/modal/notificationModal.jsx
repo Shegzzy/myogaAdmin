@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { db } from '../../firebase';
-import { addDoc, collection, } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, } from 'firebase/firestore';
 import { Button, Modal } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 
@@ -21,7 +21,7 @@ function NotificationModal() {
                 notifier: notifiers,
                 message: message,
                 title: title,
-                dateCreated: new Date(),
+                dateCreated: Timestamp.now(),
             });
 
             alert('Notification sent successfully!');
