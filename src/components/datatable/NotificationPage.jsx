@@ -1,13 +1,42 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './notificationPage.scss';
 import { db } from '../../firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query } from 'firebase/firestore';
 import NotificationModal from '../modal/notificationModal';
+import { DataGrid } from '@mui/x-data-grid';
+import { messagesColumns } from '../../datatablesource';
 
 const NotificationPage = () => {
-    const [notifiers, setNotifiers] = useState("");
-    const [title, setTitle] = useState('');
-    const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState([]);
+    // const [message, setMessage] = useState('');
+
+    useEffect(() => {
+        const fetchMessages = async () => {
+            setLoading(true);
+            try {
+                let list = [];
+
+                const querySnapshot = await getDocs(query(
+                    collection(db, "New Notification")
+                ));
+
+                querySnapshot.forEach((message) => {
+                    list.push({ id: message.id, ...message.data() });
+                });
+
+                setData(list);
+
+            } catch (e) {
+                console.log("Error ", e);
+                setLoading(false);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchMessages();
+    }, [])
 
 
 
@@ -17,23 +46,29 @@ const NotificationPage = () => {
             <div className="t-top">
                 <div className="t-title">
                     Notifications
-
                 </div>
                 <NotificationModal />
-
             </div>
             <div className="t-bottom">
-                <div className="filter-select-container">
-                    <select
-                        className="chart-selects"
-                        value={notifiers}
-                        onChange={(e) => setNotifiers(e.target.value)}
-                    >
-                        <option value="all"></option>
-                        <option value="7">Users</option>
-                        <option value="1">Riders</option>
-                    </select>
-                </div>
+                {!loading ? (<DataGrid
+                    className="datagrid"
+                    rows={data}
+                    columns={messagesColumns}
+                    pageSize={9}
+                    rowsPerPageOptions={[9]}
+                // checkboxSelection
+                />) : (<div className="detailItem">
+                    <span className="itemKey">
+                        <div className="no-data-message">
+                            <div className="single-container">
+                                <div className="loader">
+                                    <div className="lds-dual-ring"></div>
+                                    <div>Loading... </div>
+                                </div>
+                            </div>
+                        </div>
+                    </span>
+                </div>)}
             </div>
 
         </div>

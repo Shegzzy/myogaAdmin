@@ -275,6 +275,14 @@ export const bookingColumns = [
     },
 ];
 
+export const messagesColumns = [
+    // { field: 'id', headerName: 'ID', width: 100 },
+    {
+        field: "title", headerName: "Title", width: 150,
+    },
+    
+];
+
 export const cancelledBookingColumns = [
     // { field: 'id', headerName: 'ID', width: 100 },
     {
