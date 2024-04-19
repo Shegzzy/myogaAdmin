@@ -74,11 +74,11 @@ const SingleCompany = (props) => {
   useEffect(() => {
     try {
       fetchUser();
-      getEarnings();
       getData();
-      getRiders();
-      fetchEarningsData();
       fetchCompanyRatings();
+      // getEarnings();
+      // getRiders();
+      // fetchEarningsData();
     } catch (error) {
       console.log(error);
     }
@@ -203,6 +203,7 @@ const SingleCompany = (props) => {
             }
 
             const allBookings = [];
+            const driverBookings = [];
 
             for (const chunk of bookingChunks) {
               const bookingsQuery = query(
@@ -214,9 +215,6 @@ const SingleCompany = (props) => {
                 const bookingsSnapshot = await getDocs(bookingsQuery);
 
                 const driverMap = new Map();
-                const driverBookings = [];
-
-                // Fetch driver and user IDs
 
 
                 if (!bookingsSnapshot.empty) {
@@ -251,7 +249,10 @@ const SingleCompany = (props) => {
                     driverBookings.push({ ...doc.data(), driverName: driverName });
                   });
 
-                  setBookingsData(driverBookings);
+                  driverBookings.sort(
+                    (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
+                  );
+
 
                   // Separate amounts based on payment method and calculate the sum
                   const cardPayments = bookings.filter((booking) => booking["Payment Method"] === "Card");
@@ -312,6 +313,7 @@ const SingleCompany = (props) => {
             setCardPayments(sumCardPayments);
             setCashPayments(sumCashPayments);
             setEarnL(allBookings.length);
+            setBookingsData(driverBookings);
 
             if (isMounted) {
               setData(allBookings);
@@ -649,6 +651,9 @@ const SingleCompany = (props) => {
             }
 
           }
+          allBookings.sort(
+            (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
+          );
 
           setTotal(earningsTotal);
           setInFlow(roundPercentage);
@@ -656,9 +661,6 @@ const SingleCompany = (props) => {
           setCardPayments(sumCardPayments);
           setCashPayments(sumCashPayments);
 
-          allBookings.sort(
-            (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
-          );
         }
       } catch (error) {
         console.error("Error fetching data:", error);
