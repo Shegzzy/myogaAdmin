@@ -1332,6 +1332,9 @@ const SingleCompany = (props) => {
                       Dropoff Location
                     </TableCell>
                     <TableCell className="tableCell" width={130}>
+                      Delivery Mode
+                    </TableCell>
+                    <TableCell className="tableCell" width={130}>
                       Phone
                     </TableCell>
                     <TableCell className="tableCell" width={130}>
@@ -1378,6 +1381,9 @@ const SingleCompany = (props) => {
                       </TableCell>
                       <TableCell className="tableCell">
                         {row["DropOff Address"]}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {row["Delivery Mode"]}
                       </TableCell>
                       <TableCell className="tableCell">
                         {row["Customer Phone"]}

@@ -411,9 +411,16 @@ const EarningDatatable = () => {
     },
 
     {
-      field: 'toBeBalanced', headerName: 'To be Balanced', width: 200, renderCell: (params) => {
+      field: 'toBeBalanced', headerName: 'To Send', width: 200, renderCell: (params) => {
+        const value = params.row.toBeBalanced;
+        let color = 'black';
+        if (value === 0) {
+          color = 'green';
+        } else if (value > 0) {
+          color = 'orange';
+        }
         return (
-          <div className='cellStatus'>
+          <div className='cellStatus' style={{ color: color }}>
             {new Intl.NumberFormat("en-NG", {
               style: "currency",
               currency: "NGN",
@@ -427,9 +434,16 @@ const EarningDatatable = () => {
     },
 
     {
-      field: 'toPayOut', headerName: 'To Pay', width: 200, renderCell: (params) => {
+      field: 'toPayOut', headerName: 'To Receive', width: 200, renderCell: (params) => {
+        const value = params.row.toPayOut;
+        let color = 'black';
+        if (value === 0) {
+          color = 'green';
+        } else if (value > 0) {
+          color = 'red';
+        }
         return (
-          <div className='cellStatus'>
+          <div className='cellStatus' style={{ color: color }}>
             {new Intl.NumberFormat("en-NG", {
               style: "currency",
               currency: "NGN",
@@ -491,9 +505,9 @@ const EarningDatatable = () => {
           >
             <option value="all">All </option>
             <option value="7">Last Week </option>
-            <option value="1">Two Weeks Ago </option>
+            {/* <option value="1">Two Weeks Ago </option>
             <option value="2">Three Weeks Ago </option>
-            <option value="3">Four Weeks Ago </option>
+            <option value="3">Four Weeks Ago </option> */}
           </select>
         </div>
       </div>

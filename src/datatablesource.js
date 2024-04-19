@@ -234,6 +234,9 @@ export const bookingColumns = [
     {
         field: ['DropOff Address'], headerName: "Drop Off Address", width: 150,
     },
+     {
+        field: ['Delivery Mode'], headerName: "Delivery Mode", width: 150,
+    },
     {
         field: "Distance", headerName: "Distance", width: 80,
     },

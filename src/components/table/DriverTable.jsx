@@ -40,6 +40,7 @@ const DriverTable = (props) => {
               <TableCell className="tableCell">Phone</TableCell>
               <TableCell className="tableCell">Pick Up</TableCell>
               <TableCell className="tableCell">Drop Off</TableCell>
+              <TableCell className="tableCell">Delivery Mode</TableCell>
               <TableCell className="tableCell">Distance</TableCell>
               <TableCell className="tableCell">Amount</TableCell>
               <TableCell className="tableCell">Payment Method</TableCell>
@@ -66,6 +67,9 @@ const DriverTable = (props) => {
                 </TableCell>
                 <TableCell className="tableCell">
                   {row["DropOff Address"]}
+                </TableCell>
+                <TableCell className="tableCell">
+                  {row["Delivery Mode"]}
                 </TableCell>
                 <TableCell className="tableCell">{row.Distance}</TableCell>
                 <TableCell className="tableCell">
