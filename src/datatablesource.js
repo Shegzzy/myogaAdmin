@@ -286,14 +286,14 @@ export const messagesColumns = [
     },
 
     {
-        field: "dateCreated", headerName: "Date Created", width: 150,
+        field: "dateCreated", headerName: "Date Sent", width: 150,
         renderCell: (params) => {
         // Ensure params.value is a Firestore Timestamp object
         if (params.value && params.value.seconds) {
             const formattedDate = new Date(params.value.seconds * 1000).toLocaleString();
             return <div>{formattedDate}</div>;
         } else {
-            return null; // Handle if the date is not available or not in expected format
+            return null;
         }
     }
     },

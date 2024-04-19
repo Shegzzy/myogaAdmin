@@ -112,40 +112,55 @@ const SingleCompany = (props) => {
               // Last Week
               startOfPeriod = new Date(today);
               startOfPeriod.setDate(today.getDate() - today.getDay() - 7);
+              startOfPeriod.setHours(0, 0, 0, 0);
+
               endOfPeriod = new Date(today);
               endOfPeriod.setDate(today.getDate() - today.getDay() - 1);
+              endOfPeriod.setHours(23, 59, 59, 999);
             } else if (selectedFilter === "1") {
               // Two Weeks Ago
               startOfPeriod = new Date(today);
               startOfPeriod.setDate(today.getDate() - today.getDay() - 14);
+              startOfPeriod.setHours(0, 0, 0, 0);
+
               endOfPeriod = new Date(today);
               endOfPeriod.setDate(today.getDate() - today.getDay() - 8);
+              endOfPeriod.setHours(23, 59, 59, 999);
             } else if (selectedFilter === "2") {
               // Three Weeks Ago
               startOfPeriod = new Date(today);
               startOfPeriod.setDate(today.getDate() - today.getDay() - 21);
+              startOfPeriod.setHours(0, 0, 0, 0);
+
               endOfPeriod = new Date(today);
               endOfPeriod.setDate(today.getDate() - today.getDay() - 15);
+              endOfPeriod.setHours(23, 59, 59, 999);
             } else if (selectedFilter === "3") {
               // Four Weeks Ago
               startOfPeriod = new Date(today);
               startOfPeriod.setDate(today.getDate() - today.getDay() - 28);
+              startOfPeriod.setHours(0, 0, 0, 0);
+
               endOfPeriod = new Date(today);
               endOfPeriod.setDate(today.getDate() - today.getDay() - 22);
+              endOfPeriod.setHours(23, 59, 59, 999);
             } else if (selectedFilter === "30") {
               // Last Month
               startOfPeriod = new Date(today);
               startOfPeriod.setMonth(today.getMonth() - 1, 1);
               startOfPeriod.setHours(0, 0, 0, 0);
+
               endOfPeriod = new Date(startOfPeriod.getFullYear(), startOfPeriod.getMonth() + 1, 0);
-              // endOfPeriod.setHours(23, 59, 59, 999);
+              endOfPeriod.setHours(23, 59, 59, 999);
             } else if (selectedFilter === "60") {
               // Two Months Ago
               startOfPeriod = new Date(today);
               startOfPeriod.setMonth(today.getMonth() - 2, 1);
               startOfPeriod.setHours(0, 0, 0, 0);
+
               endOfPeriod = new Date(today);
               endOfPeriod.setMonth(today.getMonth() - 1, 0);
+              endOfPeriod.setHours(23, 59, 59, 999);
             }
 
             console.log('Start of period: ' + startOfPeriod);
@@ -287,16 +302,16 @@ const SingleCompany = (props) => {
 
             }
 
+            allBookings.sort(
+              (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
+            );
+
             setTotal(earningsTotal);
             setInFlow(roundEightyFivePercentage);
             setOutFlow(roundFifteenPercent);
             setCardPayments(sumCardPayments);
             setCashPayments(sumCashPayments);
             setEarnL(allBookings.length);
-
-            allBookings.sort(
-              (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
-            );
 
             if (isMounted) {
               setData(allBookings);
@@ -1178,6 +1193,7 @@ const SingleCompany = (props) => {
                   <TableRow>
                     <TableCell className="tableCell">Rider Name</TableCell>
                     <TableCell className="tableCell">Email</TableCell>
+                    <TableCell className="tableCell">Phone</TableCell>
                     <TableCell className="tableCell">Address</TableCell>
                     <TableCell className="tableCell">Location </TableCell>
                     <TableCell className="tableCell">Vehicle Number</TableCell>
@@ -1193,6 +1209,7 @@ const SingleCompany = (props) => {
                           {row.FullName}
                         </TableCell>
                         <TableCell className="tableCell">{row.Email}</TableCell>
+                        <TableCell className="tableCell">{row.Phone}</TableCell>
                         <TableCell className="tableCell">{row.Address}</TableCell>
                         <TableCell className="tableCell">{row.State}</TableCell>
                         <TableCell className="tableCell" width={200}>
