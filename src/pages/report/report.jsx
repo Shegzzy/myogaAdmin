@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import "./report.scss";
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
@@ -9,8 +9,20 @@ import CompanyChart from "../../components/report-charts/companies_chart";
 import EarningProfits from "../../components/report-charts/monthly_earnings_and_profits";
 import TopUsers from "../../components/report-charts/top_users_report";
 import Chart from "../../components/chart/chart";
+import { Button } from "react-bootstrap";
+import { useReactToPrint } from "react-to-print";
 
 const Report = () => {
+
+  function handlePrint() {
+    window.print()
+  }
+
+  const componentRef = useRef();
+  const handlePagePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
   return (
     <div className="list">
       <Sidebar />
@@ -18,7 +30,7 @@ const Report = () => {
         <Navbar />
         <div className="reportTitle">Reports</div>
         <div className="charts">
-          <div class="row">
+          <div class="row" ref={componentRef}>
             <div class="col-sm-6">
               <TopUsers title="Top 50 Users" />
               <br />
@@ -46,6 +58,7 @@ const Report = () => {
             <Chart title="Earnings (Revenue) 6 Months Curve" aspect={4 / 1} />
           </div>
 
+          <Button onClick={handlePagePrint}>Print</Button>
         </div>
       </div>
     </div>

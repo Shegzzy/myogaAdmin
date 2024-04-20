@@ -15,18 +15,6 @@ const EarningProfits = () => {
   const [data, setData] = useState([]);
   const [fieldSum, setFieldSum] = useState(0);
   const [profitSum, setProfitSum] = useState(0);
-  // const [lastMonthTotal, setLastMonthTotal] = useState(0);
-  // const [lastMonthProfit, setLastMonthProfit] = useState(0);
-  // const [lastTwoMonthTotal, setLastTwoMonthTotal] = useState(0);
-  // const [lastTwoMonthProfit, setLastTwoMonthProfit] = useState(0);
-  // const [lastThreeMonthTotal, setLastThreeMonthTotal] = useState(0);
-  // const [lastThreeMonthProfit, setLastThreeMonthProfit] = useState(0);
-  // const [lastFourMonthTotal, setLastFourMonthTotal] = useState(0);
-  // const [lastFourMonthProfit, setLastFourMonthProfit] = useState(0);
-  // const [lastFiveMonthTotal, setLastFiveMonthTotal] = useState(0);
-  // const [lastFiveMonthProfit, setLastFiveMonthProfit] = useState(0);
-  // const [lastSixMonthTotal, setLastSixMonthTotal] = useState(0);
-  // const [lastSixMonthProfit, setLastSixMonthProfit] = useState(0);
   const [monthlyData, setMonthlyData] = useState([]);
 
 
@@ -430,20 +418,8 @@ const EarningProfits = () => {
   }
 
   const formattedAmount = formatCurrency(fieldSum);
-  // const formattedLastMonthTotal = formatCurrency(lastMonthTotal);
-  // const formattedLastTwoMonthTotal = formatCurrency(lastTwoMonthTotal);
-  // const formattedLastThreeMonthTotal = formatCurrency(lastThreeMonthTotal);
-  // const formattedLastFourMonthTotal = formatCurrency(lastFourMonthTotal);
-  // const formattedLastFiveMonthTotal = formatCurrency(lastFiveMonthTotal);
-  // const formattedLastSixMonthTotal = formatCurrency(lastSixMonthTotal);
 
   const formattedProfit = formatCurrency(profitSum);
-  // const formattedLastMonthProfit = formatCurrency(lastMonthProfit);
-  // const formattedLastTwoMonthProfit = formatCurrency(lastTwoMonthProfit);
-  // const formattedLastThreeMonthProfit = formatCurrency(lastThreeMonthProfit);
-  // const formattedLastFourMonthProfit = formatCurrency(lastFourMonthProfit);
-  // const formattedLastFiveMonthProfit = formatCurrency(lastFiveMonthProfit);
-  // const formattedLastSixMonthProfit = formatCurrency(lastSixMonthProfit);
 
   return (
     <div className="featured">

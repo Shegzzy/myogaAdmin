@@ -466,7 +466,7 @@ const SingleCompany = (props) => {
         const data = doc.data();
         total += parseInt(data.Amount);
       });
-      setMData(total);
+      setMData((total * 0.85).toFixed(0));
     });
 
     //Calculating a week ago amount
