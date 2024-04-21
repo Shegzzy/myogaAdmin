@@ -1,5 +1,5 @@
 export async function reverseGeocode(latitude, longitude) {
-  const apiKey = "AIzaSyC72pU5OkUben7Ygy9ipDONeeRShVTiXrU";
+  const apiKey = process.env.REACT_APP_MAP_KEY;
   const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`;
 
   try {

@@ -56,6 +56,8 @@ const Report = () => {
             </div>
             <br />
             <Chart title="Earnings (Revenue) 6 Months Curve" aspect={4 / 1} />
+            <br />
+
           </div>
 
           <Button onClick={handlePagePrint}>Print</Button>

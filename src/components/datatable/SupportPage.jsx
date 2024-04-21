@@ -15,6 +15,7 @@ import {
     TableRow,
 } from "@mui/material";
 import TablePagination from '@mui/material/TablePagination';
+import { format } from 'date-fns';
 
 
 const SupportPage = () => {
@@ -29,7 +30,7 @@ const SupportPage = () => {
     useEffect(() => {
         fetchSupport();
         fetchAttendedSupport();
-    });
+    }, []);
 
     const fetchSupport = async () => {
         const unsub = query(
@@ -45,7 +46,7 @@ const SupportPage = () => {
         });
 
         list.sort(
-            (a, b) => new Date(b.date) - new Date(a.date)
+            (a, b) => new Date(b.dateCreated) - new Date(a.dateCreated)
         );
 
         setSData(list);
@@ -68,7 +69,7 @@ const SupportPage = () => {
         });
 
         list.sort(
-            (a, b) => new Date(b.date) - new Date(a.date)
+            (a, b) => new Date(b.dateCreated) - new Date(a.dateCreated)
         );
 
         setAttendedData(list);
@@ -129,7 +130,7 @@ const SupportPage = () => {
                                 <TableCell className="tableCell">Subject </TableCell>
                                 <TableCell className="tableCell">Type</TableCell>
                                 <TableCell className="tableCell">Status</TableCell>
-                                <TableCell className="tableCell">Date</TableCell>
+                                <TableCell className="tableCell">Date Created</TableCell>
                                 <TableCell className="tableCell">Action</TableCell>
                             </TableRow>
                         </TableHead>
@@ -147,9 +148,7 @@ const SupportPage = () => {
                                         <TableCell className="tableCell">{row.status}</TableCell>
 
                                         <TableCell className="tableCell">
-                                            {new Date(row.dateCreated).toLocaleDateString(
-                                                "en-US"
-                                            )}
+                                            {format(new Date(row.dateCreated), 'dd/MM/yyyy')}
                                         </TableCell>
 
                                         <TableCell className="tableCell">
@@ -196,7 +195,7 @@ const SupportPage = () => {
                                 <TableCell className="tableCell">Subject </TableCell>
                                 <TableCell className="tableCell">Type</TableCell>
                                 <TableCell className="tableCell">Status</TableCell>
-                                <TableCell className="tableCell">Date</TableCell>
+                                <TableCell className="tableCell">Attended Date</TableCell>
                                 <TableCell className="tableCell">Action</TableCell>
                             </TableRow>
                         </TableHead>
@@ -214,9 +213,7 @@ const SupportPage = () => {
                                         <TableCell className="tableCell">{row.status}</TableCell>
 
                                         <TableCell className="tableCell">
-                                            {new Date(row.dateCreated).toLocaleDateString(
-                                                "en-US"
-                                            )}
+                                            {new Date(row.timeStamp.seconds * 1000).toLocaleString()}
                                         </TableCell>
 
                                         <TableCell className="tableCell">

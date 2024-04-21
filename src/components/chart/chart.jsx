@@ -46,7 +46,7 @@ const Chart = ({ aspect, title }) => {
         monthData.push({
           name: getPreviousMonth(i),
           Total: total,
-          FifteenPercent: total * 0.15
+          FifteenPercent: (total * 0.15).toFixed(0)
         });
       } catch (error) {
         console.error("Error fetching earnings data:", error);
@@ -97,6 +97,7 @@ const Chart = ({ aspect, title }) => {
           }} />
           <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
           <Bar dataKey="Total" fill="#8884d8" barSize={25} label={{ position: "top" }} />
+          <Bar dataKey="FifteenPercent" fill="#82ca9d" barSize={25} label={{ position: "top", fill: "black" }} />
         </BarChart>
       </ResponsiveContainer>
     </div>
