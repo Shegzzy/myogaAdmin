@@ -7,6 +7,7 @@ import { collection, deleteDoc, doc, onSnapshot, getDocs, query, where, limit } 
 import { db } from "./../../firebase";
 import Snakbar from "../snackbar/Snakbar";
 import SearchIcon from "@mui/icons-material/Search";
+import PaymentModal from "../modal/paymentModal";
 
 
 const EarningDatatable = () => {
@@ -294,7 +295,9 @@ const EarningDatatable = () => {
                 fifteenPercent: ((cashEarnings + cardEarnings) * 0.15).toFixed(0),
                 eightyFivePercent: ((cashEarnings + cardEarnings) * 0.85).toFixed(0),
                 toBeBalanced: totalReceive,
-                toPayOut: totalPayOut
+                toPayOut: totalPayOut,
+                startOfPeriod,
+                endOfPeriod
               };
             });
 
@@ -319,8 +322,10 @@ const EarningDatatable = () => {
   }, [selectedFilter]);
 
   const companyEarningColumns = [
+    // { field: 'id', headerName: 'ID', width: 100 },
+
     {
-      field: 'company',
+      field: 'name',
       headerName: 'Company',
       width: 150,
       renderCell: (params) => (
@@ -479,6 +484,21 @@ const EarningDatatable = () => {
     handleSearch();
   }, [searchTerm]);
 
+  const actionColumn = [
+    {
+      field: "action",
+      headerName: "Action",
+      width: 100,
+      renderCell: (params) => {
+        return (
+          <PaymentModal {...params.row} />
+        );
+      },
+    },
+  ];
+
+
+
   return (
     <div className="datatable">
       <Snakbar ref={snackbarRef} message={msg} type={sType} />
@@ -514,7 +534,7 @@ const EarningDatatable = () => {
       {!loading ? (<DataGrid
         className="datagrid"
         rows={data}
-        columns={companyEarningColumns}
+        columns={companyEarningColumns.concat(actionColumn)}
         pageSize={9}
         rowsPerPageOptions={[9]}
       />) : (<div className="detailItem">
