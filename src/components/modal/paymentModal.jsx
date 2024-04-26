@@ -3,11 +3,13 @@ import { db } from '../../firebase';
 import { Timestamp, addDoc, collection, } from 'firebase/firestore';
 import { Button, Modal } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
+import { format } from 'date-fns';
 
 function PaymentModal(props) {
-    const [notifiers, setNotifiers] = useState("");
-    const [title, setTitle] = useState('');
-    const [message, setMessage] = useState('');
+    const [companyName, setCompanyName] = useState("");
+    const [dateFrom, setDateFrom] = useState('');
+    const [dateTo, setDateTo] = useState('');
+    const [amount, setAmount] = useState('');
     const [show, setShow] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -18,16 +20,19 @@ function PaymentModal(props) {
 
             const notificationRef = collection(db, 'New Notification');
             await addDoc(notificationRef, {
-                notifier: notifiers,
-                message: message,
-                title: title,
-                dateCreated: Timestamp.now(),
+                "Company ID": props.id,
+                "Company Name": companyName,
+                Amount: amount,
+                From: dateFrom,
+                To: dateTo,
+                "Date Paid": Timestamp.now(),
             });
 
             alert('Notification sent successfully!');
-            setNotifiers('');
-            setTitle('');
-            setMessage('');
+            setAmount('');
+            setCompanyName('');
+            setDateFrom('');
+            setDateTo('');
             setLoading(false);
         } catch (error) {
             console.error('Error creating role and credentials:', error);
@@ -37,9 +42,10 @@ function PaymentModal(props) {
     };
 
     const handleClose = () => {
-        setNotifiers('');
-        setTitle('');
-        setMessage('');
+        setAmount('');
+        setCompanyName('');
+        setDateFrom('');
+        setDateTo('');
         setShow(false);
         setLoading(false);
     };
@@ -60,7 +66,7 @@ function PaymentModal(props) {
                 keyboard={false}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Send New Notification</Modal.Title>
+                    <Modal.Title>Make Payment</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form
@@ -72,22 +78,22 @@ function PaymentModal(props) {
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Company:</Form.Label>
                             <Form.Control type="text" value={props.name}
-                                onChange={(e) => setTitle(e.target.value)} required
+                                onChange={(e) => setCompanyName(e.target.value)} required
                             />
 
                             <Form.Label>From:</Form.Label>
-                            <Form.Control type="text" value={props.startOfPeriod}
-                                onChange={(e) => setTitle(e.target.value)} required
+                            <Form.Control type="text" value={format(new Date(props.startOfPeriod), 'dd/MM/yyyy')}
+                                onChange={(e) => setDateFrom(e.target.value)} required
                             />
 
                             <Form.Label>To:</Form.Label>
-                            <Form.Control type="text" value={props.endOfPeriod}
-                                onChange={(e) => setTitle(e.target.value)} required
+                            <Form.Control type="text" value={format(new Date(props.endOfPeriod), 'dd/MM/yyyy')}
+                                onChange={(e) => setDateTo(e.target.value)} required
                             />
 
                             <Form.Label>Amount:</Form.Label>
                             <Form.Control type="text" value={props.toBeBalanced}
-                                onChange={(e) => setTitle(e.target.value)} required
+                                onChange={(e) => setAmount(e.target.value)} required
                             />
 
                         </Form.Group>

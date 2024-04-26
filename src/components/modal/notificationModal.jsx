@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { db } from '../../firebase';
 import { Timestamp, addDoc, collection, } from 'firebase/firestore';
 import { Button, Modal } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
+import Snakbar from '../snackbar/Snakbar';
 
 function NotificationModal() {
     const [notifiers, setNotifiers] = useState("");
@@ -10,6 +11,9 @@ function NotificationModal() {
     const [message, setMessage] = useState('');
     const [show, setShow] = useState(false);
     const [loading, setLoading] = useState(false);
+    const snackbarRef = useRef();
+    const [msg, setMsg] = useState("");
+    const [sType, setType] = useState("");
 
 
     const handleSubmit = async (e) => {
@@ -24,14 +28,17 @@ function NotificationModal() {
                 dateCreated: Timestamp.now(),
             });
 
-            alert('Notification sent successfully!');
-            setNotifiers('');
-            setTitle('');
-            setMessage('');
-            setLoading(false);
+            // alert('Notification sent successfully!');
+            handleClose();
+            setMsg("Notification sent successfully!");
+            setType("success");
+            snackbarRef.current.show();
         } catch (error) {
             console.error('Error creating role and credentials:', error);
-            alert('An error occurred while sending notification. Please try again.');
+            // alert('An error occurred while sending notification. Please try again.');
+            setMsg("An error occurred while sending notification. Please try again.");
+            setType("error");
+            snackbarRef.current.show();
             setLoading(false);
         }
     };
@@ -47,7 +54,7 @@ function NotificationModal() {
 
     return (
         <>
-
+            <Snakbar ref={snackbarRef} message={msg} type={sType} />
             <button onClick={handleShow} class="px-4 py-1 
             text-sm text-purple-600 font-semibold rounded-full border 
             border-purple-200 hover:text-white hover:bg-purple-600 hover:border-transparent 
