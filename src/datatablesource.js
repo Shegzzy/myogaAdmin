@@ -4,7 +4,20 @@ import VerifyModal from './components/modal/VerifyModal';
 import { Link } from "react-router-dom";
 import { format } from 'date-fns';
 import RefundModal from './components/modal/refundModal';
+import ImageViewModal from './components/modal/image-view-modal';
+import { useState } from 'react';
 
+//   const [selectedImagePath, setSelectedImagePath] = useState(null);
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+
+//   const handleImageClick = (imageUrl) => {
+//     setSelectedImagePath(imageUrl);
+//     setIsModalOpen(true);
+//   };
+
+//   const handleCloseModal = () => {
+//     setIsModalOpen(false);
+//   };
 
 export const userColumns = [
     // { field: 'id', headerName: 'ID', width: 150 },
@@ -102,7 +115,29 @@ export const driverColumns = [
         renderCell: (params) => {
             return (
                 <div className="cellWithImg">
-                    <img className="cellImg" src={params.row['Documents']} alt=" docs " />
+                    {/* <img className="cellImg" src={params.row.documents} alt=" docs " /> */}
+                    {params.row.documents && params.row.documents.length > 0 ? (
+                      params.row.documents.map((imageUrl, index) => (
+                        <div key={index}>
+                          <img
+                            src={imageUrl}
+                            alt={`Rider's Documents ${index + 1}`}
+                            className="cellImg"
+                            // onClick={() => handleImageClick(imageUrl)}
+                            style={{ cursor: 'pointer' }}
+                          />
+
+                          {/* <ImageViewModal
+                            title={'Rider\'s Document'}
+                            show={isModalOpen}
+                            onHide={handleCloseModal}
+                            imagePath={selectedImagePath}
+                          /> */}
+                        </div>
+                      ))
+                    ) : (
+                      <p> No documents available.</p>
+                    )}
                 </div>
             )
         }

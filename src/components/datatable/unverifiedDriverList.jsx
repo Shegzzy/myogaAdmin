@@ -40,7 +40,7 @@ const UnverifiedDriversList = () => {
                     let list = [];
 
                     querySnapshot.forEach((doc) => {
-                        list.push({ id: doc.id, ...doc.data() });
+                        list.push({ id: doc.id, ...doc.data(), documents: Array.isArray(doc.data().Documents) ? doc.data().Documents : [], });
                     });
 
                     list.sort((a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"]));
@@ -103,7 +103,7 @@ const UnverifiedDriversList = () => {
                     let list = [];
 
                     querySnapshot.forEach((doc) => {
-                        list.push({ id: doc.id, ...doc.data() });
+                        list.push({ id: doc.id, ...doc.data(), documents: Array.isArray(doc.data().Documents) ? doc.data().Documents : [], });
                     });
 
                     list.sort((a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"]));

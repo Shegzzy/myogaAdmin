@@ -5,8 +5,6 @@ import { Button, Modal } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import { format } from 'date-fns';
 import Snakbar from '../snackbar/Snakbar';
-import { stringify } from 'postcss';
-import { Collections } from '@mui/icons-material';
 
 function PaymentModal(props) {
     const [companyName, setCompanyName] = useState("");
@@ -67,7 +65,7 @@ function PaymentModal(props) {
 
             if (fetchTransaction.exists()) {
                 setPaid(true);
-                console.log(fetchTransaction.data().Amount);
+                // console.log(fetchTransaction.data().Amount);
             }
 
             // alert('Notification sent successfully!');
@@ -76,7 +74,7 @@ function PaymentModal(props) {
             setType("success");
             snackbarRef.current.show();
         } catch (error) {
-            console.error('Error creating role and credentials:', error);
+            // console.error('Error creating role and credentials:', error);
             // alert('An error occurred while sending notification. Please try again.');
             setMsg("Payment Failed. Please try again");
             setType("error");
