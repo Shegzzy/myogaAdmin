@@ -1,23 +1,9 @@
-import AssignModal from './components/modal/AssignModal';
+// import AssignModal from './components/modal/AssignModal';
 import ModalContainer from './components/modal/ModalContainer';
-import VerifyModal from './components/modal/VerifyModal';
+// import VerifyModal from './components/modal/VerifyModal';
 import { Link } from "react-router-dom";
 import { format } from 'date-fns';
 import RefundModal from './components/modal/refundModal';
-import ImageViewModal from './components/modal/image-view-modal';
-import { useState } from 'react';
-
-//   const [selectedImagePath, setSelectedImagePath] = useState(null);
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-
-//   const handleImageClick = (imageUrl) => {
-//     setSelectedImagePath(imageUrl);
-//     setIsModalOpen(true);
-//   };
-
-//   const handleCloseModal = () => {
-//     setIsModalOpen(false);
-//   };
 
 export const userColumns = [
     // { field: 'id', headerName: 'ID', width: 150 },
@@ -126,13 +112,6 @@ export const driverColumns = [
                             // onClick={() => handleImageClick(imageUrl)}
                             style={{ cursor: 'pointer' }}
                           />
-
-                          {/* <ImageViewModal
-                            title={'Rider\'s Document'}
-                            show={isModalOpen}
-                            onHide={handleCloseModal}
-                            imagePath={selectedImagePath}
-                          /> */}
                         </div>
                       ))
                     ) : (

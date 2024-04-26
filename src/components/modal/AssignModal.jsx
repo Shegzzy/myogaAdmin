@@ -30,7 +30,7 @@ function AssignModal(props) {
         <>
 
             <div className="verifyButton" onClick={handleShow}>
-                Verify Driver
+                Verify Rider
             </div>
 
             <Modal
@@ -40,7 +40,7 @@ function AssignModal(props) {
                 keyboard={false}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Verify Driver</Modal.Title>
+                    <Modal.Title>Verify Rider</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form

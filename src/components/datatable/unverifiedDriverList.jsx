@@ -12,6 +12,9 @@ import {
 import { db } from "./../../firebase";
 import Snakbar from "../snackbar/Snakbar";
 import SearchIcon from "@mui/icons-material/Search";
+import { format } from "date-fns";
+import ImageViewModal from "../modal/image-view-modal";
+import AssignModal from "../modal/AssignModal";
 
 const UnverifiedDriversList = () => {
     const navigate = useNavigate();
@@ -23,6 +26,17 @@ const UnverifiedDriversList = () => {
     const [msg, setMsg] = useState("");
     const [sType, setType] = useState("");
     const [selectedFilter, setSelectedFilter] = useState("all");
+    const [selectedImagePath, setSelectedImagePath] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleImageClick = (imageUrl) => {
+        setSelectedImagePath(imageUrl);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
 
 
     useEffect(() => {
@@ -196,6 +210,108 @@ const UnverifiedDriversList = () => {
         },
     ];
 
+    const unverifiedRidersColumns = [
+        {
+            field: "FullName", headerName: "Driver Name", width: 200, renderCell: (params) => {
+                return (
+                    <div className="cellWithImg">
+                        <img className="cellImg" src={params.row['Profile Photo']} alt=" avatar " />
+                        {params.row.FullName}
+                    </div>
+                )
+            }
+        },
+        {
+            field: "Email", headerName: "Email", width: 200,
+        },
+        {
+            field: "Phone", headerName: "Phone Number", width: 150,
+        },
+        {
+            field: ['Date of Birth'], headerName: "Date of Birth", width: 100,
+        },
+        {
+            field: "Gender", headerName: "Gender", width: 100,
+        },
+        {
+            field: "State", headerName: "Location", width: 100,
+        },
+        {
+            field: "Address", headerName: "Address", width: 150,
+        },
+        {
+            field: "Online", headerName: "Status", width: 100,
+            renderCell: (params) => {
+                return (
+                    <div className={`cellWithStatus ${params.row.Online}`}>
+                        {params.row.Online === "1" ? "online" : "offline"}
+                    </div>
+                )
+            }
+        },
+        {
+            field: "Verified", headerName: "Verification", width: 100,
+            renderCell: (params) => {
+                return (
+                    <div className={`cellWithVerify ${params.row.Verified}`}>
+                        {params.row.Verified === "1" ? "verified" : <AssignModal value={params.row.Verified} Id={params.row.id} />}
+                        {/* {params.row.Verified === "0" ? <AssignModal value={params.row.Verified} Id={params.row.id} /> : <div className="verifiedButton">Verified</div>} */}
+                    </div>
+                )
+            }
+        },
+        {
+            field: "Company", headerName: "Company", width: 150,
+        },
+        {
+            field: "Documents", headerName: "Documents", width: 150,
+            renderCell: (params) => {
+                return (
+                    <div className="cellWithImg">
+                        {/* <img className="cellImg" src={params.row.documents} alt=" docs " /> */}
+                        {params.row.documents && params.row.documents.length > 0 ? (
+                            params.row.documents.map((imageUrl, index) => (
+                                <div key={index}>
+                                    <img
+                                        src={imageUrl}
+                                        alt={`Rider's Documents ${index + 1}`}
+                                        className="cellImg"
+                                        onClick={() => handleImageClick(imageUrl)}
+                                        style={{ cursor: 'pointer' }}
+                                    />
+                                </div>
+                            ))
+                        ) : (
+                            <p> No documents available.</p>
+                        )}
+                    </div>
+                )
+            }
+        },
+        {
+            field: "Vehicle Type", headerName: "Vehicle Type", width: 100,
+        },
+        {
+            field: "Vehicle Make", headerName: "Vehicle Make", width: 100,
+        },
+        {
+            field: "Vehicle Color", headerName: "Vehicle Color", width: 100,
+        },
+        {
+            field: "Vehicle Year", headerName: "Vehicle Year", width: 100,
+        },
+        {
+            field: "Vehicle Number", headerName: "Vehicle Number", width: 100,
+        },
+        {
+            field: "Date Created", headerName: "Date Created", width: 150,
+            renderCell: (params) => {
+                const formattedDate = format(new Date(params.value), 'dd/MM/yyyy'); // Format the date
+                return <div>{formattedDate}</div>;
+            }
+        },
+    ];
+
     return (
         <div className="datatable">
             <Snakbar ref={snackbarRef} message={msg} type={sType} />
@@ -236,7 +352,7 @@ const UnverifiedDriversList = () => {
                 <DataGrid
                     className="datagrid"
                     rows={data}
-                    columns={driverColumns.concat(actionColumn)}
+                    columns={unverifiedRidersColumns.concat(actionColumn)}
                     pageSize={9}
                     rowsPerPageOptions={[9]}
                 // checkboxSelection
@@ -254,7 +370,12 @@ const UnverifiedDriversList = () => {
                 </span>
             </div>)
             }
-
+            <ImageViewModal
+                title={"Rider's Document"}
+                show={isModalOpen}
+                onHide={handleCloseModal}
+                imagePath={selectedImagePath}
+            />
         </div >
     );
 };
