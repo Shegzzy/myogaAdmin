@@ -1,11 +1,12 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { db } from '../../firebase';
-import { Timestamp, addDoc, collection, updateDoc, } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where, } from 'firebase/firestore';
 import { Button, Modal } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import { format } from 'date-fns';
 import Snakbar from '../snackbar/Snakbar';
 import { stringify } from 'postcss';
+import { Collections } from '@mui/icons-material';
 
 function PaymentModal(props) {
     const [companyName, setCompanyName] = useState("");
@@ -14,9 +15,29 @@ function PaymentModal(props) {
     const [amount, setAmount] = useState('');
     const [show, setShow] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [paid, setPaid] = useState(false);
     const snackbarRef = useRef();
     const [msg, setMsg] = useState("");
     const [sType, setType] = useState("");
+
+    useEffect(() => {
+        const queryTransactions = async () => {
+            const fetchTransac = query(
+                collection(db, "Transactions"),
+                where("Company Name", "==", props.name),
+                where("From", "==", format(new Date(props.startOfPeriod), 'dd/MM/yyyy')),
+                where("To", "==", format(new Date(props.endOfPeriod), 'dd/MM/yyyy')),
+            );
+
+            const transactionSnapshot = await getDocs(fetchTransac);
+            if (!transactionSnapshot.empty) {
+                setPaid(true);
+            }
+        };
+
+        queryTransactions();
+    }, [props.endOfPeriod, props.name, props.startOfPeriod]);
+
 
 
     const handleSubmit = async (e) => {
@@ -40,6 +61,14 @@ function PaymentModal(props) {
             await updateDoc(newDocRef, {
                 Id: newDocId
             });
+
+            const transactionDocRef = doc(db, 'Transactions', newDocId);
+            const fetchTransaction = await getDoc(transactionDocRef);
+
+            if (fetchTransaction.exists()) {
+                setPaid(true);
+                console.log(fetchTransaction.data().Amount);
+            }
 
             // alert('Notification sent successfully!');
             handleClose();
@@ -70,10 +99,10 @@ function PaymentModal(props) {
         <>
             <Snakbar ref={snackbarRef} message={msg} type={sType} />
 
-            <button onClick={handleShow} class="px-4 py-1 
+            {!paid ? (<button onClick={handleShow} class="px-4 py-1 
             text-sm text-purple-600 font-semibold rounded-full border 
             border-purple-200 hover:text-white hover:bg-purple-600 hover:border-transparent 
-            focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2">Pay</button>
+            focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2">Pay</button>) : <p>Paid</p>}
 
             <Modal
                 show={show}

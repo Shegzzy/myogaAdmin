@@ -525,8 +525,8 @@ const EarningDatatable = () => {
           >
             <option value="all">All </option>
             <option value="7">Last Week </option>
-            {/* <option value="1">Two Weeks Ago </option>
-            <option value="2">Three Weeks Ago </option>
+            <option value="1">Two Weeks Ago </option>
+            {/* <option value="2">Three Weeks Ago </option>
             <option value="3">Four Weeks Ago </option> */}
           </select>
         </div>
