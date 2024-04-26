@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { db } from '../../firebase';
-import { Timestamp, addDoc, collection, } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, updateDoc, } from 'firebase/firestore';
 import { Button, Modal } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import { format } from 'date-fns';
+import Snakbar from '../snackbar/Snakbar';
+import { stringify } from 'postcss';
 
 function PaymentModal(props) {
     const [companyName, setCompanyName] = useState("");
@@ -12,31 +14,44 @@ function PaymentModal(props) {
     const [amount, setAmount] = useState('');
     const [show, setShow] = useState(false);
     const [loading, setLoading] = useState(false);
+    const snackbarRef = useRef();
+    const [msg, setMsg] = useState("");
+    const [sType, setType] = useState("");
 
 
     const handleSubmit = async (e) => {
         try {
             setLoading(true);
 
-            const notificationRef = collection(db, 'New Notification');
-            await addDoc(notificationRef, {
+            const notificationRef = collection(db, 'Transactions');
+            const newDocRef = await addDoc(notificationRef, {
                 "Company ID": props.id,
-                "Company Name": companyName,
-                Amount: amount,
-                From: dateFrom,
-                To: dateTo,
+                "Company Name": props.name,
+                Amount: props.toBeBalanced,
+                From: format(new Date(props.startOfPeriod), 'dd/MM/yyyy'),
+                To: format(new Date(props.endOfPeriod), 'dd/MM/yyyy'),
                 "Date Paid": Timestamp.now(),
             });
 
-            alert('Notification sent successfully!');
-            setAmount('');
-            setCompanyName('');
-            setDateFrom('');
-            setDateTo('');
-            setLoading(false);
+            // Get the ID of the newly added document
+            const newDocId = newDocRef.id;
+
+            // Update the document with the ID field
+            await updateDoc(newDocRef, {
+                Id: newDocId
+            });
+
+            // alert('Notification sent successfully!');
+            handleClose();
+            setMsg("Paid Successfully!");
+            setType("success");
+            snackbarRef.current.show();
         } catch (error) {
             console.error('Error creating role and credentials:', error);
-            alert('An error occurred while sending notification. Please try again.');
+            // alert('An error occurred while sending notification. Please try again.');
+            setMsg("Payment Failed. Please try again");
+            setType("error");
+            snackbarRef.current.show();
             setLoading(false);
         }
     };
@@ -53,6 +68,7 @@ function PaymentModal(props) {
 
     return (
         <>
+            <Snakbar ref={snackbarRef} message={msg} type={sType} />
 
             <button onClick={handleShow} class="px-4 py-1 
             text-sm text-purple-600 font-semibold rounded-full border 
