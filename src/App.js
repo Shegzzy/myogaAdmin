@@ -217,6 +217,15 @@ function App() {
               />
             </Route>
 
+            <Route path="transactions">
+              <Route index element={
+                <RequireAuth>
+                  <EarningList />
+                </RequireAuth>
+              }
+              />
+            </Route>
+
             <Route path="setting">
               <Route index element={
                 <RequireAuth>
