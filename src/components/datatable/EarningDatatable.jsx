@@ -464,21 +464,29 @@ const EarningDatatable = () => {
 
   // Function to search for riders
   const handleSearch = () => {
-    if (searchTerm.trim() !== '') {
-      const filteredData = data.filter((companyName) => {
-        const name = companyName.name?.toLowerCase() ?? "";
-        return name.includes(searchTerm?.toLowerCase() ?? "");
-      });
+    try {
+      setLoading(true);
+      if (searchTerm.trim() !== '') {
+        const filteredData = data.filter((companyName) => {
+          const name = companyName.name?.toLowerCase() ?? "";
+          return name.includes(searchTerm?.toLowerCase() ?? "");
+        });
 
-      if (filteredData.length === 0) {
-        setMsg('No search results found.');
-        setType("error");
-        snackbarRef.current.show();
+        if (filteredData.length === 0) {
+          setMsg('No search results found.');
+          setType("error");
+          snackbarRef.current.show();
+        }
+
+        setData(filteredData);
+      } else {
+        setSelectedFilter("7");
+        console.log(selectedFilter);
       }
-
-      setData(filteredData);
-    } else {
-      setSelectedFilter("7");
+    } catch (e) {
+      console.log("Earnings Search Error: ", e);
+    } finally {
+      setLoading(false);
     }
   };
 

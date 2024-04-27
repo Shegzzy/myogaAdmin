@@ -26,58 +26,23 @@ const Login = () => {
 
     const adminRef = collection(db, "Admin");
     const rolesRef = collection(db, "Roles");
-    const q = query(
-      adminRef,
-      where("email", "==", email),
-      where("password", "==", password)
-    );
-    const querySnapshot = await getDocs(q);
-    if (!querySnapshot.empty) {
-      signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          dispatch({ type: "LOGIN", payload: user });
-          setMsg("Logged In Succesfully");
-          setType("success");
-          snackbarRef.current.show();
-          navigate("/");
-        })
-        .catch((error) => {
-          setError(true);
-          setMsg(error.message);
-          setType("error");
-          snackbarRef.current.show();
-        });
-    } else {
-      const q = query(
-        rolesRef,
-        where("email", "==", email),
-        where("password", "==", password)
-      );
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        signInWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            const user = userCredential.user;
-            dispatch({ type: "LOGIN", payload: user });
-            setMsg("Logged In Succesfully");
-            setType("success");
-            snackbarRef.current.show();
-            navigate("/");
-          })
-          .catch((error) => {
-            setError(true);
-            setMsg(error.message);
-            setType("error");
-            snackbarRef.current.show();
-          });
-      } else {
-        setLoading(false);
-        alert("You Don't Have Permission");
-      }
 
-    }
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        dispatch({ type: "LOGIN", payload: user });
+        setMsg("Logged In Succesfully");
+        setType("success");
+        snackbarRef.current.show();
+        navigate("/");
+      })
+      .catch((error) => {
+        setError(true);
+        setMsg(error.message);
+        setType("error");
+        snackbarRef.current.show();
+      });
   };
 
   return (

@@ -4,6 +4,9 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from '../../firebase';
+import { BsEye, BsEyeSlash } from 'react-icons/bs';
+import { InputGroup } from 'react-bootstrap';
+
 
 function EditRole(props) {
 
@@ -12,6 +15,11 @@ function EditRole(props) {
     const [email, setEmail] = useState(props.email);
     const [password, setPassword] = useState(props.password);
     const [show, setShow] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -54,14 +62,21 @@ function EditRole(props) {
                             />
 
                             <Form.Label>Email:</Form.Label>
-                            <Form.Control type="text" value={email}
+                            <Form.Control type="email" value={email}
                                 onChange={(e) => { setEmail(e.target.value) }}
                             />
 
                             <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" value={password}
-                                onChange={(e) => { setPassword(e.target.value) }}
-                            />
+                            <InputGroup>
+                                <Form.Control
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                                <Button variant="outline-secondary" onClick={togglePasswordVisibility}>
+                                    {showPassword ? <BsEyeSlash /> : <BsEye />}
+                                </Button>
+                            </InputGroup>
 
                         </Form.Group>
                     </Form>
