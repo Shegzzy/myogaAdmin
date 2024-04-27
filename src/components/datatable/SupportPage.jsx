@@ -121,6 +121,7 @@ const SupportPage = () => {
                         Attended
                     </h1>
                 </div>
+
                 {activeTab === "new" && (<TableContainer component={Paper} className="table">
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>

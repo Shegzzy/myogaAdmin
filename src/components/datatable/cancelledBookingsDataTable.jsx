@@ -1,3 +1,4 @@
+import "./cancelledBookings.scss";
 import "./bookingDatatable.scss";
 import { DataGrid } from "@mui/x-data-grid";
 import { cancelledBookingColumns, refundedBookingColumns } from "../../datatablesource";
@@ -414,7 +415,7 @@ const CancelledBookingDataTable = () => {
 
             </div>
 
-            <div className="bottom">
+            <div className="s-bottom">
                 <div className="table-navs">
                     {/* Cancelled tab */}
                     <h1 className={`title ${activeTab === "cancelled" ? "active" : ""}`} onClick={switchToCancelled}>
@@ -427,37 +428,44 @@ const CancelledBookingDataTable = () => {
                     </h1>
                 </div>
 
-                {!loading ? (<div>
-                    {activeTab === "cancelled" && (<DataGrid
-                        className="datagrid"
-                        rows={data}
-                        columns={cancelledBookingColumns}
-                        pageSize={9}
-                        rowsPerPageOptions={[9]}
-                    // checkboxSelection
-                    />)}
+                {!loading ? (
+                    <>
+                        {activeTab === "cancelled" && (
+                            <DataGrid
+                                className="datagrid"
+                                rows={data}
+                                columns={cancelledBookingColumns}
+                                pageSize={9}
+                                rowsPerPageOptions={[9]}
+                            // checkboxSelection
+                            />
+                        )}
 
-                    {activeTab === "refunded" && (<DataGrid
-                        className="datagrid"
-                        rows={refunds}
-                        columns={refundedBookingColumns}
-                        pageSize={9}
-                        rowsPerPageOptions={[9]}
-                    // checkboxSelection
-                    />)}
-                </div>) : (<div className="detailItem">
-                    <span className="itemKey">
-                        <div className="no-data-message">
-                            <div className="single-container">
-                                <div className="loader">
-                                    <div className="lds-dual-ring"></div>
-                                    <div>Loading... </div>
+                        {activeTab === "refunded" && (
+                            <DataGrid
+                                className="datagrid"
+                                rows={refunds}
+                                columns={refundedBookingColumns}
+                                pageSize={9}
+                                rowsPerPageOptions={[9]}
+                            // checkboxSelection
+                            />
+                        )}
+                    </>
+                ) : (
+                    <div className="detailItem">
+                        <span className="itemKey">
+                            <div className="no-data-message">
+                                <div className="single-container">
+                                    <div className="loader">
+                                        <div className="lds-dual-ring"></div>
+                                        <div>Loading... </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </span>
-                </div>)}
-
+                        </span>
+                    </div>
+                )}
 
             </div>
         </div>
