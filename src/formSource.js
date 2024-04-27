@@ -70,11 +70,11 @@ export const driverInputs = [
     type: "text",
     placeholder: "+1 234 567 89",
   },
-  {
-    id: "Password",
-    label: "Password",
-    type: "password",
-  },
+  // {
+  //   id: "Password",
+  //   label: "Password",
+  //   type: "password",
+  // },
 
   {
     id: "Gender",

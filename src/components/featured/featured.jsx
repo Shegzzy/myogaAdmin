@@ -367,7 +367,7 @@ const Featured = () => {
         <div className="featuredChart">
           <CircularProgressbar value={diff} text={`${diff}%`} strokeWidth={5} />
         </div>
-        <p className="title">Earnings for {Selected}</p>
+        <p className="title">Earnings</p>
         <p className="amount">{formattedAmount}</p>
         <p className="desc">This is the total earnigs from completed trips</p>
         <div className="summary">

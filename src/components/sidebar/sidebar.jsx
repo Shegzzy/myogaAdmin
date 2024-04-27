@@ -20,7 +20,8 @@ import { auth } from "./../../firebase";
 import { signOut } from "firebase/auth";
 import Snakbar from "../snackbar/Snakbar";
 import MyOga from "../../myogaIcon3.png";
-import { AttachMoney, CancelPresentation, CarCrash } from "@mui/icons-material";
+import { AttachMoney, CancelPresentation, CarCrash, PaymentRounded } from "@mui/icons-material";
+import { FaMoneyBillTransfer } from "react-icons/fa6";
 
 const Sidebar = () => {
   const { dispatch } = useContext(DarkModeContext, AuthContext);
@@ -118,6 +119,14 @@ const Sidebar = () => {
               <span>Earnings</span>
             </li>
           </Link>
+          <Link to="/earnings" style={{ textDecoration: "none" }}>
+            <li tabindex="0">
+              <FaMoneyBillTransfer className="icon" />
+              <span>Transactions</span>
+            </li>
+          </Link>
+
+
           <p className="title">USEFUL LINKS</p>
           <Link to="/notification" style={{ textDecoration: "none" }}>
             <li tabindex="0">
