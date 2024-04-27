@@ -40,6 +40,7 @@ import CancelledBookingList from './pages/list/cancelledBookingsList';
 import UnverifiedDrivers from './pages/list/unverifiedDrivers';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from './firebase';
+import TransactionList from './pages/list/transactionList';
 
 
 
@@ -220,7 +221,7 @@ function App() {
             <Route path="transactions">
               <Route index element={
                 <RequireAuth>
-                  <EarningList />
+                  <TransactionList />
                 </RequireAuth>
               }
               />

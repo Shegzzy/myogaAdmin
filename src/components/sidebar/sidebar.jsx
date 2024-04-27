@@ -119,7 +119,7 @@ const Sidebar = () => {
               <span>Earnings</span>
             </li>
           </Link>
-          <Link to="/earnings" style={{ textDecoration: "none" }}>
+          <Link to="/transactions" style={{ textDecoration: "none" }}>
             <li tabindex="0">
               <FaMoneyBillTransfer className="icon" />
               <span>Transactions</span>

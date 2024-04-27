@@ -1,9 +1,9 @@
 import "./earningDatatable.scss";
 import { DataGrid } from "@mui/x-data-grid";
-import { earningColumns } from "../../datatablesource";
+// import { earningColumns } from "../../datatablesource";
 import { useNavigate, Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import { collection, deleteDoc, doc, onSnapshot, getDocs, query, where, limit } from "firebase/firestore";
+import { collection, getDocs, query, where, limit } from "firebase/firestore";
 import { db } from "./../../firebase";
 import Snakbar from "../snackbar/Snakbar";
 import SearchIcon from "@mui/icons-material/Search";
@@ -477,6 +477,8 @@ const EarningDatatable = () => {
       }
 
       setData(filteredData);
+    } else {
+      setSelectedFilter("7");
     }
   };
 
