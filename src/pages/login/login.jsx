@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import Snakbar from "../../components/snackbar/Snakbar";
 import logo from "../../components/assets/images/myogaIcon2.png";
+import { Button } from "react-bootstrap";
+import { BsEye, BsEyeSlash } from "react-icons/bs";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -17,8 +19,12 @@ const Login = () => {
   const [msg, setMsg] = useState("");
   const [sType, setType] = useState("");
   const navigate = useNavigate();
-
   const { dispatch } = useContext(AuthContext);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -39,9 +45,10 @@ const Login = () => {
       })
       .catch((error) => {
         setError(true);
-        setMsg(error.message);
+        setMsg("Incorrect email or password");
         setType("error");
         snackbarRef.current.show();
+        setLoading(false);
       });
   };
 
@@ -57,52 +64,60 @@ const Login = () => {
     //         {error && <span>Wrong Email or Password</span>}
     //     </form>
     // </div>
-
-    <div className="login-page">
+    <>
       <Snakbar ref={snackbarRef} message={msg} type={sType} />
-      <header>
-        <span>MyOga Admin</span>
-      </header>
 
-      <img className="logo" src={logo} alt="Logo" />
+      <div className="login-page">
 
-      <form onSubmit={handleLogin}>
-        <div className="email">
-          <input
-            onChange={(e) => setEmail(e.target.value)}
-            id="email"
-            type="email"
-            placeholder="Email"
-            required
-          />
-        </div>
+        <header>
+          <span>MyOga Admin</span>
+        </header>
 
-        <div className="password">
-          <input
-            onChange={(e) => setPassword(e.target.value)}
-            id="password"
-            type="password"
-            placeholder="Password"
-            required
-          />
-        </div>
+        <img className="logo" src={logo} alt="Logo" />
 
-        {error && <span className="error">Process Failed!!</span>}
-        {/* {error && <span className="error">{Errormsg}</span>} */}
+        <form onSubmit={handleLogin}>
+          <div className="email">
+            <input
+              onChange={(e) => setEmail(e.target.value)}
+              id="email"
+              type="email"
+              placeholder="Email"
+              required
+            />
+          </div>
 
-        <button
-          type="submit"
-          className={loading ? "spinner-btn" : ""}
-          disabled={loading}
-        >
-          <span className={loading ? "hidden" : ""}>{"Login"}</span>
-          <span className={loading ? "" : "hidden"}>
-            <div className="spinner"></div>
-          </span>
-          {loading && <span>Logging In...</span>}
-        </button>
-      </form>
-    </div>
+          <div className="password">
+            <input
+              onChange={(e) => setPassword(e.target.value)}
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              required
+            />
+            <Button variant="outline-secondary" onClick={togglePasswordVisibility}>
+              {showPassword ? <BsEyeSlash /> : <BsEye />}
+            </Button>
+          </div>
+
+          {/* {error && <span className="error">Process Failed!!</span>} */}
+          {/* {error && <span className="error">{Errormsg}</span>} */}
+
+          <button
+            type="submit"
+            className={loading ? "spinner-btn" : ""}
+            disabled={loading}
+          >
+            <span className={loading ? "hidden" : ""}>{"Login"}</span>
+            <span className={loading ? "" : "hidden"}>
+              <div className="spinner"></div>
+            </span>
+            {loading && <span>Logging In...</span>}
+          </button>
+        </form>
+      </div>
+    </>
+
+
   );
 };
 
