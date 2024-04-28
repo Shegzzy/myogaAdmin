@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { companyColumns, companyRows } from "../../datatablesource";
 import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
+import { collection, deleteDoc, doc, onSnapshot, getDoc } from "firebase/firestore";
 import { db } from "./../../firebase";
 import Snakbar from "../snackbar/Snakbar";
 
@@ -58,19 +58,20 @@ const CompanyDatatable = () => {
     };
   }, []);
 
-  // const handleDelete = async (id) => {
-  //   try {
-  //     await deleteDoc(doc(db, "Companies", id));
-  //     setData(data.filter((item) => item.id !== id));
-  //     setMsg("User Deleted Succesfully");
-  //     setType("success");
-  //     snackbarRef.current.show();
-  //   } catch (erre) {
-  //     setMsg(erre.message);
-  //     setType("error");
-  //     snackbarRef.current.show();
-  //   }
-  // };
+  const handleHold = async (id) => {
+    try {
+      const companyDoc = await getDoc(doc(db, "Companies", id));
+      console.log(companyDoc.data());
+      // setData(data.filter((item) => item.id !== id));
+      setMsg(companyDoc.data().company);
+      setType("success");
+      snackbarRef.current.show();
+    } catch (erre) {
+      setMsg(erre.message);
+      setType("error");
+      snackbarRef.current.show();
+    }
+  };
 
   const actionColumn = [
     {
@@ -91,12 +92,12 @@ const CompanyDatatable = () => {
             >
               View
             </div>
-            {/* <div
+            <div
               className="deleteButton"
-              onClick={() => handleDelete(params.row.id)}
+              onClick={() => handleHold(params.row.id)}
             >
-              Delete
-            </div> */}
+              Hold
+            </div>
           </div>
         );
       },
