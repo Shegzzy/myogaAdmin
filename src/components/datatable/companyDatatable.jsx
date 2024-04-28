@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { companyColumns, companyRows } from "../../datatablesource";
 import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { collection, deleteDoc, doc, onSnapshot, getDoc, query, where, getDocs } from "firebase/firestore";
+import { collection, deleteDoc, doc, onSnapshot, getDoc, query, where, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "./../../firebase";
 import Snakbar from "../snackbar/Snakbar";
 
@@ -62,27 +62,28 @@ const CompanyDatatable = () => {
     try {
       const companyDoc = await getDoc(doc(db, "Companies", id));
       const companyName = companyDoc.data().company;
-      
-      const ridersQuery = await query(collection(db, "Drivers"),
-        where("Company", "==", companyName)
-      );
-      
+
+      const ridersQuery = query(collection(db, "Drivers"), where("Company", "==", companyName));
       const companyRiders = await getDocs(ridersQuery);
-      
-      companyRiders.forEach((rider) => {
-        console.log(rider.data().FullName)
-      })
-      
-      // setData(data.filter((item) => item.id !== id));
-      setMsg(companyName);
+
+      const updatePromises = companyRiders.docs.map(async (rider) => {
+        // console.log(rider.id);
+        const riderRef = doc(db, "Drivers", "0PHY9I8OhahJHiNhlr2sv7CV5rL2");
+        await updateDoc(riderRef, { Verified: "1" });
+      });
+
+      await Promise.all(updatePromises);
+
+      setMsg(`${companyName} is now on hold`);
       setType("success");
       snackbarRef.current.show();
-    } catch (erre) {
-      setMsg(erre.message);
+    } catch (error) {
+      setMsg(error.message);
       setType("error");
       snackbarRef.current.show();
     }
   };
+
 
   const actionColumn = [
     {
@@ -134,7 +135,7 @@ const CompanyDatatable = () => {
         columns={companyColumns.concat(actionColumn)}
         pageSize={9}
         rowsPerPageOptions={[9]}
-        checkboxSelection
+      // checkboxSelection
       />
     </div>
   );
