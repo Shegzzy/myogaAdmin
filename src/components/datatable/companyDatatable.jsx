@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { companyColumns, companyRows } from "../../datatablesource";
 import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { collection, deleteDoc, doc, onSnapshot, getDoc, query, where, getDocs, updateDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, onSnapshot, getDoc, query, where, getDocs, updateDoc, setDoc } from "firebase/firestore";
 import { db } from "./../../firebase";
 import Snakbar from "../snackbar/Snakbar";
 
@@ -58,7 +58,46 @@ const CompanyDatatable = () => {
     };
   }, []);
 
+  // hold function
   const handleHold = async (id) => {
+    try {
+      const companyDoc = await getDoc(doc(db, "Companies", id));
+      const companyName = companyDoc.data().company;
+
+      const ridersQuery = query(collection(db, "Drivers"), where("Company", "==", companyName));
+      const companyRiders = await getDocs(ridersQuery);
+
+      if (!companyRiders.empty) {
+        const updatePromises = companyRiders.docs.map(async (rider) => {
+          const riderRef = doc(db, "Drivers", rider.id);
+          await updateDoc(riderRef, { Verified: "0" });
+        });
+
+        // Update the company document status
+        const companyRef = doc(db, "Companies", id);
+        await setDoc(companyRef, { Status: "Hold" }, { merge: true });
+
+        // Wait for all updates to complete
+        await Promise.all(updatePromises);
+
+        setMsg(`${companyName} is now on hold`);
+        setType("success");
+      } else {
+        setMsg(`${companyName} has no riders`);
+        setType("error");
+      }
+
+      snackbarRef.current.show();
+    } catch (error) {
+      setMsg(error.message);
+      setType("error");
+      snackbarRef.current.show();
+    }
+  };
+
+
+  // release functionality
+  const handleRelease = async (id) => {
     try {
       const companyDoc = await getDoc(doc(db, "Companies", id));
       const companyName = companyDoc.data().company;
@@ -68,13 +107,16 @@ const CompanyDatatable = () => {
 
       const updatePromises = companyRiders.docs.map(async (rider) => {
         // console.log(rider.id);
-        const riderRef = doc(db, "Drivers", "0PHY9I8OhahJHiNhlr2sv7CV5rL2");
+        const riderRef = doc(db, "Drivers", rider.id);
+        const companyRef = doc(db, "Companies", id);
+
         await updateDoc(riderRef, { Verified: "1" });
+        await updateDoc(companyRef, { Status: "Released" });
       });
 
       await Promise.all(updatePromises);
 
-      setMsg(`${companyName} is now on hold`);
+      setMsg(`${companyName} is now released`);
       setType("success");
       snackbarRef.current.show();
     } catch (error) {
@@ -104,12 +146,17 @@ const CompanyDatatable = () => {
             >
               View
             </div>
-            <div
+            {(params.row.Status === "Released" || params.row.Status === undefined) ? (<div
               className="deleteButton"
               onClick={() => handleHold(params.row.id)}
             >
               Hold
-            </div>
+            </div>) : (<div
+              className="deleteButton"
+              onClick={() => handleRelease(params.row.id)}
+            >
+              Release
+            </div>)}
           </div>
         );
       },
