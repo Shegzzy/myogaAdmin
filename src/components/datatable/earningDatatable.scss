@@ -1,13 +1,14 @@
 .datatable{
+    flex: 6 1;
     height: 600px;
-    width: 100%;
-    min-width: 100vw;
+    // width: 100%;
+    // min-width: 100vw;
     padding: 20px;
 
-    .datagrid{
-        width: 100vw;
-        min-width: 100vw;
-    }
+    // .datagrid{
+    //     width: 100vw;
+    //     min-width: 100vw;
+    // }
 
 .datatableTitle{
     width: 100%;
