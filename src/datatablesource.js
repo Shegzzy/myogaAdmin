@@ -146,66 +146,6 @@ export const driverColumns = [
 ];
 
 
-export const companyColumns = [
-    // { field: 'id', headerName: 'ID', width: 100 },
-    {
-        field: "Company Name", headerName: "Company Name", width: 200, renderCell: (params) => {
-            return (
-                <div className="cellWithImg">
-                    {params.row['Profile Photo'] === null ? <img className="cellImg" src="https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg" alt=" avatar " />
-                        : <img className="cellImg" src={params.row['Profile Photo']} alt=" avatar " />
-                    }
-                    {params.row.company}
-                </div>
-            )
-        }
-    },
-    {
-        field: "email", headerName: "Email", width: 200,
-    },
-    {
-        field: "phone", headerName: "Company Phone Number", width: 150,
-    },
-    {
-        field: "regnumber", headerName: "Registration Number", width: 150,
-    },
-    {
-        field: "address", headerName: "Company Address", width: 250,
-    },
-    {
-        field: "location", headerName: "Location", width: 150,
-    },
-    // {
-    //     field: "Status", headerName: "Status", width: 100,
-    //     renderCell: (params) => {
-    //         return (
-    //             <div className={`cellWithStatus ${params.row.Status}`}>
-    //                 {params.row.Status}
-    //             </div>
-    //         )
-    //     }
-    // },
-    {
-        field: "Document", headerName: "Documents", width: 150, renderCell: (params) => {
-            return (
-                <div className="cellWithImg" >
-                    {params.row.documents === null ? <img className="cellImg" src="https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg" alt=" avatar " />
-                        : <img className="cellImg" src={params.row.documents} alt=" avatar " />
-                    }
-                </div>
-            )
-        }
-    },
-    {
-        field: "date", headerName: "Date Created",
-        renderCell: (params) => {
-            const formattedDate = format(new Date(params.value), 'dd/MM/yyyy'); // Format the date
-            return <div>{formattedDate || ''}</div>;
-        }
-    },
-];
-
-
 export const bookingColumns = [
     // { field: 'id', headerName: 'ID', width: 100 },
     {

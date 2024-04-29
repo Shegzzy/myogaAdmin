@@ -462,7 +462,7 @@ const EarningDatatable = () => {
 
   ];
 
-  // Function to search for riders
+  // Function to search for companies
   const handleSearch = () => {
     if (searchTerm.trim() !== '') {
       const filteredData = data.filter((companyName) => {

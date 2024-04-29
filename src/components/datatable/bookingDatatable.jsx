@@ -251,8 +251,8 @@ const BookingDatatable = () => {
 
           }
 
-          console.log('Start of period: ' + startOfPeriod);
-          console.log('End of period: ' + endOfPeriod);
+          // console.log('Start of period: ' + startOfPeriod);
+          // console.log('End of period: ' + endOfPeriod);
 
           const querySnapshot = await getDocs(query(
             collection(db, "Bookings"),
@@ -281,7 +281,7 @@ const BookingDatatable = () => {
                 const driverName = driverDoc.data().FullName;
                 driverMap.set(driverID, driverName); // Set driver name in the map
               } else {
-                console.log(`Driver with ID ${driverID} does not exist.`);
+                // console.log(`Driver with ID ${driverID} does not exist.`);
                 driverMap.delete(driverID);
               }
             } catch (error) {
@@ -297,7 +297,7 @@ const BookingDatatable = () => {
                 const userName = userDoc.data().FullName;
                 userMap.set(userID, userName); // Set user name in the map
               } else {
-                console.log(`User with ID ${userID} does not exist.`);
+                // console.log(`User with ID ${userID} does not exist.`);
                 userMap.delete(userID);
               }
             } catch (error) {

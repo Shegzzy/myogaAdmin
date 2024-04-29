@@ -1,19 +1,34 @@
 import "./companyDatatable.scss";
-import { DataGrid } from "@mui/x-data-grid";
-import { companyColumns, companyRows } from "../../datatablesource";
+import { DataGrid, GridSearchIcon } from "@mui/x-data-grid";
+// import { companyColumns, companyRows } from "../../datatablesource";
 import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { collection, deleteDoc, doc, onSnapshot, getDoc, query, where, getDocs, updateDoc, setDoc } from "firebase/firestore";
 import { db } from "./../../firebase";
 import Snakbar from "../snackbar/Snakbar";
+import ImageViewModal from "../modal/image-view-modal";
+import { format } from "date-fns";
 
 const CompanyDatatable = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
 
   const snackbarRef = useRef(null);
   const [msg, setMsg] = useState("");
   const [sType, setType] = useState("");
+  const [selectedImagePath, setSelectedImagePath] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleImageClick = (imageUrl) => {
+    setSelectedImagePath(imageUrl);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     // const fetchData = async () =>{
@@ -38,7 +53,14 @@ const CompanyDatatable = () => {
       (snapShot) => {
         let list = [];
         snapShot.docs.forEach((doc) => {
-          list.push({ id: doc.id, ...doc.data() });
+          list.push({
+            id: doc.id,
+            ...doc.data(),
+            documents: Array.isArray(doc.data().documents) ? doc.data().documents : [],
+            cac: Array.isArray(doc.data().cacDocuments) ? doc.data().cacDocuments : [],
+            cLicense: Array.isArray(doc.data().courierLicense) ? doc.data().courierLicense : [],
+
+          });
         });
         list.sort((a, b) => new Date(b["date"]) - new Date(a["date"]));
         setData(list);
@@ -126,6 +148,23 @@ const CompanyDatatable = () => {
     }
   };
 
+  // Function to search for riders
+  const handleSearch = () => {
+    if (searchTerm.trim() !== '') {
+      const filteredData = data.filter((companyName) => {
+        const name = companyName.company?.toLowerCase() ?? "";
+        return name.includes(searchTerm?.toLowerCase() ?? "");
+      });
+
+      if (filteredData.length === 0) {
+        setMsg('No search results found.');
+        setType("error");
+        snackbarRef.current.show();
+      }
+
+      setData(filteredData);
+    }
+  };
 
   const actionColumn = [
     {
@@ -152,7 +191,7 @@ const CompanyDatatable = () => {
             >
               Hold
             </div>) : (<div
-              className="deleteButton"
+              className="releaseButton"
               onClick={() => handleRelease(params.row.id)}
             >
               Release
@@ -162,6 +201,128 @@ const CompanyDatatable = () => {
       },
     },
   ];
+
+  const companyColumns = [
+    // { field: 'id', headerName: 'ID', width: 100 },
+    {
+      field: "Company Name", headerName: "Company Name", width: 200, renderCell: (params) => {
+        return (
+          <div className="cellWithImg">
+            {params.row['Profile Photo'] === null ? <img className="cellImg" src="https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg" alt=" avatar " />
+              : <img className="cellImg" src={params.row['Profile Photo']} alt=" avatar " />
+            }
+            {params.row.company}
+          </div>
+        )
+      }
+    },
+    {
+      field: "email", headerName: "Email", width: 200,
+    },
+    {
+      field: "phone", headerName: "Company Phone Number", width: 150,
+    },
+    {
+      field: "regnumber", headerName: "Registration Number", width: 150,
+    },
+    {
+      field: "address", headerName: "Company Address", width: 250,
+    },
+    {
+      field: "location", headerName: "Location", width: 150,
+    },
+    // {
+    //     field: "Status", headerName: "Status", width: 100,
+    //     renderCell: (params) => {
+    //         return (
+    //             <div className={`cellWithStatus ${params.row.Status}`}>
+    //                 {params.row.Status}
+    //             </div>
+    //         )
+    //     }
+    // },
+    {
+      field: "documents", headerName: "ID Card", width: 150, renderCell: (params) => {
+        return (
+          <div className="cellWithImg" >
+            {params.row.documents && params.row.documents.length > 0 ? (
+              params.row.documents.map((imageUrl, index) => (
+                <div key={index}>
+                  <img
+                    src={imageUrl}
+                    alt={`Company's Documents ${index + 1}`}
+                    className="cellImg"
+                    onClick={() => handleImageClick(imageUrl)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                </div>
+              ))
+            ) : (
+              <p> No documents available.</p>
+            )}
+          </div>
+        )
+      }
+    },
+
+    {
+      field: "cacDocuments", headerName: "CAC", width: 150, renderCell: (params) => {
+        return (
+          <div className="cellWithImg" >
+            {params.row.cac && params.row.cac.length > 0 ? (
+              params.row.cac.map((imageUrl, index) => (
+                <div key={index}>
+                  <img
+                    src={imageUrl}
+                    alt={`Company's Documents ${index + 1}`}
+                    className="cellImg"
+                    onClick={() => handleImageClick(imageUrl)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                </div>
+              ))
+            ) : (
+              <p> No documents available.</p>
+            )}
+          </div>
+        )
+      }
+    },
+
+    {
+      field: "courierLicense", headerName: "Courier License", width: 150, renderCell: (params) => {
+        return (
+          <div className="cellWithImg" >
+            {params.row.cLicense && params.row.cLicense.length > 0 ? (
+              params.row.cLicense.map((imageUrl, index) => (
+                <div key={index}>
+                  <img
+                    src={imageUrl}
+                    alt={`Company's Documents ${index + 1}`}
+                    className="cellImg"
+                    onClick={() => handleImageClick(imageUrl)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                </div>
+              ))
+            ) : (
+              <p> No documents available.</p>
+            )}
+          </div>
+        )
+      }
+    },
+
+
+    {
+      field: "date", headerName: "Date Created",
+      renderCell: (params) => {
+        const formattedDate = format(new Date(params.value), 'dd/MM/yyyy'); // Format the date
+        return <div>{formattedDate || ''}</div>;
+      }
+    },
+  ];
+
 
   return (
     <div className="datatable">
@@ -175,6 +336,18 @@ const CompanyDatatable = () => {
         >
           Add New
         </Link> */}
+
+        <div className="search">
+          <input
+            type="text"
+            placeholder="Enter company's name..."
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+            }}
+            value={searchTerm}
+          />
+          <GridSearchIcon onClick={handleSearch} />
+        </div>
       </div>
       <DataGrid
         className="datagrid"
@@ -183,6 +356,13 @@ const CompanyDatatable = () => {
         pageSize={9}
         rowsPerPageOptions={[9]}
       // checkboxSelection
+      />
+
+      <ImageViewModal
+        title={"Company's Document"}
+        show={isModalOpen}
+        onHide={handleCloseModal}
+        imagePath={selectedImagePath}
       />
     </div>
   );
