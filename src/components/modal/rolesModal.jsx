@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
 import { auth, db } from '../../firebase';
 import { doc, setDoc } from 'firebase/firestore';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, InputGroup, Modal } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { BsEye, BsEyeSlash } from 'react-icons/bs';
 
 function RoleAndCredentialsForm() {
     const [roleName, setRoleName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [show, setShow] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
 
     const handleSubmit = async (e) => {
         try {
@@ -27,6 +33,7 @@ function RoleAndCredentialsForm() {
             setRoleName('');
             setEmail('');
             setPassword('');
+            handleClose();
         } catch (error) {
             console.error('Error creating role and credentials:', error);
             alert('An error occurred while creating the role and credentials. Please try again.');
@@ -72,9 +79,16 @@ function RoleAndCredentialsForm() {
                             />
 
                             <Form.Label>Password:</Form.Label>
-                            <Form.Control type="password" value={password}
-                                onChange={(e) => setPassword(e.target.value)} required
-                            />
+                            <InputGroup>
+                                <Form.Control
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)} required
+                                />
+                                <Button variant="outline-secondary" onClick={togglePasswordVisibility}>
+                                    {showPassword ? <BsEyeSlash /> : <BsEye />}
+                                </Button>
+                            </InputGroup>
                         </Form.Group>
                     </Form>
                 </Modal.Body>
