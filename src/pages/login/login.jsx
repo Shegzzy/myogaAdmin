@@ -9,6 +9,7 @@ import Snakbar from "../../components/snackbar/Snakbar";
 import logo from "../../components/assets/images/myogaIcon2.png";
 import { Button } from "react-bootstrap";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
+import ForgotPasswordModal from "../../components/modal/forgotPasswordModal";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -75,7 +76,7 @@ const Login = () => {
 
         <img className="logo" src={logo} alt="Logo" />
 
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleLogin} id="loginForm">
           <div className="email">
             <input
               onChange={(e) => setEmail(e.target.value)}
@@ -103,6 +104,7 @@ const Login = () => {
           {/* {error && <span className="error">{Errormsg}</span>} */}
 
           <button
+            id="loginForm"
             type="submit"
             className={loading ? "spinner-btn" : ""}
             disabled={loading}
@@ -113,12 +115,10 @@ const Login = () => {
             </span>
             {loading && <span>Logging In...</span>}
           </button>
-          <button
-          >
-            Forgot Password?
-          </button>
         </form>
+        <ForgotPasswordModal />
       </div>
+
     </>
 
 

@@ -4,8 +4,8 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from '../../firebase';
-import { BsEye, BsEyeSlash } from 'react-icons/bs';
-import { InputGroup } from 'react-bootstrap';
+// import { BsEye, BsEyeSlash } from 'react-icons/bs';
+// import { InputGroup } from 'react-bootstrap';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 import Snakbar from '../snackbar/Snakbar';
 
