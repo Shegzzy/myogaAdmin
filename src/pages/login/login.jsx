@@ -113,6 +113,10 @@ const Login = () => {
             </span>
             {loading && <span>Logging In...</span>}
           </button>
+          <button
+          >
+            Forgot Password?
+          </button>
         </form>
       </div>
     </>
