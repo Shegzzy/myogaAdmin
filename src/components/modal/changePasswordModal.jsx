@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+// import { doc, getDoc, updateDoc } from "firebase/firestore";
 // import { auth, db } from '../../firebase';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { InputGroup } from 'react-bootstrap';
@@ -10,6 +10,7 @@ import { EmailAuthProvider, reauthenticateWithCredential, signOut, updatePasswor
 import { auth } from '../../firebase';
 import { AuthContext } from '../../context/authContext';
 import { useNavigate } from 'react-router-dom';
+import Snakbar from '../snackbar/Snakbar';
 
 
 function ChangePasswordModal() {
@@ -27,6 +28,8 @@ function ChangePasswordModal() {
     const [msg, setMsg] = useState("");
     const [sType, setType] = useState("");
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -37,7 +40,9 @@ function ChangePasswordModal() {
     };
 
     const handleCloseChangePassword = () => {
-        // setError('');
+        setError('');
+        setOldPassword('');
+        setNewPassword('');
         setShowChangePassword(false)
     };
     const handleShowChangePassword = () => {
@@ -58,10 +63,10 @@ function ChangePasswordModal() {
     }, [])
 
     const handleChangePassword = () => {
-
+        setLoading(true);
         const user = auth.currentUser;
-        console.log(user.email);
-        console.log(oldPassword)
+        // console.log(user.email);
+        // console.log(oldPassword)
         if (user) {
             // Reauthenticate the user with their old password
             const credential = EmailAuthProvider.credential(user.email, oldPassword);
@@ -71,23 +76,29 @@ function ChangePasswordModal() {
                     updatePassword(user, newPassword)
                         .then(() => {
                             // Password updated successfully
-                            setError(null);
-                            setOldPassword('');
-                            setNewPassword('');
-
-                            handleSignOut();
-                            console.log('Password updated successfully');
+                            setLoading(false);
+                            setMsg("Password updated successfully. Please login!!");
+                            setType("success");
+                            snackbarRef.current.show();
                             handleCloseChangePassword();
+                            handleSignOut();
+
                         })
                         .catch((error) => {
                             // Handle password update error
-                            setError(error);
-                            console.error('Error updating password:', error);
+                            // setError(error);
+                            // console.error('Error updating password:', error);
+                            setLoading(false);
+                            handleChangePassword();
+                            setMsg("Password update failed. Please try again");
+                            setType("error");
+                            snackbarRef.current.show();
                         });
                 })
                 .catch((error) => {
                     // Handle reauthentication error
-                    setError(error.message);
+                    setError("Incorrect old password");
+                    setLoading(false);
                     console.error('Error reauthenticating user:', error);
                 });
         } else {
@@ -115,6 +126,7 @@ function ChangePasswordModal() {
 
     return (
         <>
+            <Snakbar ref={snackbarRef} message={msg} type={sType} />
 
             <button onClick={handleShowChangePassword} >Change Password</button>
 
@@ -165,7 +177,7 @@ function ChangePasswordModal() {
                                     {showNewPassword ? <BsEyeSlash /> : <BsEye />}
                                 </Button>
                             </InputGroup>
-                            {/* {error && (<p>{error}</p>)} */}
+                            {error && (<p style={{ color: 'red' }}>{error}</p>)}
                         </Form.Group>
                     </Form>
                 </Modal.Body>
@@ -173,7 +185,18 @@ function ChangePasswordModal() {
                     <Button variant="secondary" onClick={handleCloseChangePassword}>
                         Close
                     </Button>
-                    <button className="primaryBtn text-purple-600" form="verifyForm" type="submit">Submit</button>
+                    <button
+                        form='verifyForm'
+                        type="submit"
+                        className={loading ? "spinner-btn" : "primaryBtn text-purple-600"}
+                        disabled={loading}
+                    >
+                        <span className={loading ? "hidden" : ""}>Submit</span>
+                        <span className={loading ? "" : "hidden"}>
+                            <div className="spinner"></div>
+                        </span>
+                        {loading && <span>Submitting...</span>}
+                    </button>
                 </Modal.Footer>
             </Modal>
         </>

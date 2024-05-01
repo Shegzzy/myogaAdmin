@@ -1,7 +1,7 @@
 import './profilePage.scss';
 import { useEffect, useState } from 'react';
 import { doc, getDoc } from "firebase/firestore";
-import { auth, db } from "../../firebase";
+import { db } from "../../firebase";
 import { Link } from "react-router-dom";
 import ChangePasswordModal from '../modal/changePasswordModal';
 
@@ -11,10 +11,18 @@ const ProfilePage = () => {
     const [data, setData] = useState([]);
     const [items, setItems] = useState([]);
 
+    const fetchID = () => {
+        const items = JSON.parse(localStorage.getItem('user'));
+        if (items) {
+            setItems(items);
+            setUserID(items.uid);
+            console.log(userID);
+        }
+    }
+
     useEffect(() => {
         fetchID();
-        const user = auth.currentUser;
-        console.log(user);
+
         const fetchData = async () => {
             try {
                 const profile = [];
@@ -38,14 +46,7 @@ const ProfilePage = () => {
         fetchData()
     }, [userID]);
 
-    const fetchID = () => {
-        const items = JSON.parse(localStorage.getItem('user'));
-        if (items) {
-            setItems(items);
-            setUserID(items.uid);
-            console.log(userID);
-        }
-    }
+
 
     return (
         <div className='profile-page'>

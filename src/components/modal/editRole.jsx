@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { auth, db } from '../../firebase';
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from '../../firebase';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { InputGroup } from 'react-bootstrap';
-import { EmailAuthProvider, getAuth, reauthenticateWithCredential, sendPasswordResetEmail, updatePassword } from 'firebase/auth';
-import axios from 'axios';
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
+import Snakbar from '../snackbar/Snakbar';
 
 
 function EditRole(props) {
@@ -17,29 +17,21 @@ function EditRole(props) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [show, setShow] = useState(false);
-    const [showChangePassword, setShowChangePassword] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const [showNewPassword, setShowNewPassword] = useState(false);
-    const [oldPassword, setOldPassword] = useState('');
-    const [newPassword, setNewPassword] = useState('');
+    // const [showPassword, setShowPassword] = useState(false);
+    const snackbarRef = useRef(null);
+    const [msg, setMsg] = useState("");
+    const [sType, setType] = useState("");
+    const [loading, setLoading] = useState(false);
+
+
     const [error, setError] = useState(null);
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
-    };
-
-    const toggleNewPasswordVisibility = () => {
-        setShowNewPassword(!showNewPassword);
-    };
+    // const togglePasswordVisibility = () => {
+    //     setShowPassword(!showPassword);
+    // };
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
-    const handleCloseChangePassword = () => setShowChangePassword(false);
-    const handleShowChangePassword = () => {
-        handleClose();
-        setShowChangePassword(true);
-    }
 
     const handleUpdate = async () => {
         const DocRef = doc(db, "Roles", ID);
@@ -52,23 +44,52 @@ function EditRole(props) {
     }
 
 
-    const handleResetPassword = async () => {
-        console.log(props.email);
+    // const handleResetPassword = async () => {
+    //     console.log(props.email);
+    //     let roleEmail = props.email;
+
+    //     try {
+    //         const response = await axios.post('https://us-central1-myoga-80daa.cloudfunctions.net/resetPassword', roleEmail);
+    //         // console.log(response)
+
+    //         if (response.status === 200) {
+    //             // setResetRequested(true);
+    //             console.log(response.data.message);
+    //             console.log(response.statusText);
+    //         } else {
+    //             setError('Failed to send password reset email');
+    //             console.log(response.statusText);
+    //         }
+    //     } catch (error) {
+    //         setError('Failed to send password reset email');
+    //         console.log(error);
+    //     }
+    // };
+
+    const handlesResetPassword = async () => {
+        // console.log(props.email);
         let roleEmail = props.email;
 
         try {
-            const response = await axios.post('https://us-central1-myoga-80daa.cloudfunctions.net/resetPassword', roleEmail);
-            // console.log(response)
-
-            if (response.status === 200) {
-                // setResetRequested(true);
-                console.log(response.data.message);
-                console.log(response.statusText);
-            } else {
-                setError('Failed to send password reset email');
-                console.log(response.statusText);
-            }
+            setLoading(true);
+            const auth = getAuth();
+            sendPasswordResetEmail(auth, roleEmail)
+                .then(() => {
+                    // console.log("Email sent");
+                    setLoading(false);
+                    handleClose();
+                    setMsg("A password reset link have been sent to your email");
+                    setType("success");
+                    snackbarRef.current.show();
+                })
+                .catch((error) => {
+                    setLoading(false);
+                    setMsg("Password reset failed");
+                    setType("error");
+                    snackbarRef.current.show();
+                });
         } catch (error) {
+            setLoading(false);
             setError('Failed to send password reset email');
             console.log(error);
         }
@@ -77,6 +98,7 @@ function EditRole(props) {
 
     return (
         <>
+            <Snakbar ref={snackbarRef} message={msg} type={sType} />
 
             <button onClick={handleShow} class="px-4 py-1 text-sm text-purple-600 font-semibold
              rounded-full border border-purple-200 hover:text-white hover:bg-purple-600 hover:border-transparent
@@ -95,7 +117,7 @@ function EditRole(props) {
                     <Form
                         onSubmit={(e) => {
                             e.preventDefault();
-                            handleResetPassword();
+                            handlesResetPassword();
                         }}
                         id="verifyForm">
                         <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -109,7 +131,7 @@ function EditRole(props) {
                                 onChange={(e) => { setEmail(e.target.value) }}
                             />
 
-                            <Form.Label>Password</Form.Label>
+                            {/* <Form.Label>Password</Form.Label>
                             <InputGroup>
                                 <Form.Control
                                     type={showPassword ? 'text' : 'password'}
@@ -119,7 +141,7 @@ function EditRole(props) {
                                 <Button variant="outline-secondary" onClick={togglePasswordVisibility}>
                                     {showPassword ? <BsEyeSlash /> : <BsEye />}
                                 </Button>
-                            </InputGroup>
+                            </InputGroup> */}
 
                         </Form.Group>
                     </Form>
@@ -128,63 +150,18 @@ function EditRole(props) {
                     <Button variant="secondary" onClick={handleClose}>
                         Close
                     </Button>
-                    <button className="primaryBtn text-purple-600" form="verifyForm" type="submit">Reset Password</button>                </Modal.Footer>
-            </Modal>
-
-            {/* change password modal */}
-            <Modal
-                show={showChangePassword}
-                onHide={handleCloseChangePassword}
-                backdrop="static"
-                keyboard={false}
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title>Change Password</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            // handleChangePassword();
-                        }}
-                        id="verifyForm">
-                        <Form.Group className="mb-3" controlId="formBasicEmail">
-
-
-                            <Form.Label>Old Password</Form.Label>
-                            <InputGroup>
-                                <Form.Control
-                                    type={showPassword ? 'text' : 'password'}
-                                    value={oldPassword}
-                                    onChange={(e) => setOldPassword(e.target.value)}
-                                    placeholder='enter old password'
-                                />
-                                <Button variant="outline-secondary" onClick={togglePasswordVisibility}>
-                                    {showPassword ? <BsEyeSlash /> : <BsEye />}
-                                </Button>
-                            </InputGroup>
-
-                            <Form.Label>New Password</Form.Label>
-                            <InputGroup>
-                                <Form.Control
-                                    type={showNewPassword ? 'text' : 'password'}
-                                    value={newPassword}
-                                    onChange={(e) => setNewPassword(e.target.value)}
-                                    placeholder='enter new password'
-                                />
-                                <Button variant="outline-secondary" onClick={toggleNewPasswordVisibility}>
-                                    {showNewPassword ? <BsEyeSlash /> : <BsEye />}
-                                </Button>
-                            </InputGroup>
-
-                        </Form.Group>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseChangePassword}>
-                        Close
-                    </Button>
-                    <button className="primaryBtn text-purple-600" form="verifyForm" type="submit">Submit</button>
+                    <button
+                        form='verifyForm'
+                        type="submit"
+                        className={loading ? "spinner-btn" : "primaryBtn text-purple-600"}
+                        disabled={loading}
+                    >
+                        <span className={loading ? "hidden" : ""}>Reset Password</span>
+                        <span className={loading ? "" : "hidden"}>
+                            <div className="spinner"></div>
+                        </span>
+                        {loading && <span>Resetting Password...</span>}
+                    </button>
                 </Modal.Footer>
             </Modal>
         </>
