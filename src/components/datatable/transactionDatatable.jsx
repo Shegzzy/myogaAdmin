@@ -30,6 +30,10 @@ const TransactionDataTable = () => {
                     querySnapshot.forEach((doc) => {
                         transactionList.push({ id: doc.id, ...doc.data() });
                     });
+
+                    transactionList.sort(
+                        (a, b) => new Date(b["Date Paid"]) - new Date(a["Date Paid"])
+                    );
                     setTransactions(transactionList);
                 } else {
                     const today = new Date();
@@ -105,6 +109,10 @@ const TransactionDataTable = () => {
                     transactionQuery.forEach((doc) => {
                         transactionList.push({ id: doc.id, ...doc.data() });
                     });
+
+                    transactionList.sort(
+                        (a, b) => new Date(b["Date Paid"]) - new Date(a["Date Paid"])
+                    );
                     setTransactions(transactionList);
 
                 }

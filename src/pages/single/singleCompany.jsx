@@ -45,6 +45,7 @@ const SingleCompany = (props) => {
   const [mData, setMData] = useState([]);
   const [data, setData] = useState([]);
   const [bookingsData, setBookingsData] = useState([]);
+  const [companyTransactions, setCompanyTransactions] = useState([]);
 
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [loading, setLoading] = useState(true);
@@ -76,6 +77,7 @@ const SingleCompany = (props) => {
       fetchUser();
       getData();
       fetchCompanyRatings();
+      fetchCompanyTransactions();
       // getEarnings();
       // getRiders();
       // fetchEarningsData();
@@ -333,6 +335,26 @@ const SingleCompany = (props) => {
     };
   }, [name, selectedFilter]);
 
+  // company's translations
+  const fetchCompanyTransactions = async () => {
+    let list = [];
+    const queryTransactions = query(
+      collection(db, "Transactions"),
+      where("Company ID", "==", companyId),
+    );
+
+    const transactions = await getDocs(queryTransactions);
+
+    transactions.forEach((transaction) => {
+      list.push(transaction.data());
+    })
+
+    list.sort(
+      (a, b) => new Date(b["Date Paid"]) - new Date(a["Date Paid"])
+    );
+
+    setCompanyTransactions(list);
+  }
 
   // Fetching the company information
   const fetchUser = async () => {
@@ -1404,6 +1426,64 @@ const SingleCompany = (props) => {
                           {row["Status"]}
                           {/* {<ModalContainer id={row["Booking Number"]} />} */}
                         </div>
+                      </TableCell>
+                    </TableRow>
+                  ))) : (
+                    <TableRow>
+                      <TableCell colSpan={10} align="center">
+                        No data available.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>)}
+
+          {/* company's booking table */}
+          {activeTab === "transactions" && (
+            <TableContainer component={Paper} className="table">
+              <Table sx={{ minWidth: 780 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell className="tableCell" width={80}>
+                      Company Name
+                    </TableCell>
+                    <TableCell className="tableCell" width={80}>
+                      Amount
+                    </TableCell>
+                    <TableCell className="tableCell" width={130}>
+                      From
+                    </TableCell>
+                    <TableCell className="tableCell" width={130}>
+                      To
+                    </TableCell>
+                    <TableCell className="tableCell" width={50}>
+                      Date Paid
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {companyTransactions.length !== 0 ? (companyTransactions.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                    <TableRow key={row["Company ID"]}>
+                      <TableCell className="tableCell" width={80}>
+                        {row["Company Name"]}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {new Intl.NumberFormat("en-NG", {
+                          style: "currency",
+                          currency: "NGN",
+                        })
+                          .format(row["Amount"])
+                          .replace(".00", "")}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {row["From"]}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {row["To"]}
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        {new Date(row["Date Paid"].seconds * 1000).toLocaleString()}
                       </TableCell>
                     </TableRow>
                   ))) : (
