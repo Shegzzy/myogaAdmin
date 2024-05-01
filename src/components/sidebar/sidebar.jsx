@@ -4,7 +4,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import GpsFixedIcon from "@mui/icons-material/GpsFixed";
-import DonutSmallIcon from "@mui/icons-material/DonutSmall";
+// import DonutSmallIcon from "@mui/icons-material/DonutSmall";
 import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
 import ContentPasteIcon from "@mui/icons-material/ContentPaste";
 import CreditScoreIcon from "@mui/icons-material/CreditScore";
@@ -20,7 +20,7 @@ import { auth } from "./../../firebase";
 import { signOut } from "firebase/auth";
 import Snakbar from "../snackbar/Snakbar";
 import MyOga from "../../myogaIcon3.png";
-import { AttachMoney, CancelPresentation, CarCrash, PaymentRounded } from "@mui/icons-material";
+import { AttachMoney, CancelPresentation, CarCrash } from "@mui/icons-material";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
 
 const Sidebar = () => {
@@ -29,6 +29,8 @@ const Sidebar = () => {
   const snackbarRef = useRef(null);
   const [msg, setMsg] = useState("");
   const [sType, setType] = useState("");
+
+
   const handleSignOut = () => {
     signOut(auth)
       .then(() => {
