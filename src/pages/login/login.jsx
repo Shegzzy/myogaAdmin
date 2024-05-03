@@ -1,7 +1,7 @@
 import "./login.scss";
 import { useContext, useState, useRef } from "react";
 import { auth, db } from "../../firebase";
-import { collection, where, query, getDocs } from "firebase/firestore";
+import { collection, where, query, getDocs, doc, getDoc } from "firebase/firestore";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
@@ -31,28 +31,42 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
 
-    const adminRef = collection(db, "Admin");
-    const rolesRef = collection(db, "Roles");
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      const uid = user.uid;
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
+      // Check if the authenticated user's UID exists in the "Admin" collection
+      const adminDocRef = doc(db, "Admin", uid);
+      const adminDocSnapshot = await getDoc(adminDocRef);
+      const isAdmin = adminDocSnapshot.exists();
+
+      // Check if the authenticated user's UID exists in the "Roles" collection
+      const roleDocRef = doc(db, "Roles", uid);
+      const roleDocSnapshot = await getDoc(roleDocRef);
+      const isRoleUser = roleDocSnapshot.exists();
+
+      if (isAdmin || isRoleUser) {
         dispatch({ type: "LOGIN", payload: user });
-        setMsg("Logged In Succesfully");
+        setMsg("Logged In Successfully");
         setType("success");
         snackbarRef.current.show();
         navigate("/");
-      })
-      .catch((error) => {
+      } else {
         setError(true);
-        setMsg("Incorrect email or password");
+        setMsg("You Don't Have Permission");
         setType("error");
         snackbarRef.current.show();
         setLoading(false);
-      });
+      }
+    } catch (error) {
+      setError(true);
+      setMsg(error.message);
+      setType("error");
+      snackbarRef.current.show();
+      setLoading(false);
+    }
   };
-
   return (
     // <div className="login">
     //     <Snakbar ref={snackbarRef} message={msg} type={sType} />

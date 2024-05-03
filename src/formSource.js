@@ -6,24 +6,24 @@ export const userInputs = [
         type:"text",
         placeholder:"enter full name",
     },
-    {
-        id: "Email",
-        label: "Email Address",
-        type:"mail",
-        placeholder:"enter email address",
-    },
+    // {
+    //     id: "Email",
+    //     label: "Email Address",
+    //     type:"mail",
+    //     placeholder:"enter email address",
+    // },
     {
         id: "Phone",
         label: "Phone Number",
         type:"text",
         placeholder:"start with country code eg. +234",
     },
-    {
-        id: "Password",
-        label: "Password",
-        type:"password",
-        placeholder:"Minimum of 8 characters",
-    },
+    // {
+    //     id: "Password",
+    //     label: "Password",
+    //     type:"password",
+    //     placeholder:"Minimum of 8 characters",
+    // },
     {
         id: "Address",
         label: "Home Address",
@@ -51,12 +51,12 @@ export const driverInputs = [
     type: "text",
     placeholder: "John Doe",
   },
-  {
-    id: "Email",
-    label: "Email",
-    type: "mail",
-    placeholder: "john_doe@gmail.com",
-  },
+  // {
+  //   id: "Email",
+  //   label: "Email",
+  //   type: "mail",
+  //   placeholder: "john_doe@gmail.com",
+  // },
   {
     id: "Date of Birth",
     label: "Date of birth",
@@ -169,16 +169,17 @@ export const driverInputs = [
 ];
 
 export const companyInputs = [
-  {
-    id: "company",
-    label: "Company's Name",
-    type: "text",
-  },
-  {
-    id: "email",
-    label: "Email",
-    type: "email",
-  },
+  // {
+  //   id: "company",
+  //   label: "Company's Name",
+  //   type: "text",
+  // },
+  
+  // {
+  //   id: "email",
+  //   label: "Email",
+  //   type: "email",
+  // },
 
   {
     id: "date",

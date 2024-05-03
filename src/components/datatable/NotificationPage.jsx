@@ -26,6 +26,9 @@ const NotificationPage = () => {
                     list.push({ id: message.id, ...message.data() });
                 });
 
+                list.sort(
+                    (a, b) => new Date(b["dateCreated"].seconds * 1000) - new Date(a["dateCreated"].seconds * 1000)
+                );
                 setData(list);
 
             } catch (e) {
