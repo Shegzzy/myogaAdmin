@@ -3,12 +3,12 @@ import Sidebar from "../../components/sidebar/sidebar"
 import Navbar from "../../components/navbar/navbar"
 import SettingData from "../../components/datatable/SettingData"
 
-const SettingList = () => {
+const SettingList = (role) => {
     return (
         <div className="setList">
-            <Sidebar />
+            <Sidebar {...role} />
             <div className="setListContainer">
-                <Navbar />
+                <Navbar {...role} />
                 <SettingData />
             </div>
         </div>

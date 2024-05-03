@@ -12,11 +12,11 @@ import Chart from "../../components/chart/chart";
 import { Button } from "react-bootstrap";
 import { useReactToPrint } from "react-to-print";
 
-const Report = () => {
+const Report = (role) => {
 
-  function handlePrint() {
-    window.print()
-  }
+  // function handlePrint() {
+  //   window.print()
+  // }
 
   const componentRef = useRef();
   const handlePagePrint = useReactToPrint({
@@ -25,9 +25,9 @@ const Report = () => {
 
   return (
     <div className="list">
-      <Sidebar />
+      <Sidebar {...role} />
       <div className="listContainer">
-        <Navbar />
+        <Navbar {...role} />
         <div className="reportTitle">Reports</div>
         <div className="charts">
           <div class="row" ref={componentRef}>

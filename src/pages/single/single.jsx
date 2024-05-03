@@ -35,9 +35,9 @@ const Single = (props) => {
 
   return (
     <div className="single">
-      <Sidebar />
+      <Sidebar {...props} />
       <div className="singleContainer">
-        <Navbar />
+        <Navbar {...props} />
         <div className="top">
           <div className="left">
             <div className="editButton">

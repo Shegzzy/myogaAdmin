@@ -3,12 +3,12 @@ import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
 import SupportPage from '../../components/datatable/SupportPage';
 
-const SupportList = () => {
+const SupportList = (role) => {
     return (
         <div className='support'>
-            <Sidebar />
+            <Sidebar {...role} />
             <div className="supportContainer">
-                <Navbar />
+                <Navbar {...role} />
                 <SupportPage />
             </div>
         </div>

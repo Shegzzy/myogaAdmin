@@ -3,12 +3,12 @@ import Sidebar from '../../components/sidebar/sidebar';
 import Navbar from '../../components/navbar/navbar';
 import CancelledBookingDataTable from "../../components/datatable/cancelledBookingsDataTable";
 
-const CancelledBookingList = () => {
+const CancelledBookingList = (role) => {
     return (
         <div className='bookingList'>
-            <Sidebar />
+            <Sidebar {...role} />
             <div className="bookingListContainer">
-                <Navbar />
+                <Navbar {...role} />
                 <CancelledBookingDataTable />
             </div>
         </div>

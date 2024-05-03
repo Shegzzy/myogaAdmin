@@ -417,9 +417,9 @@ const SingleDriver = (props) => {
 
   return (
     <div className="singleDriver">
-      <Sidebar />
+      <Sidebar {...props} />
       <div className="singleDriverContainer">
-        <Navbar />
+        <Navbar {...props} />
         <div className="top">
           <div className="left">
             <div className="editButton">

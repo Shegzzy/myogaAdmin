@@ -3,12 +3,12 @@ import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
 import UnverifiedDriversList from "../../components/datatable/unverifiedDriverList";
 
-const UnverifiedDrivers = () => {
+const UnverifiedDrivers = (role) => {
     return (
         <div className='driversList'>
-            <Sidebar />
+            <Sidebar {...role} />
             <div className="driversListContainer">
-                <Navbar />
+                <Navbar {...role} />
                 <UnverifiedDriversList />
             </div>
         </div>

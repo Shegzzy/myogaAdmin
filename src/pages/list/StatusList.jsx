@@ -3,12 +3,12 @@ import Sidebar from "../../components/sidebar/sidebar"
 import Navbar from "../../components/navbar/navbar"
 import StatusDatatable from "../../components/datatable/StatusDatatable"
 
-const StatusList = () => {
+const StatusList = (role) => {
     return (
         <div className="statusList">
-            <Sidebar />
+            <Sidebar {...role} />
             <div className="statusListContainer">
-                <Navbar />
+                <Navbar {...role} />
                 <StatusDatatable />
             </div>
         </div>

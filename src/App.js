@@ -83,28 +83,30 @@ function App() {
         <Routes>
           <Route path="/">
             <Route path="login" element={<Login />} />
+            
+
+            { userRole && (
+              <>
             <Route index element={
               <RequireAuth>
-                <Home />
+                <Home {...userRole} />
               </RequireAuth>
             }
             />
 
-            { userRole && (
-              <>
               {/* super admin */}
               { (userRole.role === "Super Admin1" || userRole.role === "Super Admin2") && (
             <>
             <Route path="users">
               <Route index element={
                 <RequireAuth>
-                  <List />
+                  <List {...userRole}/>
                 </RequireAuth>
               }
               />
               <Route path="/users/:id" element={
                 <RequireAuth>
-                  <Single />
+                  <Single {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -119,14 +121,14 @@ function App() {
             <Route path="drivers">
               <Route index element={
                 <RequireAuth>
-                  <DriversList />
+                  <DriversList {...userRole}/>
                 </RequireAuth>
               }
               />
 
               <Route path="/drivers/:id" element={
                 <RequireAuth>
-                  <SingleDriver />
+                  <SingleDriver {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -136,13 +138,13 @@ function App() {
             <Route path="company">
               <Route index element={
                 <RequireAuth>
-                  <CompanyList />
+                  <CompanyList {...userRole}/>
                 </RequireAuth>
               }
               />
               <Route path=":companyId" element={
                 <RequireAuth>
-                  <SingleCompany />
+                  <SingleCompany {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -157,7 +159,7 @@ function App() {
             <Route path="bookings">
               <Route index element={
                 <RequireAuth>
-                  <BookingList />
+                  <BookingList {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -178,7 +180,7 @@ function App() {
             <Route path="cancelled-bookings">
               <Route index element={
                 <RequireAuth>
-                  <CancelledBookingList />
+                  <CancelledBookingList {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -187,7 +189,7 @@ function App() {
             <Route path="bookingstatus">
               <Route index element={
                 <RequireAuth>
-                  <StatusList />
+                  <StatusList {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -196,7 +198,7 @@ function App() {
             <Route path="unverified-drivers">
               <Route index element={
                 <RequireAuth>
-                  <UnverifiedDrivers />
+                  <UnverifiedDrivers {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -205,7 +207,7 @@ function App() {
             <Route path="reports">
               <Route index element={
                 <RequireAuth>
-                  <Report />
+                  <Report {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -214,7 +216,7 @@ function App() {
             <Route path="earnings">
               <Route index element={
                 <RequireAuth>
-                  <EarningList />
+                  <EarningList {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -223,7 +225,7 @@ function App() {
             <Route path="transactions">
               <Route index element={
                 <RequireAuth>
-                  <TransactionList />
+                  <TransactionList {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -232,7 +234,7 @@ function App() {
             <Route path="setting">
               <Route index element={
                 <RequireAuth>
-                  <SettingList />
+                  <SettingList {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -241,7 +243,7 @@ function App() {
             <Route path="profile">
               <Route index element={
                 <RequireAuth>
-                  <Profile />
+                  <Profile {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -250,7 +252,7 @@ function App() {
             <Route path="notification">
               <Route index element={
                 <RequireAuth>
-                  <Notification />
+                  <Notification {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -259,7 +261,7 @@ function App() {
             <Route path="support">
               <Route index element={
                 <RequireAuth>
-                  <SupportList />
+                  <SupportList {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -268,7 +270,7 @@ function App() {
             <Route path="edit/:id"
               element={
                 <RequireAuth>
-                  <EditDriver inputs={driverInputs} title="Update Driver" />
+                  <EditDriver inputs={driverInputs} title="Update Rider" role={userRole}/>
                 </RequireAuth>
               }
             />
@@ -277,7 +279,7 @@ function App() {
               path="editcompany/:id"
               element={
                 <RequireAuth>
-                  <EditCompany inputs={companyInputs} title="Update Company" />
+                  <EditCompany inputs={companyInputs} title="Update Company" role={userRole}/>
                 </RequireAuth>
               }
             />
@@ -286,7 +288,7 @@ function App() {
               path="edituser/:id"
               element={
                 <RequireAuth>
-                  <EditUser inputs={userInputs} title="Update User" />
+                  <EditUser inputs={userInputs} title="Update User" role={userRole}/>
                 </RequireAuth>
               }
             />
@@ -295,7 +297,7 @@ function App() {
               path="editprofile/:id"
               element={
                 <RequireAuth>
-                  <EditProfile inputs={adminInputs} title="Update Profile" />
+                  <EditProfile inputs={adminInputs} title="Update Profile" role={userRole}/>
                 </RequireAuth>
               }
             />
@@ -309,23 +311,27 @@ function App() {
             <Route path="company">
               <Route index element={
                 <RequireAuth>
-                  <CompanyList />
+                  <CompanyList {...userRole}/>
                 </RequireAuth>
               }
               />
               <Route path=":companyId" element={
                 <RequireAuth>
-                  <SingleCompany />
+                  <SingleCompany {...userRole}/>
                 </RequireAuth>
               }
               />
-              <Route path="new" element={
-                <RequireAuth>
-                  <NewCompany />
-                </RequireAuth>
-              }
-              />
+              
             </Route>
+
+            <Route
+              path="editcompany/:id"
+              element={
+                <RequireAuth>
+                  <EditCompany inputs={companyInputs} title="Update Company" role={userRole}/>
+                </RequireAuth>
+              }
+            />
 
             {/* <Route path="bookings">
               <Route index element={
@@ -378,7 +384,16 @@ function App() {
             <Route path="earnings">
               <Route index element={
                 <RequireAuth>
-                  <EarningList />
+                  <EarningList {...userRole}/>
+                </RequireAuth>
+              }
+              />
+            </Route>
+
+            <Route path="transactions">
+              <Route index element={
+                <RequireAuth>
+                  <TransactionList {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -387,7 +402,7 @@ function App() {
             <Route path="reports">
               <Route index element={
                 <RequireAuth>
-                  <Report />
+                  <Report {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -403,13 +418,13 @@ function App() {
             <Route path="bookings">
               <Route index element={
                 <RequireAuth>
-                  <BookingList />
+                  <BookingList {...userRole}/>
                 </RequireAuth>
               }
               />
               <Route path=":bookingId" element={
                 <RequireAuth>
-                  <SingleBooking />
+                  <SingleBooking {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -424,7 +439,7 @@ function App() {
             <Route path="cancelled-bookings">
               <Route index element={
                 <RequireAuth>
-                  <CancelledBookingList />
+                  <CancelledBookingList {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -433,7 +448,7 @@ function App() {
             <Route path="bookingstatus">
               <Route index element={
                 <RequireAuth>
-                  <StatusList />
+                  <StatusList {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -442,7 +457,7 @@ function App() {
             <Route path="support">
               <Route index element={
                 <RequireAuth>
-                  <SupportList />
+                  <SupportList {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -485,14 +500,14 @@ function App() {
             <Route path="company">
               <Route index element={
                 <RequireAuth>
-                  <CompanyList />
+                  <CompanyList {...userRole}/>
                 </RequireAuth>
               }
               />
 
               <Route path=":companyId" element={
                 <RequireAuth>
-                  <SingleCompany />
+                  <SingleCompany {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -504,26 +519,28 @@ function App() {
               }
               />
 
-              <Route
+              
+            </Route>
+
+            <Route
               path="editcompany/:id"
               element={
                 <RequireAuth>
-                  <EditCompany inputs={companyInputs} title="Update Company" />
+                  <EditCompany inputs={companyInputs} title="Update Company" role={userRole}/>
                 </RequireAuth>
               }
             />
-            </Route>
 
             <Route path="users">
               <Route index element={
                 <RequireAuth>
-                  <List />
+                  <List {...userRole}/>
                 </RequireAuth>
               }
               />
               <Route path="/users/:id" element={
                 <RequireAuth>
-                  <Single />
+                  <Single {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -534,44 +551,46 @@ function App() {
               }
               />
 
-              <Route
+              
+            </Route>
+            <Route
               path="edituser/:id"
               element={
                 <RequireAuth>
-                  <EditUser inputs={userInputs} title="Update User" />
+                  <EditUser inputs={userInputs} title="Update User" role={userRole}/>
                 </RequireAuth>
               }
             />
-            </Route>
 
             <Route path="drivers">
               <Route index element={
                 <RequireAuth>
-                  <DriversList />
+                  <DriversList {...userRole}/>
                 </RequireAuth>
               }
               />
 
               <Route path="/drivers/:id" element={
                 <RequireAuth>
-                  <SingleDriver />
+                  <SingleDriver {...userRole}/>
                 </RequireAuth>
               }
               />
               
-              <Route path="edit/:id"
+              
+            </Route>
+            <Route path="edit/:id"
               element={
                 <RequireAuth>
-                  <EditDriver inputs={driverInputs} title="Update Driver" />
+                  <EditDriver inputs={driverInputs} title="Update Driver" role={userRole}/>
                 </RequireAuth>
               }
             />
-            </Route>
 
             <Route path="unverified-drivers">
               <Route index element={
                 <RequireAuth>
-                  <UnverifiedDrivers />
+                  <UnverifiedDrivers {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -580,7 +599,7 @@ function App() {
             <Route path="setting">
               <Route index element={
                 <RequireAuth>
-                  <SettingList />
+                  <SettingList {...userRole}/>
                 </RequireAuth>
               }
               />
@@ -654,6 +673,7 @@ function App() {
 
             </>
             )}
+            
             </>)}
           </Route>
         </Routes>

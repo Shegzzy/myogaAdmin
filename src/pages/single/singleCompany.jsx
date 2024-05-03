@@ -809,9 +809,9 @@ const SingleCompany = (props) => {
 
   return (
     <div className="singleCompany">
-      <Sidebar />
+      <Sidebar {...props} />
       <div className="singleCompanyContainer">
-        <Navbar />
+        <Navbar {...props} />
         <div className="top">
           <div className="left">
             <div className="editButton">

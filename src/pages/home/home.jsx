@@ -4,16 +4,16 @@ import Navbar from "../../components/navbar/navbar";
 import Widget from "../../components/widget/widget";
 import Chart from "../../components/chart/chart";
 import Featured from "../../components/featured/featured";
-import TableJ from "../../components/table/table";
-import SupportPage from "../../components/datatable/SupportPage";
-import EarningDatatable from "../../components/datatable/EarningDatatable";
+// import TableJ from "../../components/table/table";
+// import SupportPage from "../../components/datatable/SupportPage";
+// import EarningDatatable from "../../components/datatable/EarningDatatable";
 
-const Home = () => {
+const Home = (role) => {
   return (
     <div className="home">
-      <Sidebar />
+      <Sidebar {...role} />
       <div className="homeContainer">
-        <Navbar />
+        <Navbar {...role} />
         <div className="widgets">
           <Widget type="user" />
           <Widget type="driver" />

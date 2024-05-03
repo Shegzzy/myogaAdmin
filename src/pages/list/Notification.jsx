@@ -3,12 +3,12 @@ import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
 import NotificationPage from '../../components/datatable/NotificationPage';
 
-const Notification = () => {
+const Notification = (role) => {
     return (
         <div className='notify'>
-            <Sidebar />
+            <Sidebar {...role} />
             <div className="notifyContainer">
-                <Navbar />
+                <Navbar {...role} />
                 <NotificationPage />
             </div>
         </div>

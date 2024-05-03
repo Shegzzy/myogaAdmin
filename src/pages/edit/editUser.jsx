@@ -9,7 +9,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const EditUser = ({ inputs, title }) => {
+const EditUser = ({ inputs, title, role }) => {
 
     const [userProfile, setUserProfile] = useState(null);
     const { id } = useParams();
@@ -60,9 +60,9 @@ const EditUser = ({ inputs, title }) => {
 
     return (
         <div className="new">
-            <Sidebar />
+            <Sidebar {...role} />
             <div className="newContainer">
-                <Navbar />
+                <Navbar {...role} />
                 <div className="top">
                     <h1>{title}</h1>
                 </div>

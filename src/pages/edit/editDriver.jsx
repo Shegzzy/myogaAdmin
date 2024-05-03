@@ -9,7 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
-const EditDriver = ({ inputs, title }) => {
+const EditDriver = ({ inputs, title, role }) => {
 
     const [file, setFile] = useState("");
     const [files, setFiles] = useState([]);
@@ -72,9 +72,9 @@ const EditDriver = ({ inputs, title }) => {
 
     return (
         <div className="new">
-            <Sidebar />
+            <Sidebar {...role} />
             <div className="newContainer">
-                <Navbar />
+                <Navbar {...role} />
                 <div className="top">
                     <h1>{title}</h1>
                 </div>

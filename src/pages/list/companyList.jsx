@@ -3,12 +3,12 @@ import Sidebar from '../../components/sidebar/sidebar';
 import Navbar from '../../components/navbar/navbar';
 import CompanyDatatable from '../../components/datatable/companyDatatable';
 
-const CompanyList = () => {
+const CompanyList = (role) => {
     return (
         <div className='companyList'>
-            <Sidebar />
+            <Sidebar {...role} />
             <div className="companyListContainer">
-                <Navbar />
+                <Navbar {...role} />
                 <CompanyDatatable />
             </div>
         </div>

@@ -3,12 +3,12 @@ import Sidebar from "../../components/sidebar/sidebar"
 import Navbar from "../../components/navbar/navbar"
 import TransactionDataTable from "../../components/datatable/transactionDatatable"
 
-const TransactionList = () => {
+const TransactionList = (role) => {
     return (
         <div className="earnList">
-            <Sidebar />
+            <Sidebar {...role} />
             <div className="earnListContainer">
-                <Navbar />
+                <Navbar {...role} />
                 <TransactionDataTable />
             </div>
         </div>

@@ -15,7 +15,7 @@ import { AuthContext } from "../../context/authContext";
 
 //import ProfileModal from "../modal/ProfileModal";
 
-const Navbar = () => {
+const Navbar = (role) => {
   const { dispatch } = useContext(DarkModeContext);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
@@ -118,11 +118,7 @@ const Navbar = () => {
             </div>
           )}
         </div> */}
-        <h4> {user && user.role ? (
-          <h4>{user.role}</h4>
-        ) : (
-          <p>Loading...</p>
-        )}</h4>
+        <h4> {role.role}</h4>
 
         <div className="items">
           <div className="item">

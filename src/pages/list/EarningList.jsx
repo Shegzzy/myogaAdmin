@@ -3,12 +3,12 @@ import Sidebar from "../../components/sidebar/sidebar"
 import Navbar from "../../components/navbar/navbar"
 import EarningDatatable from "../../components/datatable/EarningDatatable"
 
-const EarningList = () => {
+const EarningList = (role) => {
     return (
         <div className="earnList">
-            <Sidebar />
+            <Sidebar {...role} />
             <div className="earnListContainer">
-                <Navbar />
+                <Navbar {...role} />
                 <EarningDatatable />
             </div>
         </div>

@@ -13,7 +13,7 @@ import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import LogoutIcon from "@mui/icons-material/Logout";
 import EmojiTransportationIcon from "@mui/icons-material/EmojiTransportation";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
 import { auth } from "./../../firebase";
@@ -23,35 +23,12 @@ import MyOga from "../../myogaIcon3.png";
 import { AttachMoney, CancelPresentation, CarCrash } from "@mui/icons-material";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
 
-const Sidebar = () => {
+const Sidebar = (role) => {
   const { dispatch } = useContext(DarkModeContext, AuthContext);
   const navigate = useNavigate();
   const snackbarRef = useRef(null);
   const [msg, setMsg] = useState("");
   const [sType, setType] = useState("");
-  const [userRole, setUserRole] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const roleRef = doc(db, "Roles", currentUser.uid);
-        const adminRef = doc(db, "Admin", currentUser.uid);
-
-        const roleDocs = await getDoc(roleRef);
-        const adminDocs = await getDoc(adminRef);
-
-        if (roleDocs.exists()) {
-          setUserRole(roleDocs.data());
-        } else {
-          setUserRole(adminDocs.data());
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData()
-  }, [currentUser]);
-
 
   const handleSignOut = () => {
     signOut(auth)
@@ -94,106 +71,431 @@ const Sidebar = () => {
             </li>
           </Link>
 
-          <p className="title">LIST</p>
-          <Link to="/users" style={{ textDecoration: "none" }}>
-            <li tabindex="0">
-              <AccountCircleIcon className="icon" />
-              <span>Users</span>
-            </li>
-          </Link>
+          {/* super admins */}
+          {(role.role === "Super Admin1" || role.role === "Super Admin2") && (
+            <>
+              <p className="title">LIST</p>
+              <Link to="/users" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <AccountCircleIcon className="icon" />
+                  <span>Users</span>
+                </li>
+              </Link>
 
-          <Link to="/drivers" style={{ textDecoration: "none" }}>
-            <li tabindex="0">
-              <DirectionsCarIcon className="icon" />
-              <span>Riders</span>
-            </li>
-          </Link>
+              <Link to="/drivers" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <DirectionsCarIcon className="icon" />
+                  <span>Riders</span>
+                </li>
+              </Link>
 
-          <Link to="/unverified-drivers" style={{ textDecoration: "none" }}>
-            <li tabindex="0">
-              <CarCrash className="icon" />
-              <span>Unverified Riders</span>
-            </li>
-          </Link>
+              <Link to="/unverified-drivers" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <CarCrash className="icon" />
+                  <span>Unverified Riders</span>
+                </li>
+              </Link>
 
-          <Link to="/company" style={{ textDecoration: "none" }}>
-            <li tabindex="0">
-              <EmojiTransportationIcon className="icon" />
-              <span>Companies</span>
-            </li>
-          </Link>
+              <Link to="/company" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <EmojiTransportationIcon className="icon" />
+                  <span>Companies</span>
+                </li>
+              </Link>
 
-          <Link to="/bookings" style={{ textDecoration: "none" }}>
-            <li tabindex="0">
-              <LibraryBooksIcon className="icon" />
-              <span>Bookings</span>
-            </li>
-          </Link>
+              <Link to="/bookings" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <LibraryBooksIcon className="icon" />
+                  <span>Bookings</span>
+                </li>
+              </Link>
 
-          <Link to="/cancelled-bookings" style={{ textDecoration: "none" }}>
-            <li tabindex="0">
-              <CancelPresentation className="icon" />
-              <span>Cancelled Bookings</span>
-            </li>
-          </Link>
+              <Link to="/cancelled-bookings" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <CancelPresentation className="icon" />
+                  <span>Cancelled Bookings</span>
+                </li>
+              </Link>
 
-          <Link to="/bookingstatus" style={{ textDecoration: "none" }}>
-            <li tabindex="0">
-              <GpsFixedIcon className="icon" />
-              <span>Order Status</span>
-            </li>
-          </Link>
+              <Link to="/bookingstatus" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <GpsFixedIcon className="icon" />
+                  <span>Order Status</span>
+                </li>
+              </Link>
 
-          <Link to="/earnings" style={{ textDecoration: "none" }}>
-            <li tabindex="0">
-              <AttachMoney className="icon" />
-              <span>Earnings</span>
-            </li>
-          </Link>
+              <Link to="/earnings" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <AttachMoney className="icon" />
+                  <span>Earnings</span>
+                </li>
+              </Link>
 
-          <Link to="/transactions" style={{ textDecoration: "none" }}>
-            <li tabindex="0">
-              <FaMoneyBillTransfer className="icon" />
-              <span>Transactions</span>
-            </li>
-          </Link>
+              <Link to="/transactions" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <FaMoneyBillTransfer className="icon" />
+                  <span>Transactions</span>
+                </li>
+              </Link>
 
 
-          <p className="title">USEFUL LINKS</p>
-          <Link to="/notification" style={{ textDecoration: "none" }}>
-            <li tabindex="0">
-              <CircleNotificationsIcon className="icon" />
-              <span>Notifications</span>
-            </li>
-          </Link>
+              <p className="title">USEFUL LINKS</p>
+              <Link to="/notification" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <CircleNotificationsIcon className="icon" />
+                  <span>Notifications</span>
+                </li>
+              </Link>
 
-          <Link to="/reports" style={{ textDecoration: "none" }}>
-            <li tabindex="0">
-              <ContentPasteIcon className="icon" />
-              <span>Reports</span>
-            </li>
-          </Link>
+              <Link to="/reports" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <ContentPasteIcon className="icon" />
+                  <span>Reports</span>
+                </li>
+              </Link>
 
-          <Link to="/support" style={{ textDecoration: "none" }}>
-            <li tabindex="0">
-              <CreditScoreIcon className="icon" />
-              <span>Support</span>
-            </li>
-          </Link>
+              <Link to="/support" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <CreditScoreIcon className="icon" />
+                  <span>Support</span>
+                </li>
+              </Link>
 
-          <Link to="/setting" style={{ textDecoration: "none" }}>
-            <li tabindex="0">
-              <SettingsIcon className="icon" />
-              <span>Settings</span>
-            </li>
-          </Link>
+              <Link to="/setting" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <SettingsIcon className="icon" />
+                  <span>Settings</span>
+                </li>
+              </Link>
 
-          <Link to="/profile" style={{ textDecoration: "none" }}>
-            <li tabindex="0">
-              <PermIdentityIcon className="icon" />
-              <span>Profile</span>
-            </li>
-          </Link>
+              <Link to="/profile" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <PermIdentityIcon className="icon" />
+                  <span>Profile</span>
+                </li>
+              </Link>
+            </>
+          )}
+
+
+          {/* finance admins */}
+          {(role.role === "Finance1" || role.role === "Finance2") && (
+            <>
+              <p className="title">LIST</p>
+              {/* <Link to="/users" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <AccountCircleIcon className="icon" />
+                  <span>Users</span>
+                </li>
+              </Link>
+
+              <Link to="/drivers" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <DirectionsCarIcon className="icon" />
+                  <span>Riders</span>
+                </li>
+              </Link>
+
+              <Link to="/unverified-drivers" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <CarCrash className="icon" />
+                  <span>Unverified Riders</span>
+                </li>
+              </Link> */}
+
+              <Link to="/company" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <EmojiTransportationIcon className="icon" />
+                  <span>Companies</span>
+                </li>
+              </Link>
+
+              {/* <Link to="/bookings" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <LibraryBooksIcon className="icon" />
+                  <span>Bookings</span>
+                </li>
+              </Link>
+
+              <Link to="/cancelled-bookings" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <CancelPresentation className="icon" />
+                  <span>Cancelled Bookings</span>
+                </li>
+              </Link>
+
+              <Link to="/bookingstatus" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <GpsFixedIcon className="icon" />
+                  <span>Order Status</span>
+                </li>
+              </Link> */}
+
+              <Link to="/earnings" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <AttachMoney className="icon" />
+                  <span>Earnings</span>
+                </li>
+              </Link>
+
+              <Link to="/transactions" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <FaMoneyBillTransfer className="icon" />
+                  <span>Transactions</span>
+                </li>
+              </Link>
+
+
+              <p className="title">USEFUL LINKS</p>
+              {/* <Link to="/notification" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <CircleNotificationsIcon className="icon" />
+                  <span>Notifications</span>
+                </li>
+              </Link> */}
+
+              <Link to="/reports" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <ContentPasteIcon className="icon" />
+                  <span>Reports</span>
+                </li>
+              </Link>
+
+              {/* <Link to="/support" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <CreditScoreIcon className="icon" />
+                  <span>Support</span>
+                </li>
+              </Link>
+
+              <Link to="/setting" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <SettingsIcon className="icon" />
+                  <span>Settings</span>
+                </li>
+              </Link>
+
+              <Link to="/profile" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <PermIdentityIcon className="icon" />
+                  <span>Profile</span>
+                </li>
+              </Link> */}
+            </>
+          )}
+
+
+          {/* support admins */}
+          {(role.role === "Support1" || role.role === "Support2") && (
+            <>
+              <p className="title">LIST</p>
+              {/* <Link to="/users" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <AccountCircleIcon className="icon" />
+                  <span>Users</span>
+                </li>
+              </Link>
+
+              <Link to="/drivers" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <DirectionsCarIcon className="icon" />
+                  <span>Riders</span>
+                </li>
+              </Link>
+
+              <Link to="/unverified-drivers" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <CarCrash className="icon" />
+                  <span>Unverified Riders</span>
+                </li>
+              </Link> */}
+
+              {/* <Link to="/company" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <EmojiTransportationIcon className="icon" />
+                  <span>Companies</span>
+                </li>
+              </Link> */}
+
+              <Link to="/bookings" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <LibraryBooksIcon className="icon" />
+                  <span>Bookings</span>
+                </li>
+              </Link>
+
+              <Link to="/cancelled-bookings" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <CancelPresentation className="icon" />
+                  <span>Cancelled Bookings</span>
+                </li>
+              </Link>
+
+              <Link to="/bookingstatus" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <GpsFixedIcon className="icon" />
+                  <span>Order Status</span>
+                </li>
+              </Link>
+
+              {/* <Link to="/earnings" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <AttachMoney className="icon" />
+                  <span>Earnings</span>
+                </li>
+              </Link>
+
+              <Link to="/transactions" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <FaMoneyBillTransfer className="icon" />
+                  <span>Transactions</span>
+                </li>
+              </Link> */}
+
+
+              <p className="title">USEFUL LINKS</p>
+              {/* <Link to="/notification" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <CircleNotificationsIcon className="icon" />
+                  <span>Notifications</span>
+                </li>
+              </Link> */}
+
+              {/* <Link to="/reports" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <ContentPasteIcon className="icon" />
+                  <span>Reports</span>
+                </li>
+              </Link> */}
+
+              <Link to="/support" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <CreditScoreIcon className="icon" />
+                  <span>Support</span>
+                </li>
+              </Link>
+
+              {/* <Link to="/setting" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <SettingsIcon className="icon" />
+                  <span>Settings</span>
+                </li>
+              </Link>
+
+              <Link to="/profile" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <PermIdentityIcon className="icon" />
+                  <span>Profile</span>
+                </li>
+              </Link> */}
+            </>
+          )}
+
+
+          {(role.role === "Business Dev1" || role.role === "Business Dev2") && (
+            <>
+              <p className="title">LIST</p>
+              <Link to="/users" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <AccountCircleIcon className="icon" />
+                  <span>Users</span>
+                </li>
+              </Link>
+
+              <Link to="/drivers" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <DirectionsCarIcon className="icon" />
+                  <span>Riders</span>
+                </li>
+              </Link>
+
+              <Link to="/unverified-drivers" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <CarCrash className="icon" />
+                  <span>Unverified Riders</span>
+                </li>
+              </Link>
+
+              <Link to="/company" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <EmojiTransportationIcon className="icon" />
+                  <span>Companies</span>
+                </li>
+              </Link>
+
+              {/* <Link to="/bookings" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <LibraryBooksIcon className="icon" />
+                  <span>Bookings</span>
+                </li>
+              </Link>
+
+              <Link to="/cancelled-bookings" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <CancelPresentation className="icon" />
+                  <span>Cancelled Bookings</span>
+                </li>
+              </Link>
+
+              <Link to="/bookingstatus" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <GpsFixedIcon className="icon" />
+                  <span>Order Status</span>
+                </li>
+              </Link> */}
+
+              {/* <Link to="/earnings" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <AttachMoney className="icon" />
+                  <span>Earnings</span>
+                </li>
+              </Link>
+
+              <Link to="/transactions" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <FaMoneyBillTransfer className="icon" />
+                  <span>Transactions</span>
+                </li>
+              </Link> */}
+
+
+              <p className="title">USEFUL LINKS</p>
+              {/* <Link to="/notification" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <CircleNotificationsIcon className="icon" />
+                  <span>Notifications</span>
+                </li>
+              </Link> */}
+
+              {/* <Link to="/reports" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <ContentPasteIcon className="icon" />
+                  <span>Reports</span>
+                </li>
+              </Link> */}
+
+              {/* <Link to="/support" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <CreditScoreIcon className="icon" />
+                  <span>Support</span>
+                </li>
+              </Link> */}
+
+              <Link to="/setting" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <SettingsIcon className="icon" />
+                  <span>Settings</span>
+                </li>
+              </Link>
+
+              {/* <Link to="/profile" style={{ textDecoration: "none" }}>
+                <li tabindex="0">
+                  <PermIdentityIcon className="icon" />
+                  <span>Profile</span>
+                </li>
+              </Link> */}
+            </>
+          )}
 
           <li tabindex="0">
             <div onClick={() => handleSignOut()}>

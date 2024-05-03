@@ -3,12 +3,12 @@ import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
 import DriverDatatable from '../../components/datatable/driverDatatable';
 
-const DriversList = () => {
+const DriversList = (role) => {
     return (
         <div className='driversList'>
-            <Sidebar />
+            <Sidebar {...role} />
             <div className="driversListContainer">
-                <Navbar />
+                <Navbar {...role} />
                 <DriverDatatable />
             </div>
         </div>

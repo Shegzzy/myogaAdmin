@@ -3,13 +3,13 @@ import Sidebar from "../../components/sidebar/sidebar"
 import Navbar from "../../components/navbar/navbar"
 import Datatable from "../../components/datatable/datatable"
 
-const List = () => {
+const List = (role) => {
     return (
-        <div className="list"> 
-            <Sidebar/>
+        <div className="list">
+            <Sidebar {...role} />
             <div className="listContainer">
-                <Navbar/>
-                <Datatable/>
+                <Navbar {...role} />
+                <Datatable />
             </div>
         </div>
     )
