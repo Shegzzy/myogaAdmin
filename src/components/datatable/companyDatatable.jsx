@@ -86,13 +86,16 @@ const CompanyDatatable = () => {
       const companyDoc = await getDoc(doc(db, "Companies", id));
       const companyName = companyDoc.data().company;
 
-      const ridersQuery = query(collection(db, "Drivers"), where("Company", "==", companyName));
+      const ridersQuery = query(collection(db, "Drivers"),
+        where("Company", "==", companyName),
+        where("Verified", "==", "1")
+      );
       const companyRiders = await getDocs(ridersQuery);
 
       if (!companyRiders.empty) {
         const updatePromises = companyRiders.docs.map(async (rider) => {
           const riderRef = doc(db, "Drivers", rider.id);
-          await updateDoc(riderRef, { Verified: "0" });
+          await updateDoc(riderRef, { Verified: "Hold" });
         });
 
         // Update the company document status
@@ -124,7 +127,9 @@ const CompanyDatatable = () => {
       const companyDoc = await getDoc(doc(db, "Companies", id));
       const companyName = companyDoc.data().company;
 
-      const ridersQuery = query(collection(db, "Drivers"), where("Company", "==", companyName));
+      const ridersQuery = query(collection(db, "Drivers"),
+        where("Company", "==", companyName),
+        where("Verified", "==", "Hold"));
       const companyRiders = await getDocs(ridersQuery);
 
       const updatePromises = companyRiders.docs.map(async (rider) => {

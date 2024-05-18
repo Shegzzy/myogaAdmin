@@ -1,15 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from './../../firebase';
 import EditRole from '../modal/editRole';
 
 const RoleSet = (props) => {
+    const [loading, setLoading] = useState(false);
 
     const handleDelete = async () => {
         try {
+            setLoading(true);
             await deleteDoc(doc(db, "Roles", props.id));
         } catch (erre) {
-
+            console.log(erre)
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -23,7 +27,14 @@ const RoleSet = (props) => {
                     </p>
                 </div>
                 <EditRole id={props.id} name={props.name} email={props.email} password={props.password} />
-                <button onClick={() => handleDelete()} class="px-4 py-1 text-sm text-red-600 font-semibold rounded-full border border-red-200 hover:text-white hover:bg-red-600 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2">Delete</button>
+                <button onClick={() => handleDelete()} disabled={loading} class={loading ? "spinner-btn" : "px-4 py-1 text-sm text-red-600 font-semibold rounded-full border border-red-200 hover:text-white hover:bg-red-600 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2"}>
+                    <span className={loading ? "hidden" : ""}>Delete</span>
+                    <span className={loading ? "" : "hidden"}>
+                        <div className="spinner"></div>
+                    </span>
+                    {loading && <span>Deleting...</span>}
+                </button>
+
             </div>
         </div>
     )
