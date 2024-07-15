@@ -201,7 +201,6 @@ const SupportPage = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-
                             {attendedData.length !== 0 ? (
                                 attendedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
                                     <TableRow key={row.id}>

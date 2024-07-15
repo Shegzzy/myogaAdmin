@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./report_chart.scss";
 import {
   BarChart,
@@ -11,6 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { collection, getDocs, where, query } from "firebase/firestore";
 import { db } from "../../firebase";
+import { DarkModeContext } from "../../context/darkModeContext";
 
 const UsersChart = ({ aspect, title }) => {
   const [totalUsersData, setTotalUsersData] = useState([]);
@@ -21,6 +22,7 @@ const UsersChart = ({ aspect, title }) => {
   const [lastFourMonthData, setLastFourMonthData] = useState([]);
   const [lastFiveMonthData, setLastFiveMonthData] = useState([]);
   const [lastSixMonthData, setLastSixMonthData] = useState([]);
+  const { darkMode } = useContext(DarkModeContext);
 
   useEffect(() => {
     getData();
@@ -311,7 +313,7 @@ const UsersChart = ({ aspect, title }) => {
             dataKey="Total"
             fill="#8884d8"
             shape={<TriangleBar />}
-            label={{ position: "top" }}
+            label={{ position: "top", fill: darkMode ? "white" : "black" }}
           ></Bar>
         </BarChart>
       </ResponsiveContainer>

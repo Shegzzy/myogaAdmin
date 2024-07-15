@@ -459,7 +459,7 @@ const Sidebar = (role) => {
               </Link> */}
 
 
-              <p className="title">USEFUL LINKS</p>
+              {/* <p className="title">USEFUL LINKS</p> */}
               {/* <Link to="/notification" style={{ textDecoration: "none" }}>
                 <li tabindex="0">
                   <CircleNotificationsIcon className="icon" />
@@ -481,12 +481,12 @@ const Sidebar = (role) => {
                 </li>
               </Link> */}
 
-              <Link to="/setting" style={{ textDecoration: "none" }}>
+              {/* <Link to="/setting" style={{ textDecoration: "none" }}>
                 <li tabindex="0">
                   <SettingsIcon className="icon" />
                   <span>Settings</span>
                 </li>
-              </Link>
+              </Link> */}
 
               {/* <Link to="/profile" style={{ textDecoration: "none" }}>
                 <li tabindex="0">

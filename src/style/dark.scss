@@ -1,6 +1,8 @@
 .app.dark{
     background-color: #222;
-    color: rgb(232, 229, 229);
+    color: white;
+    width: fit-content;
+    
 
     .chartGrid{
         stroke: rgb(228, 228, 228, 0.219);
@@ -10,12 +12,12 @@
         background-color: #222;
 
         .tableCell{
-            color: rgb(219, 216, 216);
+            color: white;
         }
     }
 
     .navbar{
-        color: rgb(214, 212, 212);
+        color: white;
         border-color: #333;
 
         .search{
@@ -23,13 +25,53 @@
         }
     }
 
+    .mNavbar .wrapper .items .item {
+        color: white;
+    }
+
+    h4{
+        color: white;
+    }
+
+    .statusList {
+        width: fit-content;
+    }
+
+    .earnList {
+        width: fit-content;
+    }
+
+    .css-5wly58-MuiDataGrid-root {
+        color: white;
+    }
+
+    .user-table th {
+        background-color: #111;
+      }
+    
+      .user-entry {
+        background-color: #111;
+      }
+    
+      .user-entry:nth-child(even) {
+        background-color: grey;
+      }
+
+      .report__chart{
+        color: white;
+      }
+
+      .reportTitle {
+        color: white;
+      }
+
     .sidebar{
         background-color: #222;
         border-color: #333;
 
         .top{
             .logo{
-                color: rgb(223, 220, 220);
+                color: white;
             }
         }
         hr{
@@ -38,13 +80,13 @@
 
         ul{
             li{
-                color: #999;
+                color: white;
                 &:hover{
                     background-color: #333;
                 }
 
                 .icon{
-                    color: #999;
+                    color: white;
                 }
 
                 span{
@@ -54,13 +96,17 @@
         }
     }
 
+    .datatable .datatableTitle {
+        color: white;
+    }
+
     .datatable{
         .datagrid{
-            color: rgb(183, 180, 180);
+            color: white;
             border: none;
 
             .viewButton, .deleteButton, .cellWithStatus{
-                color: rgb(183, 180, 180);
+                color: white;
                 border: none;
             }
         }
@@ -70,4 +116,7 @@
         background-color: transparent;
     }
 
+    tbody{
+        background-color: #222;
+    }
 }   

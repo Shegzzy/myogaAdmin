@@ -10,10 +10,13 @@ import {
 } from "recharts";
 import { collection, getDocs, where, query } from "firebase/firestore";
 import { db } from "../../firebase";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { DarkModeContext } from "../../context/darkModeContext";
 
 const Chart = ({ aspect, title }) => {
   const [monthlyData, setMonthlyData] = useState([]);
+  const { darkMode } = useContext(DarkModeContext);
+
 
 
   useEffect(() => {
@@ -90,14 +93,15 @@ const Chart = ({ aspect, title }) => {
           <XAxis dataKey="name" stroke="#8884d8" />
           <YAxis />
           <Tooltip content={<CustomTooltip />} wrapperStyle={{
-            backgroundColor: "#f5f5f5",
+            backgroundColor: darkMode ? "black" : "#f5f5f5",
             border: "1px solid #ccc",
             padding: "10px",
             fontSize: "14px",
+            color: darkMode ? "white" : "black"
           }} />
           <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-          <Bar dataKey="Total" fill="#8884d8" barSize={25} label={{ position: "top" }} />
-          <Bar dataKey="FifteenPercent" fill="#82ca9d" barSize={25} label={{ position: "top", fill: "black" }} />
+          <Bar dataKey="Total" fill="#8884d8" barSize={25} label={{ position: "top", fill: darkMode ? "white" : "black"}} />
+          <Bar dataKey="FifteenPercent" fill="#82ca9d" barSize={25} label={{ position: "top", fill: darkMode ? "white" : "black" }} />
         </BarChart>
       </ResponsiveContainer>
     </div>
