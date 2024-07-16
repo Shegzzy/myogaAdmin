@@ -1,17 +1,15 @@
 import "./driverDatatable.scss";
 import { DataGrid } from "@mui/x-data-grid";
 import { driverColumns } from "../../datatablesource";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import {
   collection,
-  deleteDoc,
   doc,
-  onSnapshot,
   query,
   where,
   getDocs,
-  or,
+  updateDoc
 } from "firebase/firestore";
 import { db } from "./../../firebase";
 import Snakbar from "../snackbar/Snakbar";
@@ -22,6 +20,8 @@ const DriverDatatable = () => {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [holdingRider, setHoldingRider] = useState(false);
+  const [releasingRider, setReleasingRider] = useState(false);
 
   const snackbarRef = useRef(null);
   const [msg, setMsg] = useState("");
@@ -38,7 +38,7 @@ const DriverDatatable = () => {
         if (selectedFilter === "all") {
           const querySnapshot = await getDocs(
             query(collection(db, "Drivers"),
-              where("Verified", "==", "1")
+            where("Verified", "in", ["1", "Hold"]),
             )
           );
           let list = [];
@@ -100,7 +100,7 @@ const DriverDatatable = () => {
 
           const querySnapshot = await getDocs(query(
             collection(db, "Drivers"),
-            where("Verified", "==", "1"),
+            where("Verified", "in", ["1", "Hold"]),
             where("Date Created", ">=", startOfPeriod.toISOString()),
             where("Date Created", "<=", endOfPeriod.toISOString())
           ));
@@ -135,11 +135,12 @@ const DriverDatatable = () => {
   // Function to search for riders
   const handleSearch = async () => {
     if (search.trim() === '') {
-      const querySnapshot = await getDocs(collection(db, "Drivers"));
+      const querySnapshot = await getDocs(query(collection(db, "Drivers"), where("Verified", "in", ["1", "Hold"])),
+    );
       let list = [];
 
       querySnapshot.forEach((doc) => {
-        list.push({ id: doc.id, ...doc.data() });
+        list.push({ id: doc.id, ...doc.data(), documents: Array.isArray(doc.data().Documents) ? doc.data().Documents : [], });
       });
 
       list.sort((a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"]));
@@ -164,6 +165,68 @@ const DriverDatatable = () => {
     }
   };
 
+  // function for holding a rider
+  const handleRiderHold = async (id) => {
+    setHoldingRider(true);
+
+    try {
+      const riderRef = doc(db, "Drivers", id);
+      await updateDoc(riderRef, { Verified: "Hold" });
+
+      const querySnapshot = await getDocs(query(collection(db, "Drivers"), where("Verified", "in", ["1", "Hold"])));
+      let list = [];
+
+      querySnapshot.forEach((doc) => {
+        list.push({ id: doc.id, ...doc.data(), documents: Array.isArray(doc.data().Documents) ? doc.data().Documents : [], });
+      });
+
+      list.sort((a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"]));
+
+      setData(list);
+      setMsg("Rider is now on hold");
+      setType("success");
+      snackbarRef.current.show();
+    } catch (e) {
+      console.log(e);
+      setMsg("Holding rider failed");
+      setType("error");
+      snackbarRef.current.show();
+    } finally {
+      setHoldingRider(false);
+    }
+  }
+
+  // function for releasing a rider
+  const handleRiderRelease = async (id) => {
+    setReleasingRider(true);
+
+    try {
+      const riderRef = doc(db, "Drivers", id);
+      await updateDoc(riderRef, { Verified: "1" });
+
+      const querySnapshot = await getDocs(query(collection(db, "Drivers"), where("Verified", "in", ["1", "Hold"])));
+      let list = [];
+
+      querySnapshot.forEach((doc) => {
+        list.push({ id: doc.id, ...doc.data(), documents: Array.isArray(doc.data().Documents) ? doc.data().Documents : [], });
+      });
+
+      list.sort((a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"]));
+
+      setData(list);
+      setMsg("Rider is now released");
+      setType("success");
+      snackbarRef.current.show();
+    } catch (e) {
+      console.log(e);
+      setMsg("Rider release failed");
+      setType("success");
+      snackbarRef.current.show();
+    } finally {
+      setReleasingRider(false); 
+    }
+  }
+
   useEffect(() => {
     handleSearch();
   }, [search]);
@@ -172,7 +235,7 @@ const DriverDatatable = () => {
     {
       field: "action",
       headerName: "Action",
-      width: 100,
+      width: 170,
       renderCell: (params) => {
         return (
           <div className="cellAction">
@@ -188,12 +251,22 @@ const DriverDatatable = () => {
               View
             </div>
 
-            {/* <div
-              className="trackButton"
-              onClick={() => handleTrackButtonClick(params.row.id)}
-            >
-              Track Rider
-            </div> */}
+              {
+                params.row.Verified === '1' ? 
+                  <div
+                className="trackButton"
+                onClick={() => handleRiderHold(params.row.id)}
+              >
+                {holdingRider ? "holding rider..." : "Hold Rider"}
+              </div> :
+              <div
+                className="trackButton"
+                onClick={() => handleRiderRelease(params.row.id)}
+              >
+                { releasingRider ? " releasing rider..." : "Release Rider"}
+              </div>
+              }
+            
           </div>
         );
       },

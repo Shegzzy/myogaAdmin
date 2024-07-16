@@ -87,7 +87,7 @@ export const driverColumns = [
         renderCell: (params) => {
             return (
                 <div className={`cellWithVerify ${params.row.Verified}`}>
-                    {params.row.Verified === "1" ? "verified" : "not verified"}
+                    {params.row.Verified === "1" ? "verified" : params.row.Verified === "Hold" ? "on hold" : "not verified"}
                     {/* {params.row.Verified === "0" ? <AssignModal value={params.row.Verified} Id={params.row.id} /> : <div className="verifiedButton">Verified</div>} */}
                 </div>
             )

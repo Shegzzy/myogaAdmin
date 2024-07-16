@@ -107,7 +107,7 @@
 
             .viewButton, .deleteButton, .cellWithStatus{
                 color: white;
-                border: none;
+                border-color: wheat;
             }
         }
     }
@@ -116,7 +116,12 @@
         background-color: transparent;
     }
 
-    tbody{
-        background-color: #222;
+    .datatable .cellWithVerify .verifyButton{
+        color: wheat;
+        border-color: wheat;
+    }
+
+    .list {
+        width: fit-content;
     }
 }   
