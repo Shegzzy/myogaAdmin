@@ -116,12 +116,34 @@
         background-color: transparent;
     }
 
-    .datatable .cellWithVerify .verifyButton{
+    .datatable .cellWithVerify .verifyButton {
+        color: wheat;
+        border-color: wheat;
+    }
+
+    .datatable .cellAction .trackButton {
         color: wheat;
         border-color: wheat;
     }
 
     .list {
         width: fit-content;
+    }
+
+    
+    .css-78c6dr-MuiToolbar-root-MuiTablePagination-toolbar {
+        color: white;
+    }
+
+    .css-78c6dr-MuiToolbar-root-MuiTablePagination-toolbar .MuiTablePagination-actions {
+        -webkit-flex-shrink: 0;
+        -ms-flex-negative: 0;
+        flex-shrink: 0;
+        margin-left: 20px;
+        color: white;
+    }
+
+    .css-pqjvzy-MuiSvgIcon-root-MuiSelect-icon {
+        color: white;
     }
 }   

@@ -132,7 +132,7 @@ const CancelledBookingDataTable = () => {
                     );
 
                     refundList.sort(
-                        (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
+                        (a, b) => new Date(b["Refunded Date"]) - new Date(a["Refunded Date"])
                     );
 
                     setData(list);
@@ -273,8 +273,9 @@ const CancelledBookingDataTable = () => {
     // Function to search for riders
     const handleSearch = () => {
         if (searchTerm.trim() === '') {
+            activeTab === "cancelled" ?
             onSnapshot(
-                collection(db, "Cancelled Bookings"),
+                query(collection(db, "Cancelled Bookings"), where("Status", "==", "cancelled")),
                 async (snapShot) => {
                     let list = [];
                     const driverMap = new Map();
@@ -346,8 +347,81 @@ const CancelledBookingDataTable = () => {
                     setType("error");
                     snackbarRef.current.show();
                 }
+            ) : onSnapshot(
+                query(collection(db, "Cancelled Bookings"), where("Status", "==", "refunded")),
+                async (snapShot) => {
+                    let list = [];
+                    const driverMap = new Map();
+                    const userMap = new Map();
+                    // Fetch driver and user IDs
+                    snapShot.forEach((docs) => {
+                        const { "Driver ID": driverID, "Customer ID": customerID } = docs.data();
+                        userMap.set(customerID, "");
+                        driverMap.set(driverID, "");
+                    });
+
+
+                    // Populate driver names
+                    await Promise.all(Array.from(driverMap.keys()).map(async (driverID) => {
+                        try {
+                            const driverDoc = await getDoc(doc(db, "Drivers", driverID));
+                            if (driverDoc.exists()) {
+                                const driverName = driverDoc.data().FullName;
+                                driverMap.set(driverID, driverName); // Set driver name in the map
+                            } else {
+                                console.log(`Driver with ID ${driverID} does not exist.`);
+                                driverMap.delete(driverID);
+                            }
+                        } catch (error) {
+                            console.error(`Error fetching driver with ID ${driverID}: ${error}`);
+                        }
+                    }));
+
+                    // Populate user names
+                    await Promise.all(Array.from(userMap.keys()).map(async (userID) => {
+                        try {
+                            const userDoc = await getDoc(doc(db, "Users", userID));
+                            if (userDoc.exists()) {
+                                const userName = userDoc.data().FullName;
+                                userMap.set(userID, userName); // Set user name in the map
+                            } else {
+                                console.log(`User with ID ${userID} does not exist.`);
+                                userMap.delete(userID);
+                            }
+                        } catch (error) {
+                            console.error(`Error fetching user with ID ${userID}: ${error}`);
+                            // Handle error (e.g., show error message)
+                        }
+                    }));
+
+                    snapShot.forEach((docs) => {
+                        const { "Driver ID": driverID, "Customer ID": customerID, ...rest } = docs.data();
+                        const customerName = userMap.get(customerID);
+                        const driverName = driverMap.get(driverID);
+
+                        list.push({
+                            id: docs.id,
+                            ...docs.data(),
+                            "Customer Name": customerName,
+                            "Driver Name": driverName
+                        });
+                    });
+
+                    list.sort(
+                        (a, b) => new Date(b["Refunded Date"]) - new Date(a["Refunded Date"])
+                    );
+                    setRefunds(list);
+                    setMsg(" Displaying All Refunds ");
+                    setType("success");
+                    snackbarRef.current.show();
+                },
+                (error) => {
+                    setMsg(error.message);
+                    setType("error");
+                    snackbarRef.current.show();
+                }
             );
-        } else {
+        } else if(activeTab === "cancelled") {
             const filteredData = data.filter((bookingNumber) => {
                 const name = bookingNumber['Booking Number']?.toLowerCase() ?? "";
                 return name.includes(searchTerm?.toLowerCase() ?? "");
@@ -360,6 +434,19 @@ const CancelledBookingDataTable = () => {
             }
 
             setData(filteredData);
+        } else {
+            const filteredData = refunds.filter((bookingNumber) => {
+                const name = bookingNumber['Booking Number']?.toLowerCase() ?? "";
+                return name.includes(searchTerm?.toLowerCase() ?? "");
+            });
+
+            if (filteredData.length === 0) {
+                setMsg('No search results found.');
+                setType("error");
+                snackbarRef.current.show();
+            }
+
+            setRefunds(filteredData);
         }
     };
 
