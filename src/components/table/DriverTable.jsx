@@ -46,6 +46,7 @@ const DriverTable = (props) => {
               <TableCell className="tableCell">Payment Method</TableCell>
               <TableCell className="tableCell">Status</TableCell>
               <TableCell className="tableCell">Date</TableCell>
+              <TableCell className="tableCell">Date Completed</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -88,6 +89,9 @@ const DriverTable = (props) => {
                 </TableCell>
                 <TableCell className="tableCell">
                   {format(new Date(row["Date Created"]), 'dd/MM/yyyy')}
+                </TableCell>
+                <TableCell className="tableCell">
+                  {row.completedDate}
                 </TableCell>
               </TableRow>
             ))) : (

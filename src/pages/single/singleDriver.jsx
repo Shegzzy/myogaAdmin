@@ -14,12 +14,12 @@ import {
 } from "firebase/firestore";
 import DriverTable from "../../components/table/DriverTable";
 import ImageViewModal from '../../components/modal/image-view-modal';
+import { format } from "date-fns";
 
 
 const SingleDriver = (props) => {
   //   const location = useLocation();
   const { id } = useParams();
-  //   const userID = location.state.id;
   const [data, setData] = useState([]);
   const [bookingData, setBookingData] = useState([]);
   const [totalEarnings, setTotalEarnings] = useState(0);
@@ -57,81 +57,82 @@ const SingleDriver = (props) => {
   }, [id]);
 
   // fetching rider's earnings
-  useEffect(() => {
-    let isMounted = true;
-    try {
-      const getEarnings = async () => {
+  // useEffect(() => {
+  //   let isMounted = true;
+  //   try {
+  //     const getEarnings = async () => {
 
-        let totalAmount = 0;
+  //       let totalAmount = 0;
 
-        const earningsQuery = query(
-          collection(db, "Earnings"),
-          where("Driver", "==", id),
-        );
+  //       const earningsQuery = query(
+  //         collection(db, "Earnings"),
+  //         where("Driver", "==", id),
+  //       );
 
-        const earningsData = await getDocs(earningsQuery);
+  //       const earningsData = await getDocs(earningsQuery);
 
-        earningsData.forEach((earnings) => {
-          const booking = earnings.data();
-          totalAmount += parseFloat(booking.Amount);
-        });
+  //       earningsData.forEach((earnings) => {
+  //         const booking = earnings.data();
+  //         totalAmount += parseFloat(booking.Amount);
+  //       });
 
-        if (isMounted) {
-          setTotalEarnings(totalAmount);
-        }
-      };
+  //       if (isMounted) {
+  //         setTotalEarnings(totalAmount);
+  //       }
+  //     };
 
-      getEarnings();
-    } catch (error) {
-      console.log(error);
-    } finally {
-      isMounted = false;
-    }
+  //     getEarnings();
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     isMounted = false;
+  //   }
 
-  }, [id]);
+  // }, [id]);
 
   // fetching rider's handled bookings
-  useEffect(() => {
-    const getBookings = async () => {
-      let isMounted = true;
-      let bookingsData = [];
+  // useEffect(() => {
+  //   const getBookings = async () => {
+  //     let isMounted = true;
+  //     let bookingsData = [];
 
-      const bookingsQuery = query(
-        collection(db, "Bookings"),
-        where("Driver ID", "==", id)
-      );
+  //     const bookingsQuery = query(
+  //       collection(db, "Bookings"),
+  //       where("Driver ID", "==", id)
+  //     );
 
-      const completedBookingsQuery = query(
-        collection(db, "Bookings"),
-        where("Driver ID", "==", id),
-        where("Status", "==", "completed")
-      );
+  //     const completedBookingsQuery = query(
+  //       collection(db, "Bookings"),
+  //       where("Driver ID", "==", id),
+  //       where("Status", "==", "completed")
+  //     );
 
-      const querySnapshot = await getDocs(bookingsQuery);
-      const queryCompletedSnapshot = await getDocs(completedBookingsQuery);
+  //     const querySnapshot = await getDocs(bookingsQuery);
+  //     const queryCompletedSnapshot = await getDocs(completedBookingsQuery);
 
-      querySnapshot.forEach((doc) => {
-        const booking = doc.data();
-        const bookingId = doc.id;
-        bookingsData.push({ ...booking, id: bookingId });
-      });
-      if (isMounted) {
-        bookingsData.sort(
-          (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
-        );
-        setBookingData(bookingsData);
-        setBookL(bookingsData.length);
-        setEarnL(queryCompletedSnapshot.docs.length);
-      }
+  //     querySnapshot.forEach((doc) => {
+  //       const booking = doc.data();
+  //       const bookingId = doc.id;
+  //       bookingsData.push({ ...booking, id: bookingId });
+  //     });
+  //     if (isMounted) {
+  //       bookingsData.sort(
+  //         (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
+  //       );
+  //       setBookingData(bookingsData);
+  //       setBookL(bookingsData.length);
+  //       setEarnL(queryCompletedSnapshot.docs.length);
+  //     }
 
-      return () => {
-        isMounted = false;
-      };
-    };
-    getBookings();
-  }, [id]);
+  //     return () => {
+  //       isMounted = false;
+  //     };
+  //   };
+  //   getBookings();
+  // }, [id]);
 
   // Function for weekly and monthly query
+  
   useEffect(() => {
     let isMounted = true;
     let startOfPeriod, endOfPeriod;
@@ -154,28 +155,39 @@ const SingleDriver = (props) => {
             where("Driver ID", "==", id)
           );
 
-          const completedBookingsQuery = query(
-            collection(db, "Bookings"),
-            where("Driver ID", "==", id),
-            where("Status", "==", "completed")
-          );
+          // const completedBookingsQuery = query(
+          //   collection(db, "Bookings"),
+          //   where("Driver ID", "==", id),
+          //   where("Status", "==", "completed")
+          // );
 
-          const earningsData = await getDocs(earningsQuery);
-          const querySnapshot = await getDocs(bookingsQuery);
-          const queryCompletedSnapshot = await getDocs(completedBookingsQuery);
+          const [earningsData, querySnapshot] = await Promise.all ([
+            getDocs(earningsQuery),
+            getDocs(bookingsQuery),
+          ])
 
+          // const earningsData = await ;
+          // const querySnapshot = await ;
+          // const queryCompletedSnapshot = await getDocs(completedBookingsQuery);
+          const earningsMap = new Map();
+          earningsData.forEach((doc) => {
+            const earnings = doc.data();
+            totalAmount += parseFloat(earnings.Amount);
+            earningsMap.set(earnings.BookingID, format(new Date(earnings.DateCreated), "dd/MM/yyyy"));
+          });
 
           querySnapshot.forEach((doc) => {
             const booking = doc.data();
             const bookingId = doc.id;
-            bookingsData.push({ ...booking, id: bookingId });
+            const bookingNumber = booking['Booking Number'];
+
+            const earningsDate = earningsMap.get(bookingNumber) || "-";
+
+            bookingsData.push({ ...booking, id: bookingId, completedDate: earningsDate });
           });
 
 
-          earningsData.forEach((earnings) => {
-            const booking = earnings.data();
-            totalAmount += parseFloat(booking.Amount);
-          });
+          
 
           if (isMounted) {
             bookingsData.sort(
@@ -184,7 +196,7 @@ const SingleDriver = (props) => {
             setBookingData(bookingsData);
             setBookL(bookingsData.length);
             setTotalEarnings(totalAmount);
-            setEarnL(queryCompletedSnapshot.docs.length);
+            setEarnL(earningsData.docs.length);
           }
         } else {
           const today = new Date();

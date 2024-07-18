@@ -38,10 +38,10 @@ const Widget = ({ type }) => {
 
     case "driver":
       data = {
-        title: "DRIVERS",
+        title: "RIDERS",
         isMoney: false,
         nav: "./drivers",
-        link: "see all drivers",
+        link: "see all riders",
         query: "Drivers",
         icon: (
           <DirectionsCarIcon
