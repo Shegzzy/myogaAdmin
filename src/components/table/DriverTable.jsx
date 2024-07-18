@@ -96,7 +96,7 @@ const DriverTable = (props) => {
               </TableRow>
             ))) : (
               <TableRow>
-                <TableCell colSpan={10} align="center">
+                <TableCell colSpan={10} align="center" className="tableCell">
                   No data available.
                 </TableCell>
               </TableRow>

@@ -15,6 +15,9 @@ import {
 import DriverTable from "../../components/table/DriverTable";
 import ImageViewModal from '../../components/modal/image-view-modal';
 import { format } from "date-fns";
+import { DateRangePicker } from "rsuite";
+import 'rsuite/DateRangePicker/styles/index.css';
+
 
 
 const SingleDriver = (props) => {
@@ -32,6 +35,8 @@ const SingleDriver = (props) => {
   const [mData, setMData] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [loading, setLoading] = useState(true);
+  const [dateRange, setDateRange] = useState([]);
+  const [activeTab, setActiveTab] = useState("all");
 
 
   // fetching riders details
@@ -155,12 +160,6 @@ const SingleDriver = (props) => {
             where("Driver ID", "==", id)
           );
 
-          // const completedBookingsQuery = query(
-          //   collection(db, "Bookings"),
-          //   where("Driver ID", "==", id),
-          //   where("Status", "==", "completed")
-          // );
-
           const [earningsData, querySnapshot] = await Promise.all ([
             getDocs(earningsQuery),
             getDocs(bookingsQuery),
@@ -202,7 +201,13 @@ const SingleDriver = (props) => {
           const today = new Date();
 
           // Calculate the start and end dates based on the selected filter
-          if (selectedFilter === "7") {
+          if (selectedFilter === "0") {
+            // Today
+            startOfPeriod = new Date(today);
+            startOfPeriod.setHours(0, 0, 0, 0); // Start of today
+            endOfPeriod = new Date(today);
+            endOfPeriod.setHours(23, 59, 59, 999); // End of today
+        }else if (selectedFilter === "7") {
             // Last Week
             startOfPeriod = new Date(today);
             startOfPeriod.setDate(today.getDate() - today.getDay() - 7);
@@ -254,43 +259,48 @@ const SingleDriver = (props) => {
           const bookingsQuery = query(
             collection(db, "Bookings"),
             where("Driver ID", "==", id),
-            where("Date Created", ">=", startOfPeriod.toISOString()),
-            where("Date Created", "<=", endOfPeriod.toISOString())
+            // where("Date Created", ">=", startOfPeriod.toISOString()),
+            // where("Date Created", "<=", endOfPeriod.toISOString())
           );
 
-          const completedBookingsQuery = query(
-            collection(db, "Bookings"),
-            where("Driver ID", "==", id),
-            where("Status", "==", "completed"),
-            where("Date Created", ">=", startOfPeriod.toISOString()),
-            where("Date Created", "<=", endOfPeriod.toISOString())
-          );
 
-          const earningsData = await getDocs(earningsQuery);
-          const querySnapshot = await getDocs(bookingsQuery);
-          const queryCompletedSnapshot = await getDocs(completedBookingsQuery);
+          const [earningsData, querySnapshot] = await Promise.all ([
+            getDocs(earningsQuery),
+            getDocs(bookingsQuery),
+          ])
+
+          const earningsMap = new Map();
+          const filteredBookingIDs = new Set();
+
+          earningsData.forEach((doc) => {
+            const earnings = doc.data();
+            totalAmount += parseFloat(earnings.Amount);
+            earningsMap.set(earnings.BookingID, format(new Date(earnings.DateCreated), "dd/MM/yyyy"));
+            filteredBookingIDs.add(earnings.BookingID);
+          });
 
 
           querySnapshot.forEach((doc) => {
             const booking = doc.data();
             const bookingId = doc.id;
-            bookingsData.push({ ...booking, id: bookingId });
+            const bookingNumber = booking['Booking Number'];
+
+            const earningsDate = earningsMap.get(bookingNumber) || "-";
+            bookingsData.push({ ...booking, id: bookingId, completedDate: earningsDate });
           });
 
 
-          earningsData.forEach((earnings) => {
-            const booking = earnings.data();
-            totalAmount += parseFloat(booking.Amount);
-          });
-
-          if (isMounted) {
-            bookingsData.sort(
-              (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
-            );
-            setBookingData(bookingsData);
-            setBookL(bookingsData.length);
+          const filteredCombinedData = bookingsData.filter((booking) =>
+            filteredBookingIDs.has(booking['Booking Number'])
+          );
+  
+            if (isMounted) {
+              filteredCombinedData.sort(
+                (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
+              );
+            setBookingData(filteredCombinedData);
             setTotalEarnings(totalAmount);
-            setEarnL(queryCompletedSnapshot.docs.length);
+            setEarnL(earningsData.docs.length);
           }
 
         }
@@ -426,6 +436,87 @@ const SingleDriver = (props) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
+  // function for setting date range
+  const handleDateRangeChange = (newDateRange) => {
+    setDateRange(newDateRange);
+  };
+
+  // for clearing date range
+  const handleDateRangeClean = async() => {
+    try {
+        const earningsQuery = query(
+          collection(db, "Earnings"),
+          where("Driver", "==", id)
+        );
+
+        const bookingsQuery = query(
+          collection(db, "Bookings"),
+          where("Driver ID", "==", id)
+        );
+
+      // Fetch Firestore data concurrently
+      const [earningsDataSnapshot, bookingsDataSnapshot] = await Promise.all([
+        getDocs(earningsQuery),
+        getDocs(bookingsQuery)
+      ]);
+
+      // Process earnings data into a map for quick lookup
+      const earningsMap = new Map();
+      earningsDataSnapshot.forEach((doc) => {
+        const earnings = doc.data();
+        earningsMap.set(earnings.BookingID, format(new Date(earnings.DateCreated), "dd/MM/yyyy"));
+      });
+
+      // Process bookings data and map earnings date
+      const combinedData = [];
+      bookingsDataSnapshot.forEach((doc) => {
+        const booking = doc.data();
+        const bookingId = doc.id;
+        const bookingNumber = booking['Booking Number'];
+
+        const earningsDate = earningsMap.get(bookingNumber) || "-";
+        combinedData.push({
+          ...booking,
+          id: bookingId,
+          completedDate: earningsDate
+        });
+      });
+
+        combinedData.sort(
+          (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
+        );
+        setBookingData(combinedData);
+        setBookL(bookingsDataSnapshot.docs.length);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  const switchToAllBookings = () => {
+    setTimeout(() => {
+        setActiveTab("all")
+    })
+    
+    handleDateRangeClean();
+  }
+
+const switchToAllActiveBookings = () => {
+    setTimeout(() => {
+        setActiveTab("active")
+    })
+
+    const filteredData = bookingData.filter((bookingNumber) => {
+      const name = bookingNumber['Status']?.toLowerCase() ?? "";
+      return name.includes("active" ?? "");
+    });
+
+    if (filteredData.length === 0) {
+      // toast.error('No search results found.');
+    }
+
+    setBookingData(filteredData);
+  }
 
   return (
     <div className="singleDriver">
@@ -571,6 +662,7 @@ const SingleDriver = (props) => {
                   onChange={(e) => setSelectedFilter(e.target.value)}
                 >
                   <option value="all">Total Earnings</option>
+                  <option value="0">Today's Earnings</option>
                   <option value="7">Last Week</option>
                   <option value="1">Two Weeks Ago</option>
                   <option value="2">Three Weeks Ago</option>
@@ -639,7 +731,24 @@ const SingleDriver = (props) => {
           </div>
         </div>
         <div className="bottom">
-          <h1 className="title">Last Bookings</h1>
+        <div className="table-navs">
+            
+            <h1 className={`title ${activeTab === "all" ? "active" : ""}`} onClick={switchToAllBookings}>
+                All Bookings
+            </h1>
+
+            <h1 className={`title ${activeTab === "active" ? "active" : ""}`} onClick={switchToAllActiveBookings}>
+                Active Bookings
+            </h1>
+
+            <DateRangePicker
+                showOneCalendar
+                value={dateRange}
+                onChange={handleDateRangeChange}
+                placeholder="select date range"
+                onClean={handleDateRangeClean}
+            />
+          </div>
           <div className="b-bottom">
             <DriverTable id={bookingData} />
           </div>
