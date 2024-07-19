@@ -126,12 +126,12 @@ const Widget = ({ type }) => {
       const thisMonthQuery = query(
         collection(db, data.query),
         where("timeStamp", "<=", today),
-        where("timeStamp", ">", firstDayOfMonth)
+        where("timeStamp", ">=", firstDayOfMonth)
       );
       const prevMonthQuery = query(
         collection(db, data.query),
         where("timeStamp", "<=", lastDayOfLastMonth),
-        where("timeStamp", ">", firstDayOfLastMonth)
+        where("timeStamp", ">=", firstDayOfLastMonth)
       );
 
       const thisMonthData = await getDocs(thisMonthQuery);

@@ -425,6 +425,75 @@ const SingleDriver = (props) => {
     });
   };
 
+  // function for date range selection queries
+  useEffect(() => {
+    const fetchBookingsByDateRange = async () => {
+      
+      try{
+        const [startDate, endDate] = dateRange;
+
+        const startDateFirestore = new Date(startDate);
+        startDateFirestore.setHours(0, 0, 0, 0);
+        const endDateFirestore = new Date(endDate);
+        endDateFirestore.setHours(23, 59, 59, 999);
+
+
+        const earningsQuery = query(
+          collection(db, "Earnings"),
+          where("Driver", "==", id)
+        );
+
+        const bookingsQuery = query(
+          collection(db, "Bookings"),
+          where("Driver ID", "==", id),
+          where("Date Created", ">=", startDateFirestore.toISOString()),
+          where("Date Created", "<=", endDateFirestore.toISOString())
+        );
+
+        // Fetch Firestore data concurrently
+        const [earningsDataSnapshot, bookingsDataSnapshot] = await Promise.all([
+          getDocs(earningsQuery),
+          getDocs(bookingsQuery)
+        ]);
+
+        // Process earnings data into a map for quick lookup
+        const earningsMap = new Map();
+        earningsDataSnapshot.forEach((doc) => {
+          const earnings = doc.data();
+          earningsMap.set(earnings.BookingID, format(new Date(earnings.DateCreated), "dd/MM/yyyy"));
+        });
+
+        // Process bookings data and map earnings date
+        const combinedData = [];
+        bookingsDataSnapshot.forEach((doc) => {
+          const booking = doc.data();
+          const bookingId = doc.id;
+          const bookingNumber = booking['Booking Number'];
+
+          const earningsDate = earningsMap.get(bookingNumber) || "-";
+          combinedData.push({
+            ...booking,
+            id: bookingId,
+            completedDate: earningsDate
+          });
+        });
+
+        combinedData.sort(
+          (a, b) => new Date(b["Date Created"]) - new Date(a["Date Created"])
+        );
+
+        setBookingData(combinedData);
+        setBookL(bookingsDataSnapshot.docs.length);
+
+      } catch (e){
+        console.log(e);
+      }
+    }
+
+    fetchBookingsByDateRange();
+
+  }, [dateRange, id]);
+
   const [selectedImagePath, setSelectedImagePath] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 

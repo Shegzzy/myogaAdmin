@@ -127,5 +127,10 @@
             color: lightgray;
             margin-bottom: 10px;
         }
+
+        .title.active {
+            color: #e290fa;
+            font-weight: bold;
+        }
     }
 }

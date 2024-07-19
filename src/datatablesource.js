@@ -4,6 +4,7 @@ import ModalContainer from './components/modal/ModalContainer';
 import { Link } from "react-router-dom";
 import { format } from 'date-fns';
 import RefundModal from './components/modal/refundModal';
+import { Timestamp } from 'firebase/firestore';
 
 export const userColumns = [
     // { field: 'id', headerName: 'ID', width: 150 },
@@ -142,6 +143,16 @@ export const driverColumns = [
             const formattedDate = format(new Date(params.value), 'dd/MM/yyyy'); // Format the date
             return <div>{formattedDate}</div>;
         }
+    },
+    {
+        field: "timeStamp", headerName: "Date Verified", width: 150,
+        renderCell: (params) => {
+            // Convert the Firestore timestamp to a JavaScript Date object
+            const date = params.value.toDate();
+            // Format the date
+            const formattedDate = format(date, "dd MMMM yyyy ");
+            return <div>{formattedDate}</div>;
+        },
     },
 ];
 
