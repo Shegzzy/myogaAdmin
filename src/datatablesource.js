@@ -241,6 +241,10 @@ export const bookingColumns = [
             return <div>{formattedDate}</div>;
         }
     },
+
+    {
+        field: "completedDate", headerName: "Date Completed", width: 150,
+    },
 ];
 
 export const messagesColumns = [
