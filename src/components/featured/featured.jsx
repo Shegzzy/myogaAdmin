@@ -364,6 +364,8 @@ const Featured = () => {
         </select>
       </div>
       <div className="bottom">
+        <p className="percent-paragraph">Last Month and Current Month's Percentage Difference</p>
+
         <div className="featuredChart">
           <CircularProgressbar value={diff} text={`${diff}%`} strokeWidth={5} />
         </div>

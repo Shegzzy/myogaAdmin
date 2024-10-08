@@ -8,6 +8,7 @@ import { db } from "./../../firebase";
 import Snakbar from "../snackbar/Snakbar";
 import ImageViewModal from "../modal/image-view-modal";
 import { format } from "date-fns";
+import VerifyCompanyModal from "../modal/VerifyCompanyModal";
 
 const CompanyDatatable = () => {
   const navigate = useNavigate();
@@ -62,7 +63,7 @@ const CompanyDatatable = () => {
 
           });
         });
-        list.sort((a, b) => new Date(b["date"]) - new Date(a["date"]));
+        list.sort((a, b) => new Date(b["timeStamp"]) - new Date(a["timeStamp"]));
         setData(list);
         setMsg(" Displaying Companies Information ");
         setType("success");
@@ -236,16 +237,16 @@ const CompanyDatatable = () => {
     {
       field: "location", headerName: "Location", width: 150,
     },
-    // {
-    //     field: "Status", headerName: "Status", width: 100,
-    //     renderCell: (params) => {
-    //         return (
-    //             <div className={`cellWithStatus ${params.row.Status}`}>
-    //                 {params.row.Status}
-    //             </div>
-    //         )
-    //     }
-    // },
+    {
+        field: "verification", headerName: "Verification Status", width: 150,
+        renderCell: (params) => {
+            return (
+                <div>
+                    {params.row.verification === 'pending' || params.row.verification === undefined ? <VerifyCompanyModal value={params.row.verification} Id={params.row.id} snackBar={snackbarRef}/> : params.row.verification}
+                </div>
+            )
+        }
+    },
     {
       field: "documents", headerName: "ID Card", width: 150, renderCell: (params) => {
         return (
@@ -320,9 +321,18 @@ const CompanyDatatable = () => {
 
 
     {
-      field: "date", headerName: "Date Created",
+      field: "date", headerName: "Date Established", width: 150, 
       renderCell: (params) => {
         const formattedDate = format(new Date(params.value), 'dd/MM/yyyy'); // Format the date
+        return <div>{formattedDate || ''}</div>;
+      }
+    },
+
+    {
+      field: "timeStamp", headerName: "Date Joined", width: 150, 
+      renderCell: (params) => {
+        const date = params.row.timeStamp.toDate();
+        const formattedDate = format(new Date(date), 'dd/MM/yyyy');
         return <div>{formattedDate || ''}</div>;
       }
     },

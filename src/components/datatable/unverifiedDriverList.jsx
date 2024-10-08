@@ -14,7 +14,7 @@ import Snakbar from "../snackbar/Snakbar";
 import SearchIcon from "@mui/icons-material/Search";
 import { format } from "date-fns";
 import ImageViewModal from "../modal/image-view-modal";
-import AssignModal from "../modal/AssignModal";
+import VerifyRiderModal from "../modal/VerifyRiderModal";
 
 const UnverifiedDriversList = () => {
     const navigate = useNavigate();
@@ -48,7 +48,8 @@ const UnverifiedDriversList = () => {
                 if (selectedFilter === "all") {
                     const querySnapshot = await getDocs(
                         query(collection(db, "Drivers"),
-                            where("Verified", "==", "0")
+                            where("Verified", "==", "0"),
+                            where("Identification", "==", "identified")
                         )
                     );
                     let list = [];
@@ -111,6 +112,7 @@ const UnverifiedDriversList = () => {
                     const querySnapshot = await getDocs(query(
                         collection(db, "Drivers"),
                         where("Verified", "==", "0"),
+                        where("Identification", "==", "identified"),
                         where("Date Created", ">=", startOfPeriod.toISOString()),
                         where("Date Created", "<=", endOfPeriod.toISOString())
                     ));
@@ -254,7 +256,7 @@ const UnverifiedDriversList = () => {
             renderCell: (params) => {
                 return (
                     <div className={`cellWithVerify ${params.row.Verified}`}>
-                        {params.row.Verified === "1" ? "verified" : <AssignModal value={params.row.Verified} Id={params.row.id} />}
+                        {params.row.Verified === "1" ? "verified" : <VerifyRiderModal value={params.row.Verified} Id={params.row.id} />}
                         {/* {params.row.Verified === "0" ? <AssignModal value={params.row.Verified} Id={params.row.id} /> : <div className="verifiedButton">Verified</div>} */}
                     </div>
                 )
